@@ -1,4 +1,7 @@
-// Use an IIFE to avoid polluting global scope and prevent redeclaration issues
+// Hey there! This is our main event recorder script that captures user interactions on web pages
+// We wrap everything in an IIFE (Immediately Invoked Function Expression) 
+
+
 (function() {
   // Check if we've already initialized to prevent duplicate initialization
   if (window.taskRecorderInitialized) {
@@ -16,7 +19,193 @@
   let currentTaskId = null;
   let dynamicObserver = null; // Properly declare the observer variable
 
-  // Utility function to get element CSS path
+  // Add debouncing utility
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  // Keep track of the last event to avoid duplicates
+  const lastEventData = {
+    type: null,
+    target: null,
+    value: null,
+    timestamp: 0,
+    lastInputValue: null
+  };
+
+  // Track page navigation to handle URL changes smoothly
+  const navigationState = {
+    lastUrl: null,
+    lastTitle: null,
+    pendingNavigation: false
+  };
+
+  // Error recovery system - Dont fail :((
+  const recoveryState = {
+    lastSavedTimestamp: Date.now(),
+    errorCount: 0,
+    maxErrors: 3  // We'll try 3 times before giving up
+  };
+
+  // All the different types of events we can capture
+  // This is like our dictionary of possible user actions
+  const EVENT_TYPES = {
+    PAGE_LOAD: 'pageLoad',    // When a page first loads
+    INPUT: 'input',          // When user types or changes input
+    CLICK: 'click',          // Mouse clicks
+    NAVIGATION: 'navigation', // Page navigation
+    FOCUS: 'focus',          // When an element gets focus
+    MOUSE_OVER: 'mouseover', // Mouse hovering over elements
+    MOUSE_OUT: 'mouseout',   // Mouse leaving elements
+    KEY_DOWN: 'keydown',     // Keyboard key press
+    KEY_UP: 'keyup',         // Keyboard key release
+    KEY_PRESS: 'keypress',   // Character input
+    SCROLL: 'scroll',        // Page scrolling
+    SUBMIT: 'submit',        // Form submissions
+    CHANGE: 'change',        // Value changes
+    BLUR: 'blur',           // Element losing focus
+    TOUCH_START: 'touchstart', // Mobile touch start
+    TOUCH_END: 'touchend',    // Mobile touch end
+    TOUCH_MOVE: 'touchmove'   // Mobile touch movement
+  };
+
+  // Track click behavior to handle double-clicks and rapid clicks
+  const clickState = {
+    lastClickTime: 0,
+    lastClickTarget: null,
+    clickCount: 0
+  };
+
+  // Verify that our event capture is working correctly
+  const eventVerification = {
+    clicks: [],
+    inputs: [],
+    navigations: [],
+    lastEventTime: 0
+  };
+
+  // Test mode settings for debugging and validation
+  const testMode = {
+    enabled: true,
+    validationQueue: [],
+    lastValidationTime: 0,
+    validationInterval: 1000, // Check every second
+    maxQueueSize: 100        // Don't let the queue get too big
+  };
+
+  // Format timestamps in a consistent way
+  function formatTimestamp(timestamp) {
+    return new Date(timestamp).toISOString();
+  }
+
+  // This function helps us decide if we should ignore an event
+  // We don't want to record every tiny movement or duplicate actions
+  function shouldIgnoreEvent(event, type) {
+    const element = event.target;
+    const currentValue = element.value || '';
+    const currentTime = Date.now();
+    
+    // Special handling for clicks - we want to be smart about what clicks we record
+    if (type === EVENT_TYPES.CLICK || type === 'mouseup') {
+        // Ignore super quick double-clicks (less than 25ms apart)
+        if (currentTime - clickState.lastClickTime < 25 && 
+            element === clickState.lastClickTarget) {
+            return true;
+        }
+
+        // Remember this click for next time
+        clickState.lastClickTime = currentTime;
+        clickState.lastClickTarget = element;
+        clickState.clickCount++;
+        
+        // Log what we clicked on - helpful for debugging
+        console.log(`Click detected on:`, {
+            element: element.tagName,
+            id: element.id,
+            class: element.className,
+            text: element.textContent.trim().substring(0, 50),
+            clickCount: clickState.clickCount,
+            type: type,
+            timestamp: new Date(currentTime).toISOString(),
+            button: event.button,  // Which mouse button was used
+            buttons: event.buttons // State of all mouse buttons
+        });
+
+        // Always record clicks on interactive elements (buttons, links, etc.)
+        if (isInteractiveElement(element)) {
+            return false;
+        }
+    }
+    
+    // Handle input events - we only care about actual changes
+    if (type === EVENT_TYPES.INPUT) {
+        // Skip if the value hasn't changed
+        if (currentValue === lastEventData.lastInputValue) {
+            return true;
+        }
+        // Remember this value for next time
+        lastEventData.lastInputValue = currentValue;
+    }
+
+    // Handle scroll events - we only care about significant scrolling
+    if (type === EVENT_TYPES.SCROLL) {
+        const scrollThreshold = 50; // pixels
+        if (Math.abs(event.deltaY) < scrollThreshold) {
+            return true; // Ignore tiny scrolls
+        }
+    }
+
+    // Handle mouse hover events - only record for interactive elements or tooltips
+    if (type === EVENT_TYPES.MOUSE_OVER || type === EVENT_TYPES.MOUSE_OUT) {
+        if (!isInteractiveElement(element) && !element.hasAttribute('title')) {
+            return true; // Ignore hovering over regular text
+        }
+    }
+
+    // Check for duplicate events within a short time window
+    if (lastEventData.type === type && 
+        lastEventData.target === element && 
+        currentTime - lastEventData.timestamp < 300) {
+        return true; // Ignore duplicates within 300ms
+    }
+    
+    // Update our memory of the last event
+    lastEventData.type = type;
+    lastEventData.target = element;
+    lastEventData.value = currentValue;
+    lastEventData.timestamp = currentTime;
+    
+    return false;
+  }
+
+  // Helper to identify interactive elements that users can click or interact with
+  function isInteractiveElement(element) {
+    const interactiveTags = ['button', 'input', 'select', 'textarea', 'a'];
+    const interactiveRoles = ['button', 'link', 'checkbox', 'radio', 'textbox', 'combobox', 'listbox', 'menuitem'];
+    
+    return (
+      interactiveTags.includes(element.tagName.toLowerCase()) ||
+      interactiveRoles.includes(element.getAttribute('role')) ||
+      element.onclick != null ||
+      element.getAttribute('tabindex') === '0'
+    );
+  }
+
+  // Quick check for images and links
+  function isImageOrLink(element) {
+    return element.tagName.toLowerCase() === 'img' || element.tagName.toLowerCase() === 'a';
+  }
+
+  // Get a CSS selector path to uniquely identify an element
+  // This helps us find elements again later, even if the page changes
   function getElementCssPath(element) {
     if (!element || element.nodeType !== 1) return '';
     
@@ -24,12 +213,13 @@
     while (element && element.nodeType === 1) {
       let selector = element.tagName.toLowerCase();
       
+      // If element has an ID, we can stop here - IDs are unique!
       if (element.id) {
         selector += '#' + element.id;
         path.unshift(selector);
-        break; // ID is unique, no need to go further up
+        break;
       } else {
-        // Add classes (but keep it reasonable)
+        // Add classes to make the selector more specific
         if (element.className && typeof element.className === 'string') {
           const classes = element.className.split(/\s+/).filter(c => c);
           if (classes.length > 0) {
@@ -37,7 +227,7 @@
           }
         }
         
-        // Add position among siblings if needed
+        // Add position information if there are similar siblings
         let sibling = element, index = 1;
         while (sibling = sibling.previousElementSibling) {
           if (sibling.tagName === element.tagName) index++;
@@ -48,12 +238,322 @@
         element = element.parentNode;
       }
       
-      // Limit path length to avoid excessive selectors
+      // Keep the path reasonably short
       if (path.length > 5) break;
     }
     
     return path.join(' > ');
   }
+
+  // Utility function to get element XPath
+  function getElementXPath(element) {
+    if (!element || element.nodeType !== 1) return '';
+    
+    if (element.id !== '') {
+      return `//*[@id="${element.id}"]`;
+    }
+    
+    if (element === document.body) {
+      return '/html/body';
+    }
+    
+    let ix = 0;
+    const siblings = element.parentNode.childNodes;
+    for (let i = 0; i < siblings.length; i++) {
+      const sibling = siblings[i];
+      if (sibling === element) {
+        return getElementXPath(element.parentNode) + '/' + element.tagName.toLowerCase() + '[' + (ix + 1) + ']';
+      }
+      if (sibling.nodeType === 1 && sibling.tagName === element.tagName) {
+        ix++;
+      }
+    }
+  }
+
+  // Function to get stable BID for an element
+  function getStableBID(element) {
+    // First try to get a stable ID from common attributes
+    const attributes = [
+      { attr: 'data-testid', prefix: 'test-' },
+      { attr: 'aria-label', prefix: 'aria-' },
+      { attr: 'id', prefix: 'id-' },
+      { attr: 'name', prefix: 'name-' },
+      { attr: 'placeholder', prefix: 'place-' },
+      { attr: 'alt', prefix: 'alt-' },
+      { attr: 'title', prefix: 'title-' },
+      { attr: 'role', prefix: 'role-' }
+    ];
+
+    for (const { attr, prefix } of attributes) {
+      const value = element.getAttribute(attr);
+      if (value) {
+        return prefix + value.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      }
+    }
+
+    // Fallback: always generate a semantic hash
+    const tag = element.tagName.toLowerCase();
+    const classes = element.className && typeof element.className === 'string'
+      ? element.className.split(/\s+/).filter(c => c).join('-')
+      : '';
+    const text = element.textContent ? element.textContent.trim().substring(0, 30) : '';
+    const siblings = Array.from(element.parentNode?.children || []);
+    const index = siblings.indexOf(element);
+    const semanticId = `${tag}-${classes}-${text}-${index}`;
+    const hash = hashString(semanticId);
+    return `${tag}${classes ? '-' + classes : ''}-${hash}`.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+  }
+
+  // Enhanced hash function for better uniqueness
+  function hashString(str) {
+    let hash = 5381;
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash << 5) + hash) + str.charCodeAt(i);
+    }
+    // Convert to base36 and take first 6 characters
+    return (hash >>> 0).toString(36).substring(0, 6);
+  }
+
+  // Function to verify and log event capture
+  function verifyEventCapture(event, type) {
+    const currentTime = Date.now();
+    const element = event.target;
+    
+    // Enhanced logging for click events
+    if (type === EVENT_TYPES.CLICK) {
+        console.log(`Click verification:`, {
+            type: type,
+            element: {
+                tag: element.tagName,
+                id: element.id,
+                class: element.className,
+                text: element.textContent.trim().substring(0, 50),
+                value: element.value || '',
+                isInteractive: isInteractiveElement(element)
+            },
+            time: new Date(currentTime).toISOString(),
+            url: window.location.href,
+            clickCount: clickState.clickCount
+        });
+    } else {
+        // Log all other events for verification
+        console.log(`Event detected:`, {
+            type: type,
+            element: {
+                tag: element.tagName,
+                id: element.id,
+                class: element.className,
+                text: element.textContent.trim().substring(0, 50),
+                value: element.value || ''
+            },
+            time: new Date(currentTime).toISOString(),
+            url: window.location.href
+        });
+    }
+
+    // Track different event types
+    switch(type) {
+        case EVENT_TYPES.CLICK:
+            eventVerification.clicks.push({
+                time: currentTime,
+                element: {
+                    tag: element.tagName,
+                    id: element.id,
+                    text: element.textContent.trim().substring(0, 50),
+                    isInteractive: isInteractiveElement(element)
+                },
+                url: window.location.href
+            });
+            break;
+        case EVENT_TYPES.INPUT:
+            eventVerification.inputs.push({
+                time: currentTime,
+                element: {
+                    tag: element.tagName,
+                    id: element.id,
+                    value: element.value
+                }
+            });
+            break;
+        case EVENT_TYPES.NAVIGATION:
+            eventVerification.navigations.push({
+                time: currentTime,
+                fromUrl: navigationState.lastUrl,
+                toUrl: window.location.href
+            });
+            break;
+    }
+
+    // Log verification state periodically
+    if (currentTime - eventVerification.lastEventTime > 1000) {
+        console.log('Event Capture Verification:', {
+            totalClicks: eventVerification.clicks.length,
+            totalInputs: eventVerification.inputs.length,
+            totalNavigations: eventVerification.navigations.length,
+            lastMinute: {
+                clicks: eventVerification.clicks.filter(c => currentTime - c.time < 60000).length,
+                inputs: eventVerification.inputs.filter(i => currentTime - i.time < 60000).length,
+                navigations: eventVerification.navigations.filter(n => currentTime - n.time < 60000).length
+            },
+            clickState: {
+                lastClickTime: new Date(clickState.lastClickTime).toISOString(),
+                clickCount: clickState.clickCount
+            }
+        });
+        eventVerification.lastEventTime = currentTime;
+    }
+  }
+
+  // Function to validate event capture
+  function validateEventCapture(event, type) {
+    if (!testMode.enabled) return;
+
+    const validation = {
+      timestamp: Date.now(),
+      type: type,
+      element: {
+        tag: event.target.tagName,
+        id: event.target.id,
+        class: event.target.className,
+        text: event.target.textContent.trim().substring(0, 50),
+        value: event.target.value || ''
+      },
+      url: window.location.href,
+      verified: false
+    };
+
+    // Add to validation queue
+    testMode.validationQueue.push(validation);
+    if (testMode.validationQueue.length > testMode.maxQueueSize) {
+      testMode.validationQueue.shift(); // Remove oldest
+    }
+
+    // Log validation attempt
+    console.log(`Event validation attempt:`, validation);
+
+    // Verify against recorded events
+    const matchingEvent = events.find(e => 
+      e.timestamp === formatTimestamp(validation.timestamp) &&
+      e.type === validation.type &&
+      e.url === validation.url
+    );
+
+    if (matchingEvent) {
+      validation.verified = true;
+      console.log(`Event validation SUCCESS:`, {
+        type: validation.type,
+        element: validation.element,
+        timestamp: validation.timestamp
+      });
+    } else {
+      console.warn(`Event validation FAILED:`, {
+        type: validation.type,
+        element: validation.element,
+        timestamp: validation.timestamp
+      });
+    }
+
+    return validation.verified;
+  }
+
+  // Enhanced function to record an event
+  function recordEvent(event) {
+    if (!isRecording) return;
+    
+    // Create event object with BrowserGym-like structure
+    const eventData = {
+      type: event.type,
+      timestamp: Date.now(),
+      url: window.location.href,
+      target: {
+        tag: event.target.tagName,
+        id: event.target.id,
+        class: event.target.className,
+        text: event.target.textContent,
+        value: event.target.value,
+        isInteractive: isInteractiveElement(event.target),
+        xpath: getElementXPath(event.target),
+        cssPath: getElementCssPath(event.target),
+        bid: getStableBID(event.target),
+        a11y: getA11yIdentifiers(event.target),
+        attributes: Array.from(event.target.attributes).reduce((acc, attr) => {
+          acc[attr.name] = attr.value;
+          return acc;
+        }, {}),
+        boundingBox: event.target.getBoundingClientRect().toJSON()
+      }
+    };
+
+    // Add event-specific data
+    if (event.type === 'click') {
+      eventData.button = event.button;
+      eventData.buttons = event.buttons;
+      eventData.clientX = event.clientX;
+      eventData.clientY = event.clientY;
+      eventData.screenX = event.screenX;
+      eventData.screenY = event.screenY;
+      eventData.pageX = event.pageX;
+      eventData.pageY = event.pageY;
+      eventData.offsetX = event.offsetX;
+      eventData.offsetY = event.offsetY;
+      eventData.movementX = event.movementX;
+      eventData.movementY = event.movementY;
+      eventData.ctrlKey = event.ctrlKey;
+      eventData.altKey = event.altKey;
+      eventData.shiftKey = event.shiftKey;
+      eventData.metaKey = event.metaKey;
+      eventData.detail = event.detail; // For double clicks
+    }
+
+    // Send event to background script
+    chrome.runtime.sendMessage({
+      type: 'recordedEvent',
+      event: eventData
+    });
+
+    // Also store locally for verification
+    events.push(eventData);
+
+    // Log click events for debugging
+    if (event.type === 'click') {
+      console.log('Click recorded:', {
+        type: event.type,
+        target: {
+          tag: event.target.tagName,
+          id: event.target.id,
+          class: event.target.className,
+          text: event.target.textContent.trim().substring(0, 50),
+          isInteractive: isInteractiveElement(event.target),
+          bid: eventData.target.bid
+        },
+        position: {
+          client: { x: event.clientX, y: event.clientY },
+          screen: { x: event.screenX, y: event.screenY },
+          page: { x: event.pageX, y: event.pageY }
+        },
+        buttons: {
+          button: event.button,
+          buttons: event.buttons,
+          detail: event.detail
+        },
+        modifiers: {
+          ctrl: event.ctrlKey,
+          alt: event.altKey,
+          shift: event.shiftKey,
+          meta: event.metaKey
+        },
+        timestamp: new Date(eventData.timestamp).toISOString()
+      });
+    }
+  }
+
+  // Update event listeners to use capture phase
+  document.addEventListener('click', recordEvent, true);
+  document.addEventListener('mousedown', recordEvent, true);
+  document.addEventListener('mouseup', recordEvent, true);
+  document.addEventListener('keydown', recordEvent, true);
+  document.addEventListener('input', recordEvent, true);
+  document.addEventListener('change', recordEvent, true);
 
   // Simple function to get accessibility identifiers for an element
   function getA11yIdentifiers(element) {
@@ -160,24 +660,60 @@
   function initializeRecording() {
     console.log("Initializing recording with event listeners");
     
-    // Record clicks
-    document.removeEventListener('click', recordClick); // Remove first to prevent duplicates
-    document.addEventListener('click', recordClick);
+    // Remove existing listeners first
+    const eventsToRemove = [
+      ['click', recordEvent],
+      ['mousedown', recordEvent],
+      ['mouseup', recordEvent],
+      ['mouseover', recordEvent],
+      ['mouseout', recordEvent],
+      ['keydown', recordEvent],
+      ['keyup', recordEvent],
+      ['keypress', recordEvent],
+      ['scroll', debouncedRecordScroll],
+      ['input', debouncedRecordInput],
+      ['focus', recordEvent],
+      ['blur', recordEvent],
+      ['change', debouncedRecordInput],
+      ['submit', recordEvent],
+      ['touchstart', recordEvent],
+      ['touchend', recordEvent],
+      ['touchmove', recordEvent]
+    ];
+
+    eventsToRemove.forEach(([event, handler]) => {
+      document.removeEventListener(event, handler, true);
+    });
     
-    // Record form inputs
-    document.removeEventListener('input', recordInput);
-    document.addEventListener('input', recordInput);
+    // Add event listeners with capture phase
+    eventsToRemove.forEach(([event, handler]) => {
+      document.addEventListener(event, handler, true);
+      console.log(`Added event listener for ${event}`);
+    });
     
-    // Add focus and mousedown listeners
-    // document.removeEventListener('focus', recordFocus, true);
-    // document.addEventListener('focus', recordFocus, true);
-    
-    // document.removeEventListener('mousedown', recordMouseDown, true);
-    // document.addEventListener('mousedown', recordMouseDown, true);
+    // Add navigation event listeners
+    window.addEventListener('popstate', handleNavigation);
+    window.addEventListener('pushState', handleNavigation);
+    window.addEventListener('replaceState', handleNavigation);
     
     // Set up observer for dynamic elements
     dynamicObserver = observeDynamicChanges();
+
+    // Verify recording state
+    console.log("Recording initialized with state:", {
+      isRecording,
+      currentTaskId,
+      eventListeners: eventsToRemove.map(([event]) => event)
+    });
   }
+
+  // Create debounced version of recordInput with longer delay
+  const debouncedRecordInput = debounce((e) => {
+    // Only record input events if the value has actually changed
+    if (e.target.value !== lastEventData.lastInputValue) {
+      recordEvent(e);
+    }
+  }, 500); // Increased to 500ms debounce
 
   // Listen for messages from popup
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -217,9 +753,9 @@
       
       // Record initial page load as an event
       const pageLoadEvent = {
-        type: 'pageLoad',
+        type: EVENT_TYPES.PAGE_LOAD,
+        timestamp: formatTimestamp(Date.now()),
         url: window.location.href,
-        timestamp: Date.now(),
         title: document.title
       };
       events.push(pageLoadEvent);
@@ -232,10 +768,29 @@
     isRecording = false;
     
     // Remove event listeners
-    document.removeEventListener('click', recordClick);
-    document.removeEventListener('input', recordInput);
-    document.removeEventListener('focus', recordFocus, true);
-    document.removeEventListener('mousedown', recordMouseDown, true);
+    const eventsToRemove = [
+      ['click', recordEvent],
+      ['mousedown', recordEvent],
+      ['mouseup', recordEvent],
+      ['mouseover', recordEvent],
+      ['mouseout', recordEvent],
+      ['keydown', recordEvent],
+      ['keyup', recordEvent],
+      ['keypress', recordEvent],
+      ['scroll', debouncedRecordScroll],
+      ['input', debouncedRecordInput],
+      ['focus', recordEvent],
+      ['blur', recordEvent],
+      ['change', debouncedRecordInput],
+      ['submit', recordEvent],
+      ['touchstart', recordEvent],
+      ['touchend', recordEvent],
+      ['touchmove', recordEvent]
+    ];
+
+    eventsToRemove.forEach(([event, handler]) => {
+      document.removeEventListener(event, handler, true);
+    });
     
     // Disconnect observer
     if (dynamicObserver) {
@@ -272,306 +827,201 @@
   function saveEvents() {
     if (!isRecording || !currentTaskId) return;
     
-    chrome.storage.local.get(['taskHistory'], function(data) {
-      const taskHistory = data.taskHistory || {};
-      
-      if (taskHistory[currentTaskId]) {
-        taskHistory[currentTaskId].events = events;
-        
-        // Save the updated task history
-        chrome.storage.local.set({ taskHistory: taskHistory }, function() {
-          console.log("Events saved to task history");
-        });
-      }
-    });
-  }
-
-  function recordClick(e) {
-    if (!isRecording) return;
-    
     try {
-      // Create the basic event data
-      const eventData = {
-        type: 'click',
-        timestamp: Date.now(),
-        url: window.location.href,
+      chrome.storage.local.get(['taskHistory'], function(data) {
+        const taskHistory = data.taskHistory || {};
         
-        // Add just enough a11y info to identify the element in the tree
-        a11y: getA11yIdentifiers(e.target),
-        
-        // Include text content for easier identification
-        textContent: e.target.textContent ? e.target.textContent.trim().substring(0, 100) : ''
-      };
-      
-      console.log("Click recorded with a11y identifiers:", eventData);
-      events.push(eventData);
-      saveEvents();
-    } catch (error) {
-      console.error("Error recording click:", error);
-    }
-  }
-
-  function recordInput(e) {
-    if (!isRecording) return;
-    
-    try {
-      const eventData = {
-        type: 'input',
-        timestamp: Date.now(),
-        url: window.location.href,
-        value: e.target.value || '',
-        a11y: getA11yIdentifiers(e.target)
-      };
-      
-      console.log("Input recorded:", eventData);
-      events.push(eventData);
-      saveEvents();
-    } catch (error) {
-      console.error("Error recording input:", error);
-    }
-  }
-
-  function recordFocus(e) {
-    if (!isRecording) return;
-    
-    try {
-      // Only record focus on input elements, selects, and textareas
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
-        const eventData = {
-          type: 'focus',
-          timestamp: Date.now(),
-          url: window.location.href,
-          a11y: getA11yIdentifiers(e.target)
-        };
-        
-        console.log("Focus recorded:", eventData);
-        events.push(eventData);
-        saveEvents();
-      }
-    } catch (error) {
-      console.error("Error recording focus:", error);
-    }
-  }
-
-  function recordMouseDown(e) {
-    if (!isRecording) return;
-    
-    try {
-      // Find if this is a dropdown/suggestion item
-      const dropdownItem = e.target.closest('li') || 
-                           e.target.closest('[role="option"]') || 
-                           e.target.closest('[role="menuitem"]') ||
-                           e.target.closest('.dropdown-item');
-      
-      // Create the basic event data
-      const eventData = {
-        type: 'mousedown',
-        target: e.target.tagName,
-        id: e.target.id || '',
-        class: typeof e.target.className === 'string' ? e.target.className : '',
-        timestamp: Date.now(),
-        url: window.location.href,
-        x: e.clientX,
-        y: e.clientY,
-        textContent: e.target.textContent ? e.target.textContent.trim().substring(0, 100) : '',
-        cssPath: getElementCssPath(e.target),
-        attributes: {}
-      };
-      
-      // If this is a dropdown item, add more context
-      if (dropdownItem) {
-        eventData.isDropdownItem = true;
-        eventData.dropdownItemText = dropdownItem.textContent ? dropdownItem.textContent.trim() : '';
-        
-        // Find the closest link element
-        const linkElement = e.target.closest('a') || dropdownItem.querySelector('a');
-        if (linkElement) {
-          eventData.linkHref = linkElement.href || linkElement.getAttribute('href') || '';
-          eventData.linkText = linkElement.textContent ? linkElement.textContent.trim() : '';
-        }
-        
-        // Try to find the parent container
-        const container = dropdownItem.closest('ul') || 
-                          dropdownItem.closest('[role="menu"]') || 
-                          dropdownItem.closest('[role="listbox"]');
-        if (container) {
-          eventData.containerType = container.tagName;
-          eventData.containerClass = typeof container.className === 'string' ? container.className : '';
-          eventData.containerItems = container.children.length;
-        }
-      }
-      
-      // Capture important attributes
-      const importantAttrs = ['href', 'src', 'alt', 'title', 'name', 'value', 'type', 'placeholder', 'role', 'aria-label', 'data-title'];
-      importantAttrs.forEach(attr => {
-        if (e.target.hasAttribute(attr)) {
-          eventData.attributes[attr] = e.target.getAttribute(attr);
+        if (taskHistory[currentTaskId]) {
+          taskHistory[currentTaskId].events = events;
+          
+          // Save the updated task history
+          chrome.storage.local.set({ taskHistory: taskHistory }, function() {
+            console.log("Events saved to task history");
+            recoveryState.lastSavedTimestamp = Date.now();
+            recoveryState.errorCount = 0;
+          });
         }
       });
-      
-      console.log("Mousedown recorded:", eventData);
-      events.push(eventData);
-      saveEvents();
     } catch (error) {
-      console.error("Error recording mousedown:", error);
+      console.error("Error saving events:", error);
+      recoveryState.errorCount++;
+      
+      // Attempt recovery if we've hit too many errors
+      if (recoveryState.errorCount >= recoveryState.maxErrors) {
+        attemptRecovery();
+      }
     }
   }
 
-  function observeDynamicChanges() {
-    // Make sure we have a valid target to observe
-    if (!document.body) {
-      console.log("Body not available yet, will retry observer setup");
-      // Retry after a short delay
-      setTimeout(observeDynamicChanges, 100);
-      return null;
-    }
+  // Add debounced scroll handler
+  const debouncedRecordScroll = debounce((e) => {
+    recordEvent(e);
+  }, 100);
 
-    try {
-      const observer = new MutationObserver(mutations => {
-        for (const mutation of mutations) {
-          if (mutation.type === 'childList') {
-            // Check for any new interactive elements
-            for (const node of mutation.addedNodes) {
-              if (node.nodeType === 1) { // Element node
-                try {
-                  // Look for dropdown menus, lists, and other interactive elements
-                  const dropdownElements = node.querySelectorAll('ul, [role="menu"], [role="listbox"], .dropdown-menu');
-                  if (dropdownElements.length > 0) {
-                    console.log("Dynamic dropdown elements detected:", dropdownElements);
-                  }
-                  
-                  // Look for form elements
-                  const formElements = node.querySelectorAll('input, select, textarea, button');
-                  if (formElements.length > 0) {
-                    console.log("Dynamic form elements detected:", formElements);
-                  }
-                  
-                  // No need to attach special listeners - our document-level listeners will catch events
-                  // from these elements. We're just logging them for debugging purposes.
-                } catch (e) {
-                  console.error("Error processing mutation node:", e);
-                }
-              }
-            }
-          }
-        }
-      });
-      
-      observer.observe(document.body, { childList: true, subtree: true });
-      console.log("MutationObserver successfully attached to document.body");
-      return observer;
-    } catch (error) {
-      console.error("Error setting up MutationObserver:", error);
-      return null;
+  // Function to handle navigation events
+  function handleNavigation(event) {
+    if (!isRecording) return;
+    
+    const currentUrl = window.location.href;
+    const previousUrl = navigationState.lastUrl || document.referrer;
+    
+    if (currentUrl !== previousUrl) {
+      recordNavigationEvent(previousUrl, currentUrl);
     }
   }
 
-  // Add navigation event listeners
+  // Add beforeunload handler for navigation
   window.addEventListener('beforeunload', function() {
     if (!isRecording) return;
     
+    navigationState.pendingNavigation = true;
+    const currentUrl = window.location.href;
+    
+    // Save current state
     try {
-      const eventData = {
-        type: 'navigation',
-        fromUrl: window.location.href,
-        timestamp: Date.now()
-      };
-      
-      console.log("Navigation event recorded:", eventData);
-      
-      // We need to use synchronous storage here since the page is unloading
-      try {
-        // Get current events
-        const storageData = JSON.parse(localStorage.getItem('tempNavigationData') || '{}');
-        storageData.lastFromUrl = window.location.href;
-        storageData.lastNavigationTime = Date.now();
-        storageData.taskId = currentTaskId;
-        localStorage.setItem('tempNavigationData', JSON.stringify(storageData));
-      } catch (e) {
-        console.error("Error saving navigation data:", e);
-      }
-    } catch (error) {
-      console.error("Error in beforeunload handler:", error);
+      localStorage.setItem('pendingNavigation', JSON.stringify({
+        fromUrl: currentUrl,
+        timestamp: Date.now(),
+        taskId: currentTaskId
+      }));
+    } catch (e) {
+      console.error("Error saving navigation state:", e);
     }
   });
 
-  // When page loads, check if we have pending navigation data
-  window.addEventListener('load', function() {
+  // Function to attempt recovery from errors
+  function attemptRecovery() {
+    console.log("Attempting recovery from errors...");
+    
+    // Clear error count
+    recoveryState.errorCount = 0;
+    
+    // Try to save events to localStorage as backup
     try {
-      if (!isRecording) return;
-      
-      try {
-        const storageData = JSON.parse(localStorage.getItem('tempNavigationData') || '{}');
-        if (storageData.lastFromUrl && storageData.lastNavigationTime && storageData.taskId) {
-          // If the last navigation was recent (within 5 seconds), record it
-          if (Date.now() - storageData.lastNavigationTime < 5000) {
-            const navigationEventData = {
-              type: 'navigation',
-              fromUrl: storageData.lastFromUrl,
-              toUrl: window.location.href,
-              timestamp: storageData.lastNavigationTime,
-              completedTimestamp: Date.now()
-            };
-            
-            console.log("Navigation completed:", navigationEventData);
-            
-            // Get existing events and add this navigation
-            chrome.storage.local.get(['taskHistory'], (data) => {
-              const taskHistory = data.taskHistory || {};
-              const taskId = storageData.taskId;
-              
-              if (taskHistory[taskId]) {
-                const currentEvents = taskHistory[taskId].events || [];
-                currentEvents.push(navigationEventData);
-                taskHistory[taskId].events = currentEvents;
-                
-                // Save updated events
-                chrome.storage.local.set({ taskHistory: taskHistory }, function() {
-                  console.log("Navigation event saved to task history");
-                });
-              }
-            });
-          }
-          
-          // Clear the temporary navigation data
-          localStorage.removeItem('tempNavigationData');
-        }
-      } catch (e) {
-        console.error("Error processing navigation data:", e);
-      }
-      
-      // Record page load event
-      const pageLoadEventData = {
-        type: 'pageLoad',
-        url: window.location.href,
+      localStorage.setItem('eventCaptureBackup', JSON.stringify({
+        events: events,
         timestamp: Date.now(),
-        title: document.title,
-        referrer: document.referrer
-      };
-      
-      console.log("Page load recorded:", pageLoadEventData);
-      
-      // Get existing events first
-      chrome.storage.local.get(['taskHistory', 'currentTaskId'], (data) => {
-        if (data.currentTaskId) {
-          const taskHistory = data.taskHistory || {};
-          const taskId = data.currentTaskId;
-          
-          if (taskHistory[taskId]) {
-            const currentEvents = taskHistory[taskId].events || [];
-            currentEvents.push(pageLoadEventData);
-            taskHistory[taskId].events = currentEvents;
-            
-            // Save updated events
-            chrome.storage.local.set({ taskHistory: taskHistory }, function() {
-              console.log("Page load event saved to task history");
-            });
-          }
+        taskId: currentTaskId
+      }));
+    } catch (e) {
+      console.error("Failed to create backup:", e);
+    }
+    
+    // Reinitialize recording
+    initializeRecording();
+  }
+
+  // Enhanced function to record navigation events
+  function recordNavigationEvent(fromUrl, toUrl, type = EVENT_TYPES.NAVIGATION) {
+    if (!isRecording) return;
+
+    const eventData = {
+      type: type,
+      timestamp: formatTimestamp(Date.now()),
+      fromUrl: fromUrl,
+      toUrl: toUrl,
+      title: document.title,
+      referrer: document.referrer,
+      fromUserInput: clickState.clickCount > 0
+    };
+
+    events.push(eventData);
+    saveEvents();
+    
+    // Update navigation state
+    navigationState.lastUrl = toUrl;
+    navigationState.lastTitle = document.title;
+    navigationState.pendingNavigation = false;
+    
+    // Reset click count after navigation
+    clickState.clickCount = 0;
+
+    // Log navigation event
+    console.log(`Navigation recorded:`, {
+      from: fromUrl,
+      to: toUrl,
+      userInitiated: clickState.clickCount > 0,
+      totalNavigations: eventVerification.navigations.length
+    });
+  }
+
+  // Add periodic event verification
+  setInterval(() => {
+    if (isRecording) {
+      console.log('Event Capture Status:', {
+        totalEvents: events.length,
+        clicks: eventVerification.clicks.length,
+        inputs: eventVerification.inputs.length,
+        navigations: eventVerification.navigations.length,
+        lastMinute: {
+          clicks: eventVerification.clicks.filter(c => Date.now() - c.time < 60000).length,
+          inputs: eventVerification.inputs.filter(i => Date.now() - i.time < 60000).length,
+          navigations: eventVerification.navigations.filter(n => Date.now() - n.time < 60000).length
         }
       });
-      
-    } catch (error) {
-      console.error("Error in load handler:", error);
     }
-  });
+  }, 5000);
+
+  // Add periodic validation check
+  setInterval(() => {
+    if (isRecording && testMode.enabled) {
+      const currentTime = Date.now();
+      if (currentTime - testMode.lastValidationTime >= testMode.validationInterval) {
+        // Check validation queue
+        const unverified = testMode.validationQueue.filter(v => !v.verified);
+        if (unverified.length > 0) {
+          console.warn(`Found ${unverified.length} unverified events:`, unverified);
+        }
+        
+        // Log validation statistics
+        console.log('Event Capture Validation Status:', {
+          totalEvents: events.length,
+          validationQueueSize: testMode.validationQueue.length,
+          verifiedEvents: testMode.validationQueue.filter(v => v.verified).length,
+          unverifiedEvents: unverified.length,
+          lastMinute: {
+            total: testMode.validationQueue.filter(v => currentTime - v.timestamp < 60000).length,
+            verified: testMode.validationQueue.filter(v => v.verified && currentTime - v.timestamp < 60000).length
+          }
+        });
+        
+        testMode.lastValidationTime = currentTime;
+      }
+    }
+  }, 1000);
+
+  // Add periodic recording state verification
+  setInterval(() => {
+    if (isRecording) {
+      console.log('Recording State Check:', {
+        isRecording,
+        currentTaskId,
+        totalEvents: events.length,
+        lastEventTime: events.length > 0 ? events[events.length - 1].timestamp : null,
+        clickCount: clickState.clickCount,
+        eventListeners: {
+          click: document.onclick !== null,
+          mousedown: document.onmousedown !== null,
+          mouseup: document.onmouseup !== null
+        }
+      });
+    }
+  }, 2000);
+
+  // Add click event verification
+  document.addEventListener('click', function verifyClick(e) {
+    if (isRecording) {
+      console.log('Click Verification:', {
+        target: e.target.tagName,
+        id: e.target.id,
+        class: e.target.className,
+        isInteractive: isInteractiveElement(e.target),
+        recordingState: {
+          isRecording,
+          currentTaskId,
+          clickCount: clickState.clickCount
+        }
+      });
+    }
+  }, true);
 })(); // End of IIFE

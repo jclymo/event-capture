@@ -25,5 +25,6 @@
       "js": ["recorder.js"],
       "run_at": "document_start"
     }
-  ]
+  ],
+  "incognito": "split"
 }

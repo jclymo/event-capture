@@ -207,11 +207,12 @@ function showTaskSummary(taskId, taskData) {
   const viewButton = document.createElement('button');
   viewButton.textContent = 'View Detailed Events';
   viewButton.addEventListener('click', () => {
-    // Open a new window with detailed events
+    // Create a new window with proper CSP headers
     const detailWindow = window.open('', 'Task Details', 'width=800,height=600');
-    const formattedEvents = JSON.stringify(taskData.events, null, 2);
     
+    // Write the HTML structure
     detailWindow.document.write(`
+      <!DOCTYPE html>
       <html>
         <head>
           <title>Task Details</title>
@@ -221,16 +222,23 @@ function showTaskSummary(taskId, taskData) {
         </head>
         <body>
           <h1>Task Details: ${taskData.title}</h1>
-          <pre>${formattedEvents.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+          <pre id="eventData"></pre>
         </body>
       </html>
     `);
+    
+    // Close the document write stream
+    detailWindow.document.close();
+    
+    // Set the event data after the document is ready
+    detailWindow.document.getElementById('eventData').textContent = 
+      JSON.stringify(taskData.events, null, 2);
   });
   
   resultsDiv.appendChild(viewButton);
 }
 
-// Add function to view task history
+// Function to view task history
 function addTaskHistoryButton() {
   const historyButton = document.createElement('button');
   historyButton.textContent = 'View Task History';
@@ -243,10 +251,12 @@ function addTaskHistoryButton() {
     chrome.storage.local.get(['taskHistory'], (data) => {
       const taskHistory = data.taskHistory || {};
       
-      // Create a new window to display task history
+      // Create a new window
       const historyWindow = window.open('', 'Task History', 'width=800,height=600');
       
-      let historyHtml = `
+      // Write the HTML structure
+      historyWindow.document.write(`
+        <!DOCTYPE html>
         <html>
           <head>
             <title>Task History</title>
@@ -262,60 +272,67 @@ function addTaskHistoryButton() {
           </head>
           <body>
             <h1>Task History</h1>
-      `;
+            <div id="taskList">Loading...</div>
+          </body>
+        </html>
+      `);
+      
+      // Close the document write stream
+      historyWindow.document.close();
+      
+      // Get the task list container
+      const taskList = historyWindow.document.getElementById('taskList');
       
       if (Object.keys(taskHistory).length === 0) {
-        historyHtml += '<p>No tasks recorded yet.</p>';
+        taskList.innerHTML = '<p>No tasks recorded yet.</p>';
       } else {
         // Sort tasks by start time (newest first)
         const sortedTasks = Object.values(taskHistory).sort((a, b) => b.startTime - a.startTime);
         
-        for (const task of sortedTasks) {
+        // Create task elements
+        sortedTasks.forEach(task => {
           const duration = task.endTime ? Math.floor((task.endTime - task.startTime) / 1000) : 'In progress';
           const formattedDuration = typeof duration === 'number' ? 
             `${Math.floor(duration / 60)}m ${duration % 60}s` : duration;
           
-          historyHtml += `
-            <div class="task" data-task-id="${task.id}">
-              <div class="task-header">
-                <span class="task-title">${task.title}</span>
-                <span class="task-date">${new Date(task.startTime).toLocaleString()}</span>
-              </div>
-              <div class="task-details">
-                <p><strong>Status:</strong> ${task.status}</p>
-                <p><strong>Duration:</strong> ${formattedDuration}</p>
-                <p><strong>Events:</strong> ${task.events ? task.events.length : 0}</p>
-                <button onclick="viewTaskDetails('${task.id}')">View Details</button>
-                <button onclick="exportTask('${task.id}')">Export</button>
-                <button onclick="deleteTask('${task.id}')" style="background-color: #f44336; color: white;">Delete</button>
-              </div>
+          const taskElement = document.createElement('div');
+          taskElement.className = 'task';
+          taskElement.dataset.taskId = task.id;
+          
+          taskElement.innerHTML = `
+            <div class="task-header">
+              <span class="task-title">${task.title}</span>
+              <span class="task-date">${new Date(task.startTime).toLocaleString()}</span>
+            </div>
+            <div class="task-details">
+              <p><strong>Status:</strong> ${task.status}</p>
+              <p><strong>Duration:</strong> ${formattedDuration}</p>
+              <p><strong>Events:</strong> ${task.events ? task.events.length : 0}</p>
+              <button class="view-details">View Details</button>
+              <button class="export-task">Export</button>
+              <button class="delete-task" style="background-color: #f44336; color: white;">Delete</button>
             </div>
           `;
-        }
+          
+          // Add event listeners
+          taskElement.querySelector('.view-details').addEventListener('click', () => {
+            chrome.runtime.sendMessage({action: "viewTaskDetails", taskId: task.id});
+          });
+          
+          taskElement.querySelector('.export-task').addEventListener('click', () => {
+            chrome.runtime.sendMessage({action: "exportTask", taskId: task.id});
+          });
+          
+          taskElement.querySelector('.delete-task').addEventListener('click', () => {
+            if (confirm("Are you sure you want to delete this task?")) {
+              chrome.runtime.sendMessage({action: "deleteTask", taskId: task.id});
+              taskElement.remove();
+            }
+          });
+          
+          taskList.appendChild(taskElement);
+        });
       }
-      
-      historyHtml += `
-            <script>
-              function viewTaskDetails(taskId) {
-                chrome.runtime.sendMessage({action: "viewTaskDetails", taskId: taskId});
-              }
-              
-              function exportTask(taskId) {
-                chrome.runtime.sendMessage({action: "exportTask", taskId: taskId});
-              }
-              
-              function deleteTask(taskId) {
-                if (confirm("Are you sure you want to delete this task?")) {
-                  chrome.runtime.sendMessage({action: "deleteTask", taskId: taskId});
-                  document.querySelector(\`[data-task-id="\${taskId}"]\`).remove();
-                }
-              }
-            </script>
-          </body>
-        </html>
-      `;
-      
-      historyWindow.document.write(historyHtml);
     });
   });
   

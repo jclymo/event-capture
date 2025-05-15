@@ -16,34 +16,51 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 });
 
-// Listen for task history actions
+// Listen for events from recorder.js
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "viewTaskDetails") {
-    chrome.storage.local.get(['taskHistory'], (data) => {
-      const taskHistory = data.taskHistory || {};
-      const task = taskHistory[message.taskId];
-      
-      if (task) {
-        // Open a new window with task details
-        const detailWindow = window.open('', 'Task Details', 'width=800,height=600');
-        const formattedEvents = JSON.stringify(task.events, null, 2);
+  if (message.type === 'recordedEvent') {
+    console.log("Received recorded event:", {
+      type: message.event.type,
+      target: {
+        tag: message.event.target.tag,
+        id: message.event.target.id,
+        bid: message.event.target.bid,
+        isInteractive: message.event.target.isInteractive
+      },
+      timestamp: new Date(message.event.timestamp).toISOString()
+    });
+    
+    // Get current task info
+    chrome.storage.local.get(['isRecording', 'currentTaskId', 'taskHistory'], (data) => {
+      if (data.isRecording && data.currentTaskId && data.taskHistory) {
+        const taskHistory = data.taskHistory;
+        const taskId = data.currentTaskId;
         
-        detailWindow.document.write(`
-          <html>
-            <head>
-              <title>Task Details</title>
-              <style>
-                body { font-family: monospace; white-space: pre; padding: 20px; }
-              </style>
-            </head>
-            <body>
-              <h1>Task Details: ${task.title}</h1>
-              <pre>${formattedEvents.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
-            </body>
-          </html>
-        `);
+        if (taskHistory[taskId]) {
+          const events = taskHistory[taskId].events || [];
+          
+          // Add the event to the task history
+          events.push(message.event);
+          taskHistory[taskId].events = events;
+          
+          // Save updated task history
+          chrome.storage.local.set({ taskHistory: taskHistory }, () => {
+            console.log("Event saved to task history:", {
+              type: message.event.type,
+              totalEvents: events.length,
+              timestamp: new Date(message.event.timestamp).toISOString()
+            });
+          });
+        }
       }
     });
+  } else if (message.action === "viewTaskDetails") {
+    // Manifest V3 background scripts cannot use DOM APIs.
+    // Open a new tab to details.html and pass the taskId as a query parameter.
+    chrome.tabs.create({
+      url: `details.html?taskId=${message.taskId}`
+    });
+    // The UI for viewing and filtering events should be implemented in details.html/details.js
   } else if (message.action === "exportTask") {
     chrome.storage.local.get(['taskHistory'], (data) => {
       const taskHistory = data.taskHistory || {};
