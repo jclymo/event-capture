@@ -158,10 +158,11 @@ document.getElementById('endTask').addEventListener('click', async () => {
       }
       
       if (data.recordingTabId) {
+        chrome.runtime.sendMessage({ action: "stopRecording" });
         try {
           // Send message to stop recording
           // chrome.tabs.sendMessage(data.recordingTabId, { action: "stopRecording" });
-          chrome.runtime.sendMessage({ action: "stopRecording" }); // changed from tabs to runtime
+          // chrome.runtime.sendMessage({ action: "stopRecording" }); // changed from tabs to runtime
         } catch (e) {
           console.error("Error sending stop message:", e);
         }
@@ -275,6 +276,7 @@ function addTaskHistoryButton() {
           </head>
           <body>
             <h1>Task History</h1>
+            <button id="clearAllTasks">Clear All Tasks</button>
             <div id="taskList">Loading...</div>
           </body>
         </html>
@@ -285,7 +287,16 @@ function addTaskHistoryButton() {
       
       // Get the task list container
       const taskList = historyWindow.document.getElementById('taskList');
-      
+      const clearAllTasks = historyWindow.document.getElementById('clearAllTasks');
+      clearAllTasks.addEventListener('click', () => {
+        chrome.storage.local.set({ taskHistory: {} }, function() {
+          console.log("All tasks cleared");
+          taskList.innerHTML = '<p>No tasks recorded yet.</p>';
+        });
+        // refresh contents
+        taskList.innerHTML = '<p>No tasks recorded yet.</p>';
+      }
+    );
       if (Object.keys(taskHistory).length === 0) {
         taskList.innerHTML = '<p>No tasks recorded yet.</p>';
       } else {

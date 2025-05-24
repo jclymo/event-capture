@@ -1,6 +1,43 @@
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === chrome.runtime.OnInstalledReason.UPDATE) {
+    // Extension was just updated
+    reloadAllTabs();
+  }
+});
+function reloadAllTabs() {
+  chrome.tabs.query({}, (tabs) => {
+    for (const tab of tabs) {
+      // skip chrome:// and extension pages
+      if (!tab.url.startsWith('chrome://') &&
+          !tab.url.startsWith('edge://') &&
+          !tab.url.startsWith('chrome-extension://')) {
+        chrome.tabs.reload(tab.id);
+      }
+    }
+  });
+}
+
+
+
+chrome.runtime.onInstalled.addListener(details => {
+  if (details.reason === 'install' || details.reason === 'update') {
+    chrome.tabs.query({ url: ['<all_urls>'] }, tabs => {
+      for (const t of tabs) {
+        chrome.scripting.executeScript({
+          target: { tabId: t.id },
+          files: ['recorder.js']
+        }).catch(console.error);
+      }
+    });
+  }
+});
 // Track navigation events
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete') {
+
+    if (tab.url && tab.url.startsWith('chrome-extension://')) {
+      return;
+    }
     // Check if we're recording
     chrome.storage.local.get(['isRecording', 'recordingTabId'], (data) => {
       if (data.isRecording && data.recordingTabId === tabId) {
@@ -32,7 +69,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         isInteractive: message.event.target.isInteractive
       },
       timestamp: new Date(message.event.timestamp).toISOString()
-    });
+    }
+  );
     
     // Get current task info
     chrome.storage.local.get(['isRecording', 'currentTaskId', 'taskHistory'], (data) => {
@@ -57,13 +95,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           });
         }
       }
-    });
+    }
+  
+  ); sendResponse({status: "recording event received"});
   } else if (message.action === "viewTaskDetails") {
     // Manifest V3 background scripts cannot use DOM APIs.
     // Open a new tab to details.html and pass the taskId as a query parameter.
     chrome.tabs.create({
       url: `details.html?taskId=${message.taskId}`
     });
+    sendResponse({status: "task details viewed"});
     // The UI for viewing and filtering events should be implemented in details.html/details.js
   } else if (message.action === "exportTask") {
     chrome.storage.local.get(['taskHistory'], (data) => {
@@ -83,6 +124,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
       }
     });
+    sendResponse({status: "task exported"});
   } else if (message.action === "deleteTask") {
     chrome.storage.local.get(['taskHistory'], (data) => {
       const taskHistory = data.taskHistory || {};
@@ -95,6 +137,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
       }
     });
+    sendResponse({status: "task deleted"});
   }
   
   return true; // Required for async sendResponse
@@ -103,6 +146,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // Listen for tab updates (including URL changes)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete') {
+    
+    if (tab.url && tab.url.startsWith('chrome-extension://')) {
+      return;
+    }
     // Check if we're recording and this is the recording tab
     chrome.storage.local.get(['isRecording', 'recordingTabId', 'currentTaskId', 'taskHistory'], (data) => {
       if (data.isRecording && data.recordingTabId === tabId && data.currentTaskId) {
@@ -182,7 +229,7 @@ const startScreenCapture = async (taskId) => {
 
     // Create recording screen tab
     const tab = await chrome.tabs.create({
-      url: chrome.runtime.getURL('recorder.html'),
+      url: chrome.runtime.getURL('screencapture.html'),
       pinned: true,
       active: true,
     });
@@ -193,7 +240,7 @@ const startScreenCapture = async (taskId) => {
         chrome.tabs.onUpdated.removeListener(listener);
 
         await chrome.tabs.sendMessage(tabId, {
-          action: 'startRecording',
+          action: 'startScreenCapture',
           taskId: taskId,
           body: {
             currentTab: currentTab,
