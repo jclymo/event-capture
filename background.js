@@ -18,6 +18,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 // Listen for events from recorder.js
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if(message.action == "initiateRecording"){
+    startScreenCapture(message.taskId);
+    sendResponse({status: "recording started"});
+  }
   if (message.type === 'recordedEvent') {
     console.log("Received recorded event:", {
       type: message.event.type,
@@ -167,3 +171,36 @@ chrome.tabs.onCreated.addListener((tab) => {
     }
   });
 });
+
+
+
+
+const startScreenCapture = async (taskId) => {
+  await chrome.tabs.query({'active': true, 'lastFocusedWindow': true, 'currentWindow': true}, async function (tabs) {
+    // Get current tab to focus on it after start recording on recording screen tab
+    const currentTab = tabs[0];
+
+    // Create recording screen tab
+    const tab = await chrome.tabs.create({
+      url: chrome.runtime.getURL('recorder.html'),
+      pinned: true,
+      active: true,
+    });
+
+    // Wait for recording screen tab to be loaded and send message to it with the currentTab
+    chrome.tabs.onUpdated.addListener(async function listener(tabId, info) {
+      if (tabId === tab.id && info.status === 'complete') {
+        chrome.tabs.onUpdated.removeListener(listener);
+
+        await chrome.tabs.sendMessage(tabId, {
+          action: 'startRecording',
+          taskId: taskId,
+          body: {
+            currentTab: currentTab,
+          },
+        });
+      }
+    });
+  });
+};
+

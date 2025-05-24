@@ -5,6 +5,32 @@ const taskId = urlParams.get('taskId');
 document.getElementById('eventData').textContent = 'Loading...';
 document.getElementById('eventCount').textContent = '';
 
+async function pushToMongoDB(data) {
+  try {
+    const response = await fetch('http://localhost:3000/api/events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        taskId: taskId,
+        events: data
+      })
+    });
+
+    const result = await response.json();
+    
+    if (response.ok) {
+      alert('Data successfully pushed to MongoDB!');
+    } else {
+      throw new Error(result.error || 'Failed to push data');
+    }
+  } catch (error) {
+    console.error('Error pushing to MongoDB:', error);
+    alert('Error pushing to MongoDB: ' + error.message);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   chrome.storage.local.get(['taskHistory'], (data) => {
     const task = data.taskHistory?.[taskId];
@@ -53,6 +79,11 @@ document.addEventListener('DOMContentLoaded', function() {
         this.textContent = 'Sort by Event Type';
       }
       renderEvents();
+    });
+
+    // Add MongoDB push button event listener
+    document.getElementById('pushToMongoBtn').addEventListener('click', function() {
+      pushToMongoDB(events);
     });
 
     renderEvents();

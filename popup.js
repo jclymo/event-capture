@@ -106,7 +106,9 @@ document.getElementById('startTask').addEventListener('click', async () => {
     });
     
     // Send message to start recording
-    chrome.tabs.sendMessage(tab.id, { action: "startRecording", taskId: taskId });
+    // chrome.tabs.sendMessage(tab.id, { action: "startRecording", taskId: taskId });
+    chrome.runtime.sendMessage({ action: "initiateRecording", taskId: taskId }); // changed from tabs to runtime
+
   } catch (error) {
     console.error("Error starting recording:", error);
     alert("Error: " + error.message);
@@ -158,7 +160,8 @@ document.getElementById('endTask').addEventListener('click', async () => {
       if (data.recordingTabId) {
         try {
           // Send message to stop recording
-          chrome.tabs.sendMessage(data.recordingTabId, { action: "stopRecording" });
+          // chrome.tabs.sendMessage(data.recordingTabId, { action: "stopRecording" });
+          chrome.runtime.sendMessage({ action: "stopRecording" }); // changed from tabs to runtime
         } catch (e) {
           console.error("Error sending stop message:", e);
         }

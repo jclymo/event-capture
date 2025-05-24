@@ -14,7 +14,8 @@
     "scripting",
     "storage",
     "tabs",
-    "downloads"
+    "downloads",
+    "desktopCapture"
   ],
   "host_permissions": [
     "<all_urls>"
