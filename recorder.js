@@ -457,13 +457,19 @@
   }
 
   // Enhanced function to record an event
-  function recordEvent(event) {
+  async function recordEvent(event) {
     if (!isRecording) return;
-    
+    const screenshotResponse = await chrome.runtime.sendMessage({ action: "takeScreenshot" });
+// const screenshotFromOffsetResponse = await chrome.runtime.sendMessage({ 
+//   action: "screenshotFromChunksAtOffset",
+//   offsetSeconds: 1
+// });
     // Create event object with BrowserGym-like structure
     const eventData = {
       type: event.type,
       timestamp: Date.now(),
+      screenshot: screenshotResponse.base64Image,
+      // screenshotFromChunksAtOffset: screenshotFromOffsetResponse.base64Image,
       url: window.location.href,
       target: {
         tag: event.target.tagName,
@@ -697,7 +703,7 @@
     window.addEventListener('replaceState', handleNavigation);
     
     // Set up observer for dynamic elements
-    dynamicObserver = observeDynamicChanges();
+    // dynamicObserver = observeDynamicChanges();
 
     // Verify recording state
     console.log("Recording initialized with state:", {
@@ -720,12 +726,9 @@
     console.log("Message received in recorder:", message);
     if (message.action === "startRecording") {
       startRecording(message.taskId);
-      sendResponse({status: "recording started"});
     } else if (message.action === "stopRecording") {
       stopRecording();
-      sendResponse({status: "recording stopped"});
     }
-    return true; // Required for async sendResponse
   });
 
   function startRecording(taskId) {
@@ -766,8 +769,7 @@
   function stopRecording() {
     console.log("Recording stopped");
     isRecording = false;
-    
-    // Remove event listeners
+
     const eventsToRemove = [
       ['click', recordEvent],
       ['mousedown', recordEvent],
@@ -791,16 +793,17 @@
     eventsToRemove.forEach(([event, handler]) => {
       document.removeEventListener(event, handler, true);
     });
-    
+        // stop the isRecording key in chrome.storage.local
+        chrome.storage.local.set({ isRecording: false });
     // Disconnect observer
-    if (dynamicObserver) {
-      try {
-        dynamicObserver.disconnect();
-        dynamicObserver = null;
-      } catch (e) {
-        console.error("Error disconnecting observer:", e);
-      }
-    }
+    // if (dynamicObserver) {
+    //   try {
+    //     dynamicObserver.disconnect();
+    //     dynamicObserver = null;
+    //   } catch (e) {
+    //     console.error("Error disconnecting observer:", e);
+    //   }
+    // }
     
     // Log recorded events
     console.log("Recorded events to save:", events);

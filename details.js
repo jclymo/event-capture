@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('eventCount').textContent = `Total Events: ${filtered.length}`;
       document.getElementById('eventData').textContent = filtered.map(event => {
         const timestamp = new Date(event.timestamp).toLocaleString();
-        return `[${timestamp}] ${event.type}\n${JSON.stringify(event.target, null, 2)}\n`;
+        return `[${timestamp}] ${event.type}\n ${event.screenshot ? `Screenshot: ${event.screenshot}` : ''}\n   ${JSON.stringify(event.target, null, 2)}\n`;
       }).join('\n');
     }
 
