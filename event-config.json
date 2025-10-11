@@ -65,14 +65,14 @@
     },
     {
       "name": "input",
-      "enabled": true,
+      "enabled": false,
       "handler": "debouncedRecordInput",
       "description": "Input value changes",
       "screenshot": false
     },
     {
       "name": "change",
-      "enabled": true,
+      "enabled": false,
       "handler": "debouncedRecordInput",
       "description": "Committed value change",
       "screenshot": false

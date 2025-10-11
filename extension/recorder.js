@@ -30,6 +30,18 @@
   let currentTaskId = null;
   let dynamicObserver = null; // Properly declare the observer variable
 
+  const formStateTracker = {
+    dropdowns: new Map(),           // id -> current value
+    inputs: new Map(),              // id -> current value  
+    checkboxes: new Map(),          // id -> checked state
+    checkboxGroups: new Map(),      // name -> array of checked values
+    radioGroups: new Map(),         // name -> selected value
+    initialized: false
+  };
+
+
+  console.log('🐛 Debug available: window.debugFormState.getState()');
+  // =========================================
   // Add debouncing utility
   function debounce(func, wait) {
     let timeout;
@@ -433,6 +445,16 @@
     return (hash >>> 0).toString(36).substring(0, 6);
   }
 
+  // Helper function to get a stable identifier for an element
+  function getElementIdentifier(element) {
+    // Priority: id > name > bid > generated
+    return element.id || 
+          element.name || 
+          getStableBID(element) || 
+          `element-${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  
   // Function to verify and log event capture
   function verifyEventCapture(event, type) {
     const currentTime = Date.now();
@@ -742,6 +764,372 @@
     
     return simpleRoleMap[tagName] || '';
   }
+  
+  // ===== ADD THIS ENTIRE BLOCK =====
+  function initializeFormState() {
+    // Allow multiple scans, don't block
+    if (!formStateTracker.initialized) {
+      formStateTracker.initialized = true;
+      formStateTracker.scanCount = 0;
+    }
+    formStateTracker.scanCount = (formStateTracker.scanCount || 0) + 1;
+    
+    console.log(`🔄 Form state scan #${formStateTracker.scanCount}...`);
+    console.log('🔍 Page:', window.location.href);
+    console.log('🔍 Document ready state:', document.readyState);
+    
+    let foundCount = 0;
+    
+    // ========== 1. NATIVE HTML FORMS ==========
+    console.log('🔍 Checking native selects...');
+    const nativeSelects = document.querySelectorAll('select');
+    console.log(`   Found ${nativeSelects.length} native select elements`);
+    
+    nativeSelects.forEach(select => {
+      const id = getElementIdentifier(select);
+      if (!formStateTracker.dropdowns.has(id)) {
+        const defaultValue = select.value || select.options[select.selectedIndex]?.value;
+        if (defaultValue) {
+          formStateTracker.dropdowns.set(id, defaultValue);
+          foundCount++;
+          console.log(`   ✅ Native select: ${id} = ${defaultValue}`);
+        }
+      }
+    });
+    
+    // ========== 2. AMAZON DROPDOWN CONTAINERS (MAIN PATTERN) ==========
+    console.log('🔍 Checking Amazon dropdown containers...');
+    const amazonContainers = document.querySelectorAll('.a-dropdown-container');
+    console.log(`   Found ${amazonContainers.length} Amazon dropdown containers`);
+    
+    amazonContainers.forEach(container => {
+      const id = getElementIdentifier(container);
+      if (!formStateTracker.dropdowns.has(id)) {
+        // Get the button text element (this has the selected value)
+        const buttonText = container.querySelector('.a-button-text');
+        if (buttonText) {
+          const selectedText = buttonText.textContent.trim();
+          console.log(`   🔍 Container ${id}: text="${selectedText}"`);
+          if (selectedText && selectedText !== 'Select') {
+            formStateTracker.dropdowns.set(id, selectedText);
+            foundCount++;
+            console.log(`   ✅ Amazon dropdown container: ${id} = ${selectedText}`);
+          }
+        } else {
+          console.log(`   ⚠️ Container ${id}: no .a-button-text found`);
+        }
+      }
+    });
+    
+    // ========== 3. AMAZON DATA-ACTION DROPDOWNS ==========
+    console.log('🔍 Checking Amazon data-action dropdowns...');
+    const amazonDataAction = document.querySelectorAll('[data-action*="dropdown"]');
+    console.log(`   Found ${amazonDataAction.length} data-action dropdowns`);
+    
+    amazonDataAction.forEach(dropdown => {
+      const id = getElementIdentifier(dropdown);
+      if (!formStateTracker.dropdowns.has(id)) {
+        // Look for inner button text
+        const innerButton = dropdown.querySelector('.a-button-inner');
+        const buttonText = dropdown.querySelector('.a-button-text');
+        
+        let selectedText = '';
+        if (buttonText) {
+          selectedText = buttonText.textContent.trim();
+        } else if (innerButton) {
+          selectedText = innerButton.textContent.trim();
+        } else {
+          selectedText = dropdown.textContent.trim();
+        }
+        
+        // Clean up the text (remove labels)
+        selectedText = selectedText
+          .replace(/^(Select|Choose|Quantity|Size|Color):\s*/i, '')
+          .trim();
+        
+        console.log(`   🔍 Data-action ${id}: text="${selectedText}"`);
+        
+        if (selectedText && selectedText.length > 0 && selectedText.length < 50) {
+          formStateTracker.dropdowns.set(id, selectedText);
+          foundCount++;
+          console.log(`   ✅ Amazon data-action dropdown: ${id} = ${selectedText}`);
+        }
+      }
+    });
+    
+    // ========== 4. TEXT INPUTS ==========
+    document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], textarea').forEach(input => {
+      const id = getElementIdentifier(input);
+      if (!formStateTracker.inputs.has(id)) {
+        formStateTracker.inputs.set(id, input.value || '');
+      }
+    });
+    
+    // ========== 5. CHECKBOXES (INDIVIDUAL + GROUPS) ==========
+    const checkboxGroups = new Map();
+    
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+      const name = checkbox.name;
+      const id = checkbox.id || getElementIdentifier(checkbox);
+      
+      if (name) {
+        // Part of a group
+        if (!checkboxGroups.has(name)) {
+          checkboxGroups.set(name, []);
+        }
+        if (checkbox.checked) {
+          const currentValues = formStateTracker.checkboxGroups.get(name) || [];
+          const value = checkbox.value || id;
+          if (!currentValues.includes(value)) {
+            checkboxGroups.get(name).push(value);
+          }
+        }
+      } else {
+        // Individual checkbox
+        if (!formStateTracker.checkboxes.has(id)) {
+          formStateTracker.checkboxes.set(id, checkbox.checked);
+        }
+      }
+    });
+    
+    // Merge checkbox groups
+    checkboxGroups.forEach((values, name) => {
+      if (!formStateTracker.checkboxGroups.has(name)) {
+        formStateTracker.checkboxGroups.set(name, values);
+      } else {
+        // Add any new values
+        const existing = formStateTracker.checkboxGroups.get(name);
+        values.forEach(v => {
+          if (!existing.includes(v)) existing.push(v);
+        });
+      }
+    });
+    
+    // ========== 6. RADIO BUTTONS ==========
+    const radioGroups = {};
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+      const groupName = radio.name;
+      if (radio.checked && groupName) {
+        radioGroups[groupName] = radio.value;
+      }
+    });
+    Object.entries(radioGroups).forEach(([name, value]) => {
+      if (!formStateTracker.radioGroups.has(name)) {
+        formStateTracker.radioGroups.set(name, value);
+      }
+    });
+    
+    // ========== 7. QUANTITY SELECTORS (GENERIC) ==========
+    document.querySelectorAll('[name="quantity"], [id*="quantity"], #qty, [name="qty"]').forEach(qty => {
+      const id = getElementIdentifier(qty);
+      if (!formStateTracker.inputs.has(id)) {
+        let value;
+        if (qty.tagName === 'SELECT') {
+          value = qty.value || qty.options[qty.selectedIndex]?.value;
+        } else if (qty.tagName === 'INPUT') {
+          value = qty.value;
+        }
+        if (value) {
+          formStateTracker.inputs.set(id, value);
+          foundCount++;
+          console.log(`   ✅ Quantity input: ${id} = ${value}`);
+        }
+      }
+    });
+    
+    console.log(`📊 Scan #${formStateTracker.scanCount} complete: Found ${foundCount} new elements`);
+    console.log('📊 Total tracked:', {
+      dropdowns: formStateTracker.dropdowns.size,
+      inputs: formStateTracker.inputs.size,
+      checkboxes: formStateTracker.checkboxes.size,
+      checkboxGroups: formStateTracker.checkboxGroups.size,
+      radioGroups: formStateTracker.radioGroups.size
+    });
+    
+    // Debug: Show what we actually captured
+    if (formStateTracker.dropdowns.size > 0) {
+      console.log('📋 Captured dropdowns:', Object.fromEntries(formStateTracker.dropdowns));
+    }
+    
+    // If nothing found after 3 seconds, log a warning
+    if (formStateTracker.scanCount >= 4 && formStateTracker.dropdowns.size === 0) {
+      console.warn('⚠️ WARNING: No form elements found after 4 scans!');
+      console.warn('   This might indicate:');
+      console.warn('   1. Amazon changed their HTML structure');
+      console.warn('   2. Page is loading very slowly');
+      console.warn('   3. Selectors need to be updated');
+    }
+  }
+  
+  function recordStateChange(element, elementType, oldValue, newValue) {
+    if (!isRecording) return;
+    
+    // Compare to detect if we should record (internal logic only)
+    if (Array.isArray(oldValue) && Array.isArray(newValue)) {
+      const sameLength = oldValue.length === newValue.length;
+      const sameValues = oldValue.every(v => newValue.includes(v)) && 
+                         newValue.every(v => oldValue.includes(v));
+      if (sameLength && sameValues) return;
+    } else if (oldValue === newValue) {
+      return;
+    }
+    
+    // Build event with ONLY current state (no oldValue/newValue in schema)
+    const eventData = {
+      type: 'change',
+      timestamp: Date.now(),
+      url: window.location.href,
+      target: {
+        tag: element.tagName,
+        id: element.id,
+        class: element.className,
+        name: element.name,
+        type: element.type,
+        value: newValue,
+        bid: getStableBID(element),
+        xpath: getElementXPath(element),
+        cssPath: getElementCssPath(element),
+        a11y: getA11yIdentifiers(element),
+        attributes: Array.from(element.attributes).reduce((acc, attr) => {
+          acc[attr.name] = attr.value;
+          return acc;
+        }, {}),
+        boundingBox: element.getBoundingClientRect().toJSON(),
+        isInteractive: isInteractiveElement(element)
+      }
+    };
+    
+    // For checkbox groups, value is an array
+    if (Array.isArray(newValue)) {
+      eventData.target.value = newValue;
+      eventData.target.type = 'checkbox-group';
+    }
+    
+    // Send to background
+    chrome.runtime.sendMessage({ type: 'recordedEvent', event: eventData });
+    events.push(eventData);
+    
+    console.log('State change recorded:', {
+      type: elementType,
+      element: element.id || element.name,
+      currentValue: Array.isArray(newValue) ? newValue.join(', ') : newValue
+    });
+  }
+  
+  function attachStateChangeListeners() {
+    // Listen for form element changes
+    document.addEventListener('change', (e) => {
+      if (!isRecording) return;
+      
+      const element = e.target;
+      const id = getElementIdentifier(element);
+      
+      // Handle SELECT dropdowns
+      if (element.tagName === 'SELECT') {
+        const oldValue = formStateTracker.dropdowns.get(id);
+        const newValue = element.value;
+        
+        if (oldValue !== newValue) {
+          formStateTracker.dropdowns.set(id, newValue);
+          recordStateChange(element, 'dropdown', oldValue, newValue);
+        }
+      }
+      // Handle checkboxes
+      else if (element.type === 'checkbox') {
+        const name = element.name;
+        
+        if (name) {
+          // Part of a checkbox group
+          const oldValues = formStateTracker.checkboxGroups.get(name) || [];
+          const value = element.value || id;
+          
+          let newValues;
+          if (element.checked) {
+            newValues = [...oldValues, value];
+          } else {
+            newValues = oldValues.filter(v => v !== value);
+          }
+          
+          formStateTracker.checkboxGroups.set(name, newValues);
+          recordStateChange(element, 'checkbox_group', oldValues, newValues);
+          
+        } else {
+          // Individual checkbox
+          const oldValue = formStateTracker.checkboxes.get(id);
+          const newValue = element.checked;
+          
+          if (oldValue !== newValue) {
+            formStateTracker.checkboxes.set(id, newValue);
+            recordStateChange(element, 'checkbox', oldValue, newValue);
+          }
+        }
+      }
+      // Handle radio buttons
+      else if (element.type === 'radio') {
+        const groupName = element.name;
+        const oldValue = formStateTracker.radioGroups.get(groupName);
+        const newValue = element.value;
+        
+        if (oldValue !== newValue) {
+          formStateTracker.radioGroups.set(groupName, newValue);
+          recordStateChange(element, 'radio', oldValue, newValue);
+        }
+      }
+    }, true);
+    
+    // Listen for input changes (debounced)
+    const debouncedInputHandler = debounce((e) => {
+      if (!isRecording) return;
+      
+      const element = e.target;
+      const id = getElementIdentifier(element);
+      
+      if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+        const oldValue = formStateTracker.inputs.get(id) || '';
+        const newValue = element.value;
+        
+        if (oldValue !== newValue) {
+          formStateTracker.inputs.set(id, newValue);
+          recordStateChange(element, 'input', oldValue, newValue);
+        }
+      }
+    }, 500);
+    
+    document.addEventListener('input', debouncedInputHandler, true);
+    
+    console.log('State change listeners attached');
+  }
+  
+  function handleCustomDropdownSelection(element) {
+    if (!isRecording) return;
+    
+    // Check if this is a dropdown option selection
+    const isDropdownOption = 
+      (element.hasAttribute('data-action') && 
+       element.getAttribute('data-action').includes('dropdown')) ||
+      element.classList.contains('a-dropdown-link') ||
+      element.closest('[role="listbox"]');
+    
+    if (!isDropdownOption) return;
+    
+    // Find the parent dropdown container
+    const dropdownContainer = 
+      element.closest('[data-action*="dropdown"]') ||
+      element.closest('[role="listbox"]')?.previousElementSibling;
+    
+    if (!dropdownContainer) return;
+    
+    const id = getElementIdentifier(dropdownContainer);
+    const oldValue = formStateTracker.dropdowns.get(id);
+    const newValue = element.textContent.trim() || element.getAttribute('data-value');
+    
+    if (oldValue !== newValue && newValue) {
+      formStateTracker.dropdowns.set(id, newValue);
+      recordStateChange(dropdownContainer, 'custom_dropdown', oldValue, newValue);
+    }
+  }
+  // ===== END ADD =====
+
 
   // Check if we should be recording when script loads
   chrome.storage.local.get(['isRecording', 'currentTaskId', 'taskHistory'], (data) => {
@@ -797,6 +1185,68 @@
     beforeunload: handleBeforeUnload
   };
 
+  // ===== ADD THIS ENTIRE FUNCTION =====
+  function observeDynamicChanges() {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        // Handle attribute changes
+        if (mutation.type === 'attributes') {
+          if (mutation.attributeName === 'disabled' || 
+              mutation.attributeName === 'value' ||
+              mutation.attributeName === 'selected') {
+            const element = mutation.target;
+            
+            if (element.tagName === 'SELECT' || 
+                element.tagName === 'INPUT' || 
+                element.tagName === 'TEXTAREA') {
+              const id = getElementIdentifier(element);
+              
+              if (element.tagName === 'SELECT') {
+                const currentValue = element.value;
+                const trackedValue = formStateTracker.dropdowns.get(id);
+                if (currentValue !== trackedValue) {
+                  formStateTracker.dropdowns.set(id, currentValue);
+                }
+              }
+            }
+          }
+        }
+        
+        // Handle newly added form elements
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1) {
+            if (node.tagName === 'SELECT') {
+              const id = getElementIdentifier(node);
+              const value = node.value || node.options[node.selectedIndex]?.value;
+              formStateTracker.dropdowns.set(id, value);
+              console.log('New dropdown detected:', id, value);
+            }
+            
+            if (node.querySelectorAll) {
+              node.querySelectorAll('select, input, textarea').forEach(formElement => {
+                const id = getElementIdentifier(formElement);
+                if (formElement.tagName === 'SELECT') {
+                  const value = formElement.value;
+                  formStateTracker.dropdowns.set(id, value);
+                }
+              });
+            }
+          }
+        });
+      });
+    });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['disabled', 'value', 'selected', 'checked', 'data-value']
+  });
+
+  return observer;
+  }
+// ===== END ADD =====
+  // Function to observe dynamic changes in the DOM
   async function initializeRecording() {
     console.log('Initializing recording with configurable listeners');
 
@@ -806,6 +1256,41 @@
       detachDomListeners();
       detachNavigationListeners();
 
+      // ========== MULTI-PASS SCANNING FOR DYNAMIC CONTENT ==========
+      console.log('🚀 Starting multi-pass form state scanning...');
+      console.log('🚀 Current URL:', window.location.href);
+      console.log('🚀 Page ready state:', document.readyState);
+
+      // Pass 1: Immediate (catches pre-rendered content)
+      console.log('🔄 Running scan #1 (immediate)...');
+      initializeFormState();
+
+      // Pass 2: After 500ms (catches fast-loading dynamic content)
+      setTimeout(() => {
+        console.log('🔄 Running scan #2 (500ms delay)...');
+        initializeFormState();
+      }, 500);
+
+      // Pass 3: After 1.5s (catches most dynamic content)
+      setTimeout(() => {
+        console.log('🔄 Running scan #3 (1500ms delay)...');
+        initializeFormState();
+      }, 1500);
+
+      // Pass 4: After 3s (Amazon usually loaded by now)
+      setTimeout(() => {
+        console.log('🔄 Running scan #4 (3000ms delay)...');
+        initializeFormState();
+      }, 3000);
+
+      // Pass 5: After 5s (final safety net)
+      setTimeout(() => {
+        console.log('🔄 Running scan #5 (5000ms delay - FINAL)...');
+        initializeFormState();
+        console.log('✅ All scans complete');
+      }, 5000);
+
+      attachStateChangeListeners();
       const enabledDomEvents = (config.domEvents || []).filter(evt => evt && evt.enabled !== false);
       enabledDomEvents.forEach(({ name, handler }) => {
         const resolvedHandler = getHandlerByKey(handler);
@@ -813,8 +1298,38 @@
           console.warn(`No handler resolved for event '${name}' (key: ${handler}).`);
           return;
         }
-        document.addEventListener(name, resolvedHandler, true);
-        activeDomListeners.set(name, resolvedHandler);
+
+        // Special handling for clicks to detect custom dropdowns
+        if (name === 'click') {
+          const clickHandler = (e) => {
+            const element = e.target;
+            
+            // Skip clicks on dropdown-related elements
+            const skipClick = 
+              element.classList.contains('a-dropdown-label') ||
+              element.classList.contains('a-dropdown-link') ||
+              element.closest('[role="listbox"]') ||
+              element.closest('.a-popover-wrapper') ||
+              (element.hasAttribute('data-action') && 
+               element.getAttribute('data-action').includes('dropdown'));
+            
+            if (skipClick) {
+              // Only handle state change, don't record click
+              handleCustomDropdownSelection(element);
+              console.log('Skipped dropdown click, handled as state change');
+              return; // Don't record this click
+            }
+            
+            // Regular click - record it
+            resolvedHandler(e);
+          };
+          document.addEventListener(name, clickHandler, true);
+          activeDomListeners.set(name, clickHandler);
+        } else {
+          document.addEventListener(name, resolvedHandler, true);
+          activeDomListeners.set(name, resolvedHandler);
+        }
+
         console.log(`Added event listener for ${name}`);
       });
 
@@ -909,6 +1424,22 @@
     console.log("Recording stopped");
     isRecording = false;
     
+
+      // Capture final form state
+    const finalFormState = {
+      type: 'final_form_state',
+      timestamp: Date.now(),
+      url: window.location.href,
+      state: {
+        dropdowns: Object.fromEntries(formStateTracker.dropdowns),
+        inputs: Object.fromEntries(formStateTracker.inputs),
+        checkboxes: Object.fromEntries(formStateTracker.checkboxes),
+        checkboxGroups: Object.fromEntries(formStateTracker.checkboxGroups),
+        radioGroups: Object.fromEntries(formStateTracker.radioGroups)
+      }
+    };
+  
+  events.push(finalFormState);
     // Remove event listeners configured for this session
     detachDomListeners();
     detachNavigationListeners();
