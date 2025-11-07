@@ -1,0 +1,13 @@
+[project]
+name = "data-augmentation"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3>=1.40.66",
+    "browsergym>=0.14.2",
+    "dotenv>=0.9.9",
+    "gymnasium>=1.2.2",
+    "openai>=2.7.1",
+]
