@@ -151,6 +151,11 @@ async function pushTaskToMongo(taskData, buttonElement) {
   }
 }
 
+// Settings button - open settings page
+document.getElementById('settingsBtn').addEventListener('click', () => {
+  chrome.tabs.create({ url: 'settings.html' });
+});
+
 document.getElementById('startTask').addEventListener('click', async () => {
   try {
     // Disable start button, enable end button

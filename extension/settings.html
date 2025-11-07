@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Capture Settings</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>⚙️ Event Capture Configuration</h1>
+      <p class="subtitle">Configure which user interactions to capture during recording</p>
+    </header>
+
+    <div class="toolbar">
+      <button id="saveBtn" class="btn btn-primary">💾 Save Configuration</button>
+      <button id="resetBtn" class="btn btn-secondary">🔄 Reset to Defaults</button>
+      <button id="exportBtn" class="btn btn-secondary">📤 Export</button>
+      <button id="importBtn" class="btn btn-secondary">📥 Import</button>
+      <input type="file" id="importFile" accept=".json" style="display: none;">
+    </div>
+
+    <div class="presets">
+      <label>Quick Presets:</label>
+      <button class="preset-btn" data-preset="minimal">Minimal (Clicks Only)</button>
+      <button class="preset-btn" data-preset="standard">Standard (Clicks + Inputs)</button>
+      <button class="preset-btn" data-preset="verbose">Verbose (All Events)</button>
+    </div>
+
+    <div class="config-sections">
+      <!-- Mouse Events -->
+      <div class="event-group">
+        <h2>🖱️ Mouse Events</h2>
+        <div class="event-list">
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="click" data-handler="recordEvent">
+              <span class="event-name">Click</span>
+            </label>
+            <span class="event-desc">Mouse button clicks on elements</span>
+          </div>
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="mousedown" data-handler="recordEvent">
+              <span class="event-name">Mouse Down</span>
+            </label>
+            <span class="event-desc">Mouse button press (before release)</span>
+          </div>
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="mouseup" data-handler="recordEvent">
+              <span class="event-name">Mouse Up</span>
+            </label>
+            <span class="event-desc">Mouse button release</span>
+          </div>
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="mouseover" data-handler="recordEvent">
+              <span class="event-name">Mouse Over</span>
+            </label>
+            <span class="event-desc">Pointer enters element (hover start)</span>
+          </div>
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="mouseout" data-handler="recordEvent">
+              <span class="event-name">Mouse Out</span>
+            </label>
+            <span class="event-desc">Pointer leaves element (hover end)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Keyboard Events -->
+      <div class="event-group">
+        <h2>⌨️ Keyboard Events</h2>
+        <div class="event-list">
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="keydown" data-handler="recordEvent">
+              <span class="event-name">Key Down</span>
+            </label>
+            <span class="event-desc">Key pressed down (before release)</span>
+          </div>
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="keyup" data-handler="recordEvent">
+              <span class="event-name">Key Up</span>
+            </label>
+            <span class="event-desc">Key released</span>
+          </div>
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="keypress" data-handler="recordEvent">
+              <span class="event-name">Key Press</span>
+            </label>
+            <span class="event-desc">Printable key pressed (deprecated)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Events -->
+      <div class="event-group">
+        <h2>📝 Form & Input Events</h2>
+        <div class="event-list">
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="input" data-handler="debouncedRecordInput">
+              <span class="event-name">Input</span>
+            </label>
+            <span class="event-desc">Text input in form fields (debounced)</span>
+          </div>
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="change" data-handler="debouncedRecordInput">
+              <span class="event-name">Change</span>
+            </label>
+            <span class="event-desc">Form field value changed</span>
+          </div>
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="focus" data-handler="recordEvent">
+              <span class="event-name">Focus</span>
+            </label>
+            <span class="event-desc">Element receives focus</span>
+          </div>
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="blur" data-handler="recordEvent">
+              <span class="event-name">Blur</span>
+            </label>
+            <span class="event-desc">Element loses focus</span>
+          </div>
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="submit" data-handler="recordEvent">
+              <span class="event-name">Submit</span>
+            </label>
+            <span class="event-desc">Form submission</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll Events -->
+      <div class="event-group">
+        <h2>📜 Scroll Events</h2>
+        <div class="event-list">
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="scroll" data-handler="debouncedRecordScroll">
+              <span class="event-name">Scroll</span>
+            </label>
+            <span class="event-desc">Page or element scrolling (debounced)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Touch Events -->
+      <div class="event-group">
+        <h2>📱 Touch Events (Mobile)</h2>
+        <div class="event-list">
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="touchstart" data-handler="recordEvent">
+              <span class="event-name">Touch Start</span>
+            </label>
+            <span class="event-desc">Touch begins on element</span>
+          </div>
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="touchend" data-handler="recordEvent">
+              <span class="event-name">Touch End</span>
+            </label>
+            <span class="event-desc">Touch ends (finger lifted)</span>
+          </div>
+          <div class="event-item">
+            <label>
+              <input type="checkbox" data-event="touchmove" data-handler="recordEvent">
+              <span class="event-name">Touch Move</span>
+            </label>
+            <span class="event-desc">Touch moved while on element</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <span id="statusMessage"></span>
+    </div>
+
+    <footer>
+      <button id="closeBtn" class="btn btn-link">← Back to Popup</button>
+    </footer>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>
+
+
+
+
+
+

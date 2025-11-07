@@ -172,12 +172,22 @@
     }
 
     try {
+      // Priority 1: Load from chrome.storage.sync (user preferences from settings UI)
+      const { eventConfig } = await chrome.storage.sync.get('eventConfig');
+      if (eventConfig && eventConfig.domEvents) {
+        console.log('Loaded event config from chrome.storage.sync');
+        cachedEventConfig = mergeEventConfig(eventConfig);
+        return cachedEventConfig;
+      }
+
+      // Priority 2: Load from event-config.json (file-based config)
       const configUrl = chrome.runtime.getURL('event-config.json');
       const response = await fetch(configUrl, { cache: 'no-cache' });
       if (!response.ok) {
         throw new Error(`Failed to load event-config.json: ${response.status}`);
       }
       const userConfig = await response.json();
+      console.log('Loaded event config from event-config.json');
       cachedEventConfig = mergeEventConfig(userConfig);
     } catch (error) {
       console.warn('Falling back to default event configuration.', error);
@@ -985,6 +995,19 @@
     } else if (message.action === "stopRecording") {
       stopRecording();
       sendResponse({status: "recording stopped"});
+    } else if (message.action === "reloadEventConfig") {
+      // Settings UI requested config reload
+      cachedEventConfig = null;
+      if (isRecording) {
+        // Reinitialize with new config if currently recording
+        initializeRecording().then(() => {
+          console.log('Event configuration reloaded');
+          sendResponse({status: "config reloaded"});
+        });
+      } else {
+        sendResponse({status: "config cleared, will reload on next recording"});
+      }
+      return true; // Async response
     }
     return true; // Required for async sendResponse
   });
