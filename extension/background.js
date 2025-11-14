@@ -16,6 +16,41 @@ let videoRecording = {
   localPath: null
 };
 let pendingVideoBlob = null;
+const recordingDebug = {
+  totalEventsStored: 0,
+  lastEventSummary: null,
+  lastStoreError: null
+};
+globalThis.recordingDebug = recordingDebug;
+
+async function injectRecorderIntoTab(tabId, reason = '') {
+  if (typeof tabId !== 'number') {
+    return;
+  }
+
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId, allFrames: true },
+      files: ['recorder.js']
+    });
+    if (reason) {
+      console.log(`Recorder injected into tab ${tabId} (${reason})`);
+    } else {
+      console.log(`Recorder injected into tab ${tabId}`);
+    }
+  } catch (err) {
+    console.error(`Recorder injection failed${reason ? ` (${reason})` : ''}:`, err);
+  }
+}
+
+function rehydrateRecordingTab(reason = '') {
+  chrome.storage.local.get(['isRecording', 'recordingTabId'], (data) => {
+    if (!data?.isRecording || typeof data.recordingTabId !== 'number') {
+      return;
+    }
+    injectRecorderIntoTab(data.recordingTabId, reason);
+  });
+}
 
 // API base (fallback safe if config.js is not available in SW)
 const API_BASE = (typeof API_ENDPOINT !== 'undefined' && API_ENDPOINT)
@@ -351,28 +386,31 @@ const eventQueue = {
   }
 };
 
-function addRelativeRecordingTimestampToEvent(eventData) {
+function addRelativeRecordingTimestampToEvent(eventData, fallbackBase = null) {
   let relative = null;
-  if (videoRecording.startedAtMs || data.videoStartedAtMs) {
-    const base = videoRecording.startedAtMs || data.videoStartedAtMs;
+  const base = videoRecording.startedAtMs || fallbackBase;
+  if (base != null && eventData?.timestamp != null) {
     relative = Math.max(0, Number(eventData.timestamp) - Number(base));
   }
-  // Add exact video timestamp key as requested
-  const dataWithRelative = relative != null ? { 
-    ...eventData, 
-    videoTimeMs: relative, 
+
+  if (relative == null) {
+    return eventData;
+  }
+
+  return {
+    ...eventData,
+    videoTimeMs: relative,
     video_timestamp: relative,
     video_event_start_ms: relative,
     video_event_end_ms: relative
-  } : eventData;  
-
-  return dataWithRelative
+  };
 }
 
 // Process HTML capture and event capture storage operations
 function updateEventStorage(captureData, sender, callback) {
-  chrome.storage.local.get(['isRecording', 'currentTaskId', 'taskHistory'], (data) => {
+  chrome.storage.local.get(['isRecording', 'currentTaskId', 'taskHistory', 'videoStartedAtMs'], (data) => {
     if (!data.isRecording || !data.currentTaskId || !data.taskHistory) {
+      recordingDebug.lastStoreError = 'Not recording or missing task history';
       callback();
       return;
     }
@@ -386,9 +424,17 @@ function updateEventStorage(captureData, sender, callback) {
     }
 
     const events = taskHistory[taskId].events || [];
-    dataWithRelative = addRelativeRecordingTimestampToEvent(captureData)
+    const dataWithRelative = addRelativeRecordingTimestampToEvent(captureData, data.videoStartedAtMs);
     events.push(dataWithRelative);
     taskHistory[taskId].events = events;
+    recordingDebug.totalEventsStored += 1;
+    recordingDebug.lastEventSummary = {
+      type: dataWithRelative.type,
+      url: dataWithRelative.url,
+      isInIframe: !!dataWithRelative.isInIframe,
+      timestamp: Date.now()
+    };
+    recordingDebug.lastStoreError = null;
   
     // Save to storage
     chrome.storage.local.set({ taskHistory: taskHistory }, callback)
@@ -439,6 +485,28 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
       }
     });
+  } else if (message.action === "injectBrowserGymScript") {
+    const tabId = sender.tab?.id;
+    if (!tabId) {
+      sendResponse?.({ success: false, error: 'Tab context is missing' });
+      return true;
+    }
+
+  const target = sender.frameId != null
+    ? { tabId, frameIds: [sender.frameId], world: 'MAIN' }
+    : { tabId, allFrames: true, world: 'MAIN' };
+
+    chrome.scripting.executeScript({
+      target,
+      files: ['browsergym-inject.js']
+    }).then((results) => {
+      console.log('BrowserGym injected frames:', results?.map(r => r.frameId));
+      sendResponse?.({ success: true, frames: results?.map(r => r.frameId) });
+    }).catch(err => {
+      console.error('BrowserGym scripting injection failed:', err);
+      sendResponse?.({ success: false, error: err.message || String(err) });
+    });
+    return true;
   }
   
   return true; // Keep port open for async branches
@@ -453,10 +521,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         console.log("Navigation detected in recording tab:", tab.url);
         
         // Inject recorder script into the new page
-        chrome.scripting.executeScript({
-          target: { tabId: tabId },
-          files: ['recorder.js']
-        }).catch(err => console.error("Script injection error:", err));
+        injectRecorderIntoTab(tabId, 'tab updated');
       }
     });
   }
@@ -471,4 +536,22 @@ chrome.tabs.onCreated.addListener((tab) => {
       
     }
   });
+});
+
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName !== 'local') {
+    return;
+  }
+
+  let triggerReason = null;
+
+  if (changes.isRecording && changes.isRecording.newValue === true) {
+    triggerReason = 'recording toggled on';
+  } else if (changes.recordingTabId && typeof changes.recordingTabId.newValue === 'number') {
+    triggerReason = 'recording tab updated';
+  }
+
+  if (triggerReason) {
+    rehydrateRecordingTab(triggerReason);
+  }
 });

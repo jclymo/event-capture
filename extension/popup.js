@@ -230,7 +230,7 @@ document.getElementById('startTask').addEventListener('click', async () => {
 
     // Always inject the latest content script, then robust start handshake
     try {
-      await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['recorder.js'] });
+      await chrome.scripting.executeScript({ target: { tabId: tab.id, allFrames: true }, files: ['recorder.js'] });
       await new Promise(r => setTimeout(r, 100));
     } catch (e) {
       console.warn('Initial recorder injection failed (will retry if needed):', e);
@@ -255,7 +255,7 @@ document.getElementById('startTask').addEventListener('click', async () => {
     let ack = await sendStart();
     if (!ack || ack.status !== 'recording started') {
       console.warn('Recorder did not ack; attempting one reinjection...');
-      await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['recorder.js'] });
+      await chrome.scripting.executeScript({ target: { tabId: tab.id, allFrames: true }, files: ['recorder.js'] });
       await new Promise(r => setTimeout(r, 150));
       ack = await sendStart();
     }

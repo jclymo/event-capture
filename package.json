@@ -1,0 +1,22 @@
+{
+  "name": "event-capture-test",
+  "version": "1.0.0",
+  "description": "Automated tests for Chrome event capture extension on ServiceNow",
+  "main": "test-servicenow.js",
+  "scripts": {
+    "test": "node test-servicenow.js",
+    "test:verbose": "VERBOSE=true node test-servicenow.js",
+    "test:amazon": "node test-amazon.js"
+  },
+  "keywords": [
+    "chrome-extension",
+    "servicenow",
+    "automation",
+    "testing"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^21.0.0"
+  }
+}
