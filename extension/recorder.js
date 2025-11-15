@@ -63,6 +63,8 @@
   const prebufferEvents = []; // Buffer events before isRecording is true
   const PREBUFFER_WINDOW_MS = 2000; // Only keep very recent events
   let recordingStartAtMs = null;
+  let iframeObserver = null; // Observer for detecting new iframes
+  const trackedIframes = new WeakSet(); // Track which iframes we've instrumented
 
   // Ensure critical listeners are attached as early as possible, once per page
   if (!window.__recorderCriticalAttached) {
@@ -173,12 +175,14 @@
 
   // Attach a minimal set of capture-phase listeners ASAP so we preempt
   // site-level capturing handlers that may stop propagation (e.g., Amazon)
-  function preAttachCriticalListeners() {
+  function preAttachCriticalListeners(targetDocument = document) {
     try {
       const critical = ['pointerdown', 'mousedown', 'mouseup', 'click', 'submit', 'input', 'change', 'keydown'];
       critical.forEach((name) => {
-        if (!criticalDomListeners.has(name)) {
-          document.addEventListener(name, (e) => {
+        // Use document as key to track which documents have listeners
+        const key = `${name}_${targetDocument === document ? 'main' : 'iframe'}`;
+        if (!criticalDomListeners.has(key)) {
+          targetDocument.addEventListener(name, (e) => {
             try {
               if (isRecording) {
                 recordEvent(e);
@@ -192,8 +196,8 @@
               console.warn('Critical listener error:', err);
             }
           }, true);
-          criticalDomListeners.set(name, true);
-          console.log(`Pre-attached critical listener for ${name}`);
+          criticalDomListeners.set(key, true);
+          console.log(`Pre-attached critical listener for ${name} on`, targetDocument === document ? 'main document' : 'iframe');
         }
       });
     } catch (err) {
@@ -978,12 +982,21 @@
       return;
     }
     
+    // Check if event originated from an iframe
+    const inIframe = window !== window.top;
+    const iframeInfo = inIframe ? {
+      isInIframe: true,
+      iframeUrl: window.location.href,
+      topUrl: window.top?.location?.href || 'unknown'
+    } : { isInIframe: false };
+
     // Create event object with BrowserGym-like structure
     const eventData = {
       type: event.type,
       timestamp: Date.now(),
       url: window.location.href,
-      target: targetMetadata
+      target: targetMetadata,
+      ...iframeInfo
     };
 
     if (originalTarget && originalTarget !== metadataElement) {
@@ -1276,6 +1289,183 @@
     }
   }
 
+  // Instrument an iframe for event capturing
+  function instrumentIframe(iframe) {
+    if (trackedIframes.has(iframe)) {
+      console.log('Iframe already instrumented, skipping');
+      return;
+    }
+
+    try {
+      // Mark as tracked first to avoid reprocessing
+      trackedIframes.add(iframe);
+
+      // Try to access iframe's contentDocument (will fail for cross-origin iframes)
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+
+      if (!iframeDoc) {
+        console.warn('Cannot access iframe document (cross-origin or not loaded):', iframe.src);
+        return;
+      }
+
+      console.log('📍 Instrumenting iframe:', iframe.src || '<no src>');
+
+      // Wait for iframe to be fully loaded
+      const instrumentWhenReady = () => {
+        try {
+          if (iframeDoc.readyState === 'complete' || iframeDoc.readyState === 'interactive') {
+            // Attach critical listeners to iframe
+            preAttachCriticalListeners(iframeDoc);
+
+            // Attach full event listeners if recording
+            if (isRecording) {
+              attachDomListenersToDocument(iframeDoc);
+            }
+
+            // Inject BrowserGym into iframe
+            injectBrowserGymIntoIframe(iframe);
+
+            console.log('✅ Iframe instrumented successfully');
+          } else {
+            // Wait for DOMContentLoaded
+            iframeDoc.addEventListener('DOMContentLoaded', () => {
+              preAttachCriticalListeners(iframeDoc);
+              if (isRecording) {
+                attachDomListenersToDocument(iframeDoc);
+              }
+              injectBrowserGymIntoIframe(iframe);
+            }, { once: true });
+          }
+        } catch (err) {
+          console.warn('Error instrumenting iframe:', err);
+        }
+      };
+
+      // If iframe is not yet loaded, wait for load event
+      if (iframe.contentWindow && (iframeDoc.readyState === 'loading' || !iframeDoc.readyState)) {
+        iframe.addEventListener('load', instrumentWhenReady, { once: true });
+      } else {
+        instrumentWhenReady();
+      }
+
+    } catch (err) {
+      console.warn('Failed to instrument iframe (likely cross-origin):', err);
+      // Still mark as tracked to avoid retrying
+    }
+  }
+
+  // Attach DOM listeners to a specific document (main or iframe)
+  function attachDomListenersToDocument(targetDocument) {
+    try {
+      const config = cachedEventConfig || DEFAULT_EVENT_CONFIG;
+      const enabledDomEvents = (config.domEvents || []).filter(evt => evt && evt.enabled !== false);
+
+      enabledDomEvents.forEach(({ name, handler }) => {
+        const resolvedHandler = getHandlerByKey(handler);
+        if (!resolvedHandler) {
+          console.warn(`No handler resolved for event '${name}' (key: ${handler}).`);
+          return;
+        }
+        // Skip if already handled by critical listener for main document
+        if (targetDocument === document && criticalDomListeners.has(`${name}_main`)) {
+          return;
+        }
+        targetDocument.addEventListener(name, resolvedHandler, true);
+        console.log(`Added event listener for ${name} on`, targetDocument === document ? 'main' : 'iframe');
+      });
+    } catch (err) {
+      console.error('Failed to attach DOM listeners to document:', err);
+    }
+  }
+
+  // Inject BrowserGym script into an iframe
+  function injectBrowserGymIntoIframe(iframe) {
+    try {
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!iframeDoc) return;
+
+      const iframeWindow = iframe.contentWindow;
+      if (!iframeWindow) return;
+
+      // Check if already injected
+      if (iframeWindow.browserGymInitialized) {
+        console.log('BrowserGym already initialized in iframe');
+        return;
+      }
+
+      // Inject the BrowserGym script into the iframe
+      const script = iframeDoc.createElement('script');
+      script.src = chrome.runtime.getURL('browsergym-inject.js');
+      script.onload = () => {
+        console.log('📜 BrowserGym script loaded in iframe');
+      };
+      script.onerror = () => {
+        console.error('❌ Failed to inject BrowserGym script into iframe');
+      };
+      (iframeDoc.head || iframeDoc.documentElement)?.appendChild(script);
+    } catch (err) {
+      console.warn('Failed to inject BrowserGym into iframe:', err);
+    }
+  }
+
+  // Find and instrument all existing iframes
+  function instrumentAllIframes() {
+    try {
+      const iframes = document.querySelectorAll('iframe, frame');
+      console.log(`Found ${iframes.length} iframes to instrument`);
+      iframes.forEach(iframe => {
+        instrumentIframe(iframe);
+      });
+    } catch (err) {
+      console.error('Error finding iframes:', err);
+    }
+  }
+
+  // Start observing for new iframes
+  function startIframeObserver() {
+    if (iframeObserver) {
+      iframeObserver.disconnect();
+    }
+
+    iframeObserver = new MutationObserver((mutations) => {
+      mutations.forEach(mutation => {
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+          mutation.addedNodes.forEach(node => {
+            // Check if the added node is an iframe
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              if (node.tagName === 'IFRAME' || node.tagName === 'FRAME') {
+                console.log('🆕 New iframe detected');
+                instrumentIframe(node);
+              }
+              // Check for iframes within the added node
+              const iframes = node.querySelectorAll?.('iframe, frame');
+              if (iframes && iframes.length > 0) {
+                console.log(`🆕 Found ${iframes.length} iframes in added content`);
+                iframes.forEach(iframe => instrumentIframe(iframe));
+              }
+            }
+          });
+        }
+      });
+    });
+
+    iframeObserver.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    console.log('👁️ Iframe MutationObserver started');
+  }
+
+  // Stop observing for iframes
+  function stopIframeObserver() {
+    if (iframeObserver) {
+      iframeObserver.disconnect();
+      iframeObserver = null;
+      console.log('👁️ Iframe MutationObserver stopped');
+    }
+  }
+
   // Unified initialization function for both new recordings and resumed sessions
   async function initializeRecordingSession(taskId, options = {}) {
     const {
@@ -1323,6 +1513,10 @@
     // // BrowserGym injection disabled: rely on fallback BIDs to avoid CSP issues
     // console.log('BrowserGym BID injection disabled; using fallback element IDs.');
 
+    // Start iframe observer and instrument existing iframes
+    startIframeObserver();
+    instrumentAllIframes();
+
   }
 
   // Check if we should be recording when script loads (handles navigation during recording)
@@ -1355,11 +1549,13 @@
     }
   }
 
-  function detachDomListeners() {
+  function detachDomListeners(targetDocument = document) {
     activeDomListeners.forEach((handler, eventName) => {
-      document.removeEventListener(eventName, handler, true);
+      targetDocument.removeEventListener(eventName, handler, true);
     });
-    activeDomListeners.clear();
+    if (targetDocument === document) {
+      activeDomListeners.clear();
+    }
   }
 
   function detachNavigationListeners() {
@@ -1461,80 +1657,48 @@
 
   async function injectBrowserGymScript() {
     return new Promise((resolve) => {
-      try {
-        // Check if already injected by looking for the script element
-        const existingScript = document.getElementById('browsergym-inject-script');
-        if (existingScript) {
-          console.log('🔍 BrowserGym script element already exists');
-          
-          // Check if BrowserGym is actually initialized in page context
-          // We need to check via the page scope, not content script scope
-          const checkScript = document.createElement('script');
-          checkScript.textContent = `
-            if (window.browserGymInitialized) {
-              document.dispatchEvent(new CustomEvent('browsergym-check-complete', { 
-                detail: { initialized: true }
-              }));
-            } else {
-              document.dispatchEvent(new CustomEvent('browsergym-check-complete', { 
-                detail: { initialized: false }
-              }));
-            }
-          `;
-          
-          const checkHandler = (event) => {
-            checkScript.remove();
-            if (event.detail.initialized) {
-              console.log('✅ BrowserGym already initialized in page context');
-              resolve(true);
-            } else {
-              console.log('⚠️ BrowserGym script exists but not initialized, will re-inject');
-              existingScript.remove();
-              injectBrowserGymScript().then(resolve);
-            }
-          };
-          
-          document.addEventListener('browsergym-check-complete', checkHandler, { once: true });
-          document.documentElement.appendChild(checkScript);
+      if (window.browserGymInitialized) {
+        console.log('✅ BrowserGym already initialized');
+        resolve(true);
+        return;
+      }
+
+      let timeoutId = null;
+      const cleanup = () => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+        document.removeEventListener('browsergym-injection-complete', completionHandler);
+      };
+
+      const completionHandler = (event) => {
+        cleanup();
+        console.log('BrowserGym injection complete:', event.detail);
+        resolve(event.detail?.success === true);
+      };
+
+      const signalTimeout = () => {
+        cleanup();
+        console.warn('⏱️ BrowserGym injection timeout');
+        resolve(false);
+      };
+
+      document.addEventListener('browsergym-injection-complete', completionHandler, { once: true });
+      timeoutId = setTimeout(signalTimeout, 3000);
+
+      console.log('💉 Requesting BrowserGym injection via background');
+      chrome.runtime.sendMessage({ action: 'injectBrowserGymScript' }, (response) => {
+        if (chrome.runtime.lastError) {
+          cleanup();
+          console.error('BrowserGym injection request failed:', chrome.runtime.lastError);
+          resolve(false);
           return;
         }
-
-        console.log('💉 Injecting BrowserGym script...');
-
-        // Listen for completion event from injected script
-        const completionHandler = (event) => {
-          console.log('BrowserGym injection complete:', event.detail);
-          clearTimeout(timeoutId);
-          resolve(event.detail.success);
-        };
-        document.addEventListener('browsergym-injection-complete', completionHandler, { once: true });
-
-        // Timeout after 3 seconds
-        const timeoutId = setTimeout(() => {
-          document.removeEventListener('browsergym-injection-complete', completionHandler);
-          console.warn('⏱️ BrowserGym injection timeout');
-          resolve(false);
-        }, 3000);
-
-        // Inject the BrowserGym script into page context
-        const script = document.createElement('script');
-        script.id = 'browsergym-inject-script';
-        script.src = chrome.runtime.getURL('browsergym-inject.js');
-        script.onload = () => {
-          console.log('📜 BrowserGym script loaded');
-        };
-        script.onerror = () => {
-          clearTimeout(timeoutId);
-          document.removeEventListener('browsergym-injection-complete', completionHandler);
-          console.error('❌ Failed to inject BrowserGym script');
-          resolve(false);
-        };
-        (document.head || document.documentElement).appendChild(script);
-        
-      } catch (err) {
-        console.error('BrowserGym injection error:', err);
-        resolve(false);
-      }
+        if (!response || response.success !== true) {
+          console.warn('BrowserGym injection response failed:', response?.error);
+        }
+      });
     });
   }
 
@@ -1566,11 +1730,11 @@
   function stopRecording() {
     console.log("Recording stopped");
     isRecording = false;
-    
+
     // Remove event listeners configured for this session
     detachDomListeners();
     detachNavigationListeners();
-    
+
     // Disconnect observers
     if (dynamicObserver) {
       try {
@@ -1580,9 +1744,12 @@
         console.error("Error disconnecting observer:", e);
       }
     }
-    
+
     // Stop BrowserGym observer
     stopBrowserGymObserver();
+
+    // Stop iframe observer
+    stopIframeObserver();
     
     // Log recorded events
     console.log("Recorded events to save:", events);

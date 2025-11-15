@@ -30,3 +30,15 @@ event-capture-archives/
 # Node
 ###############################################
 node_modules/
+
+###############################################
+# Local test harness artifacts (keep local only)
+###############################################
+package.json
+package-lock.json
+test-servicenow.js
+test-amazon.js
+test-results.json
+test-results-amazon.json
+test-screenshots/
+README-TESTING.md
