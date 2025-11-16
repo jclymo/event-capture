@@ -1395,7 +1395,7 @@
 
       // Inject the BrowserGym script into the iframe
       const script = iframeDoc.createElement('script');
-      script.src = chrome.runtime.getURL('browsergym-inject.js');
+      script.src = chrome.runtime.getURL('bgym/browsergym-inject.js');
       script.onload = () => {
         console.log('📜 BrowserGym script loaded in iframe');
       };

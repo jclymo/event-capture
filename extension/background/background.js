@@ -31,7 +31,7 @@ async function injectRecorderIntoTab(tabId, reason = '') {
   try {
     await chrome.scripting.executeScript({
       target: { tabId, allFrames: true },
-      files: ['recorder.js']
+      files: ['recorder/recorder.js']
     });
     if (reason) {
       console.log(`Recorder injected into tab ${tabId} (${reason})`);
@@ -67,7 +67,7 @@ async function ensureOffscreenDocument() {
     }
     console.log('Creating offscreen document for screen recording...');
     await chrome.offscreen.createDocument({
-      url: 'offscreen.html',
+      url: 'offscreen/offscreen.html',
       reasons: ['DISPLAY_MEDIA'],  // For getDisplayMedia/screen capture
       justification: 'Record whole screen during task'
     });
@@ -498,7 +498,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     chrome.scripting.executeScript({
       target,
-      files: ['browsergym-inject.js']
+      files: ['bgym/browsergym-inject.js']
     }).then((results) => {
       console.log('BrowserGym injected frames:', results?.map(r => r.frameId));
       sendResponse?.({ success: true, frames: results?.map(r => r.frameId) });

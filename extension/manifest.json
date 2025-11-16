@@ -4,10 +4,10 @@
   "version": "1.0",
   "description": "Records user actions and screen during tasks",
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup/popup.html"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background/background.js"
   },
   "permissions": [
     "activeTab",
@@ -21,16 +21,12 @@
   "host_permissions": [
     "<all_urls>"
   ],
-  // "content_scripts": [
-  //   {
-  //     "matches": ["<all_urls>"],
-  //     "js": ["recorder.js"],
-  //     "run_at": "document_start"
-  //   }
-  // ],
   "web_accessible_resources": [
     {
-      "resources": ["event-config.json", "offscreen.html", "offscreen.js","browsergym-inject.js"],
+      "resources": ["event-config.json",
+       "offscreen/offscreen.html", 
+       "offscreen/offscreen.js",
+       "bgym/browsergym-inject.js"],
       "matches": ["<all_urls>"]
     }
   ],
