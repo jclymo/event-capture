@@ -228,15 +228,7 @@ document.getElementById('startTask').addEventListener('click', async () => {
       return;
     }
 
-    // Always inject the latest content script, then robust start handshake
-    try {
-      await chrome.scripting.executeScript({ target: { tabId: tab.id, allFrames: true }, files: ['recorder/recorder.js'] });
-      await new Promise(r => setTimeout(r, 100));
-    } catch (e) {
-      console.warn('Initial recorder injection failed (will retry if needed):', e);
-    }
-
-    // Robust start handshake: wait for ack; reinject once if needed
+    // Content scripts auto-inject, but fallback for already-open tabs
     const sendStart = () => new Promise(resolve => {
       let settled = false;
       const t = setTimeout(() => { if (!settled) resolve(null); }, 800);
@@ -254,13 +246,26 @@ document.getElementById('startTask').addEventListener('click', async () => {
 
     let ack = await sendStart();
     if (!ack || ack.status !== 'recording started') {
-      console.warn('Recorder did not ack; attempting one reinjection...');
-      await chrome.scripting.executeScript({ target: { tabId: tab.id, allFrames: true }, files: ['recorder/recorder.js'] });
-      await new Promise(r => setTimeout(r, 150));
-      ack = await sendStart();
+      console.warn('Recorder did not respond; manually injecting modules for already-open tab...');
+      try {
+        // Inject all modules in order for tabs that were open before extension load
+        await chrome.scripting.executeScript({ 
+          target: { tabId: tab.id, allFrames: true }, 
+          files: [
+            'recorder/dom-utils.js',
+            'recorder/iframe-manager.js',
+            'recorder/event-handlers.js',
+            'recorder/recorder.js'
+          ]
+        });
+        await new Promise(r => setTimeout(r, 200));
+        ack = await sendStart();
+      } catch (e) {
+        console.error('Manual injection failed:', e);
+      }
     }
     if (!ack || ack.status !== 'recording started') {
-      console.warn('Recorder still not acknowledged. If events do not appear, refresh the page.');
+      console.warn('Recorder still not acknowledged. Please refresh the page.');
     } else {
       console.log('Recording started ack:', ack);
     }

@@ -29,14 +29,20 @@ async function injectRecorderIntoTab(tabId, reason = '') {
   }
 
   try {
+    // Inject all recorder modules in order
     await chrome.scripting.executeScript({
       target: { tabId, allFrames: true },
-      files: ['recorder/recorder.js']
+      files: [
+        'recorder/dom-utils.js',
+        'recorder/iframe-manager.js',
+        'recorder/event-handlers.js',
+        'recorder/recorder.js'
+      ]
     });
     if (reason) {
-      console.log(`Recorder injected into tab ${tabId} (${reason})`);
+      console.log(`Recorder modules injected into tab ${tabId} (${reason})`);
     } else {
-      console.log(`Recorder injected into tab ${tabId}`);
+      console.log(`Recorder modules injected into tab ${tabId}`);
     }
   } catch (err) {
     console.error(`Recorder injection failed${reason ? ` (${reason})` : ''}:`, err);
