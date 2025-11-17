@@ -16,26 +16,95 @@ function checkStorage() {
   });
 }
 
-// Add timer element
-const timerElement = document.createElement('div');
-timerElement.id = 'timer';
-timerElement.style.margin = '10px 0';
-timerElement.style.fontSize = '18px';
-timerElement.style.textAlign = 'center';
-document.querySelector('h1').after(timerElement);
+const timerElement = document.getElementById('timer');
+const statusBadge = document.getElementById('recordingStatus');
+const summaryBadge = document.getElementById('summaryBadge');
+let taskDetailsButton = null;
 
 let timerInterval;
-const mainPushButton = document.getElementById('pushToMongo');
+let mainPushButton = null;
 let lastCompletedTaskId = null;
 const taskDescriptionInput = document.getElementById('taskDescription');
 const TASK_TITLE_STORAGE_KEY = 'taskTitleDraft';
+let sortedTaskList = [];
+let unsyncedTasksCount = 0;
+
+// Lightweight toast element for quick feedback
+let toastElement = null;
+let toastTimeoutId = null;
+
+function ensureToast() {
+  if (!toastElement) {
+    toastElement = document.createElement('div');
+    toastElement.className = 'toast';
+    document.body.appendChild(toastElement);
+  }
+}
+
+function showToast(message, variant = 'default') {
+  ensureToast();
+  toastElement.textContent = message;
+  toastElement.className = 'toast';
+  if (variant === 'success') {
+    toastElement.classList.add('toast--success');
+  } else if (variant === 'error') {
+    toastElement.classList.add('toast--error');
+  }
+  toastElement.classList.add('toast--visible');
+  if (toastTimeoutId) {
+    clearTimeout(toastTimeoutId);
+  }
+  toastTimeoutId = setTimeout(() => {
+    toastElement.classList.remove('toast--visible');
+  }, 2200);
+}
+
+function setRecordingStatus(text, variant = 'idle') {
+  if (!statusBadge) return;
+  statusBadge.textContent = text;
+  statusBadge.classList.remove('status-pill--idle', 'status-pill--recording', 'status-pill--finished');
+  let background = '#0284c7';
+  if (variant === 'recording') {
+    statusBadge.classList.add('status-pill--recording');
+    background = '#b91c1c';
+  } else if (variant === 'finished') {
+    statusBadge.classList.add('status-pill--finished');
+    background = '#16a34a';
+  } else {
+    statusBadge.classList.add('status-pill--idle');
+    background = '#0284c7';
+  }
+  statusBadge.style.backgroundColor = background;
+}
+
+function setSummaryBadge(text, background = '#22c55e') {
+  if (!summaryBadge) return;
+  summaryBadge.textContent = text;
+  summaryBadge.style.backgroundColor = background;
+}
+
+function sortTasksBySync(taskHistory = {}) {
+  const tasks = Object.values(taskHistory || {});
+  return tasks.slice().sort((a, b) => {
+    const aSynced = a.pushedToMongo ? 1 : 0;
+    const bSynced = b.pushedToMongo ? 1 : 0;
+    if (aSynced !== bSynced) {
+      return aSynced - bSynced;
+    }
+    const aTime = (a.endTime || a.startTime || 0);
+    const bTime = (b.endTime || b.startTime || 0);
+    return bTime - aTime;
+  });
+}
 
 function startTimer(startTime) {
   const updateTimer = () => {
     const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
     const minutes = Math.floor(elapsedSeconds / 60);
     const seconds = elapsedSeconds % 60;
-    timerElement.textContent = `Time: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+    if (timerElement) {
+      timerElement.textContent = `Time: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
   };
   
   // Clear any existing timer
@@ -44,6 +113,33 @@ function startTimer(startTime) {
   // Update immediately and then every second
   updateTimer();
   timerInterval = setInterval(updateTimer, 1000);
+}
+
+function refreshSummaryFromStorage() {
+  chrome.storage.local.get(['taskHistory'], (data) => {
+    const taskHistory = data.taskHistory || {};
+    sortedTaskList = sortTasksBySync(taskHistory);
+    const pending = sortedTaskList.filter((t) => !t.pushedToMongo);
+    unsyncedTasksCount = pending.length;
+    const summaryTask = pending[0] || sortedTaskList[0];
+    if (summaryTask) {
+      lastCompletedTaskId = summaryTask.id;
+      showTaskSummary(summaryTask, unsyncedTasksCount);
+    } else {
+      const resultsDiv = document.getElementById('results');
+      if (resultsDiv) {
+        resultsDiv.innerHTML = `<p class="placeholder-text">Finish a recording to populate this summary area.</p>`;
+      }
+      setSummaryBadge('No tasks yet', '#94a3b8');
+      if (mainPushButton) {
+        mainPushButton.disabled = true;
+        mainPushButton.textContent = 'Sync to MongoDB';
+      }
+      if (taskDetailsButton) {
+        taskDetailsButton.disabled = true;
+      }
+    }
+  });
 }
 
 // Initialize task description input
@@ -61,8 +157,8 @@ if (taskDescriptionInput) {
 }
 
 async function pushTaskToMongo(taskData, buttonElement) {
-  if (!taskData || !Array.isArray(taskData.events) || taskData.events.length === 0) {
-    alert('No event data available to push.');
+  if (!taskData) {
+    showToast('Task data not available.', 'error');
     return;
   }
 
@@ -77,11 +173,12 @@ async function pushTaskToMongo(taskData, buttonElement) {
   const payload = buildTaskPayload(taskData);
 
   if (!payload) {
-    alert('Unable to build payload from task data.');
+    showToast('Unable to build payload from task data.', 'error');
     return;
   }
 
   try {
+    let pushedOk = false;
     // Attach local video path if available
     try {
       const store = await chrome.storage.local.get(['videoStartedAtMs']);
@@ -112,10 +209,28 @@ async function pushTaskToMongo(taskData, buttonElement) {
       console.error('Failed to archive payload locally:', archiveError);
     }
 
-    if (result.success) {
-      alert('Task data successfully pushed to MongoDB.');
+    if (result && result.success) {
+      showToast('Latest recording synced to MongoDB.', 'success');
+      pushedOk = true;
+      const taskId = taskData.id;
+      if (taskId) {
+        chrome.storage.local.get(['taskHistory'], (data) => {
+          const taskHistory = data.taskHistory || {};
+          if (taskHistory[taskId]) {
+            taskHistory[taskId].pushedToMongo = true;
+            taskHistory[taskId].pushedAt = Date.now();
+            chrome.storage.local.set({ taskHistory }, () => {
+              refreshSummaryFromStorage();
+            });
+          } else {
+            refreshSummaryFromStorage();
+          }
+        });
+      } else {
+        refreshSummaryFromStorage();
+      }
     } else {
-      alert('Task data sent. Server response: ' + JSON.stringify(result));
+      showToast('Task data sent (check server).', 'success');
     }
   } catch (error) {
     console.error('Error pushing to MongoDB:', error);
@@ -124,11 +239,16 @@ async function pushTaskToMongo(taskData, buttonElement) {
     } catch (archiveError) {
       console.error('Failed to archive payload after error:', archiveError);
     }
-    alert('Error pushing to MongoDB: ' + error.message);
+    showToast('Could not sync to MongoDB.', 'error');
   } finally {
     if (buttonElement) {
-      buttonElement.disabled = false;
-      buttonElement.textContent = 'Push to MongoDB';
+      if (pushedOk) {
+        buttonElement.disabled = true;
+        buttonElement.textContent = 'Synced';
+      } else {
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Sync to MongoDB';
+      }
     }
   }
 }
@@ -152,6 +272,7 @@ document.getElementById('startTask').addEventListener('click', async () => {
       alert("Cannot record on browser pages. Please navigate to a website first.");
       document.getElementById('startTask').disabled = false;
       document.getElementById('endTask').disabled = true;
+      setRecordingStatus('Idle', 'idle');
       return;
     }
     
@@ -224,7 +345,7 @@ document.getElementById('startTask').addEventListener('click', async () => {
       document.getElementById('startTask').disabled = false;
       document.getElementById('endTask').disabled = true;
       if (timerInterval) clearInterval(timerInterval);
-      timerElement.textContent = '';
+      if (timerElement) timerElement.textContent = '';
       return;
     }
 
@@ -264,12 +385,15 @@ document.getElementById('startTask').addEventListener('click', async () => {
     } else {
       console.log('Recording started ack:', ack);
     }
+    setRecordingStatus('Recording', 'recording');
+    showToast('Recording started.', 'success');
   } catch (error) {
     console.error("Error starting recording:", error);
     alert("Error: " + error.message);
     // Reset buttons
     document.getElementById('startTask').disabled = false;
     document.getElementById('endTask').disabled = true;
+    setRecordingStatus('Idle', 'idle');
   }
 });
 
@@ -281,7 +405,7 @@ document.getElementById('endTask').addEventListener('click', async () => {
     
     // Clear timer
     if (timerInterval) clearInterval(timerInterval);
-    timerElement.textContent = '';
+    if (timerElement) timerElement.textContent = '';
     
     // Get current task ID
     chrome.storage.local.get(['currentTaskId', 'recordingTabId', 'taskHistory'], async (data) => {
@@ -310,12 +434,17 @@ document.getElementById('endTask').addEventListener('click', async () => {
         console.log("Task completed:", taskId);
 
         // Show task summary
-        showTaskSummary(taskId, taskHistory[taskId]);
+        refreshSummaryFromStorage();
+        setRecordingStatus('Idle', 'finished');
 
         lastCompletedTaskId = taskId;
         if (mainPushButton) {
           mainPushButton.disabled = false;
         }
+        if (taskDetailsButton) {
+          taskDetailsButton.disabled = false;
+        }
+        showToast('Recording finished.', 'success');
       }
       
       if (data.recordingTabId) {
@@ -341,7 +470,7 @@ document.getElementById('endTask').addEventListener('click', async () => {
 });
 
 // Function to show task summary
-function showTaskSummary(taskId, taskData) {
+function showTaskSummary(taskData, pendingCount = 0) {
   // Create or get the results container
   let resultsDiv = document.getElementById('results');
   if (!resultsDiv) {
@@ -353,214 +482,182 @@ function showTaskSummary(taskId, taskData) {
   // Clear previous results
   resultsDiv.innerHTML = '';
   
+  const safeTitle = (taskData && typeof taskData.title === 'string' && taskData.title.trim())
+    ? taskData.title.trim()
+    : 'Untitled task';
+  const events = Array.isArray(taskData.events) ? taskData.events : [];
+  const totalEvents = events.length;
+  const durationSeconds = taskData.endTime && taskData.startTime
+    ? Math.max(0, Math.floor((taskData.endTime - taskData.startTime) / 1000))
+    : 0;
+  const minutes = Math.floor(durationSeconds / 60);
+  const seconds = durationSeconds % 60;
+
+  const countsByType = events.reduce((acc, ev) => {
+    const t = ev && ev.type ? String(ev.type) : 'unknown';
+    acc[t] = (acc[t] || 0) + 1;
+    return acc;
+  }, {});
+  const clickCount = countsByType.click || 0;
+  const keyCount =
+    (countsByType.keydown || 0) +
+    (countsByType.keyup || 0) +
+    (countsByType.keypress || 0);
+  const inputCount = countsByType.input || 0;
+
+  const startTime = taskData.startTime ? new Date(taskData.startTime) : null;
+  const endTime = taskData.endTime ? new Date(taskData.endTime) : null;
+  const formatClock = (d) =>
+    d ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—';
+
   // Create summary header
   const header = document.createElement('h2');
   header.textContent = 'Task Summary';
   resultsDiv.appendChild(header);
-  
-  // Add task details
-  const details = document.createElement('div');
-  const duration = Math.floor((taskData.endTime - taskData.startTime) / 1000);
-  const minutes = Math.floor(duration / 60);
-  const seconds = duration % 60;
-  
-  details.innerHTML = `
-    <p><strong>Task:</strong> ${taskData.title}</p>
-    <p><strong>Duration:</strong> ${minutes}m ${seconds}s</p>
-    <p><strong>Events recorded:</strong> ${taskData.events.length}</p>
-    <p><strong>Start URL:</strong> ${taskData.startUrl}</p>
-    <p><strong>End URL:</strong> ${taskData.endUrl}</p>
-  `;
-  resultsDiv.appendChild(details);
-  
-  // Add view details button
-  const viewButton = document.createElement('button');
-  viewButton.textContent = 'View Detailed Events';
-  viewButton.addEventListener('click', () => {
-    // Create a new window with proper CSP headers
-    const detailWindow = window.open('', 'Task Details', 'width=800,height=600');
-    
-    // Write the HTML structure
-    detailWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Task Details</title>
-          <style>
-            body { font-family: monospace; white-space: pre; padding: 20px; }
-          </style>
-        </head>
-        <body>
-          <h1>Task Details: ${taskData.title}</h1>
-          <pre id="eventData"></pre>
-        </body>
-      </html>
-    `);
-    
-    // Close the document write stream
-    detailWindow.document.close();
-    
-    // Set the event data after the document is ready
-    detailWindow.document.getElementById('eventData').textContent = 
-      JSON.stringify(taskData.events, null, 2);
+
+  const summaryContainer = document.createElement('div');
+  summaryContainer.className = 'summary-rows';
+
+  const rows = [
+    ['Task', safeTitle],
+    ['Duration', `${minutes}m ${seconds.toString().padStart(2, '0')}s`],
+    [
+      'Events',
+      `${totalEvents} total  •  ${clickCount} clicks  •  ${keyCount} keys  •  ${inputCount} inputs`
+    ],
+    [
+      'Time window',
+      `${formatClock(startTime)} → ${formatClock(endTime)}`
+    ]
+  ];
+
+  rows.forEach(([label, value]) => {
+    const row = document.createElement('div');
+    row.className = 'summary-row';
+
+    const labelSpan = document.createElement('span');
+    labelSpan.className = 'summary-label';
+    labelSpan.textContent = label;
+
+    const valueSpan = document.createElement('span');
+    valueSpan.className = 'summary-value';
+    valueSpan.textContent = value;
+
+    row.appendChild(labelSpan);
+    row.appendChild(valueSpan);
+    summaryContainer.appendChild(row);
   });
 
-  resultsDiv.appendChild(viewButton);
+  resultsDiv.appendChild(summaryContainer);
+  const summaryNote = document.createElement('div');
+  summaryNote.className = 'summary-note';
+  summaryNote.textContent = pendingCount > 0
+    ? `${pendingCount} task${pendingCount === 1 ? '' : 's'} waiting to sync`
+    : 'All recorded tasks synced';
+  resultsDiv.appendChild(summaryNote);
+  const alreadyPushed = !!taskData.pushedToMongo;
+  if (alreadyPushed) {
+    setSummaryBadge(`Synced · ${totalEvents} events`, '#16a34a');
+  } else {
+    setSummaryBadge(`Ready to sync · ${totalEvents} events`, '#22c55e');
+  }
+
+  if (mainPushButton) {
+    const canPush = totalEvents > 0 && !alreadyPushed;
+    mainPushButton.disabled = !canPush;
+    mainPushButton.textContent = alreadyPushed ? 'Synced to MongoDB' : 'Sync to MongoDB';
+  }
+  if (taskDetailsButton) {
+    taskDetailsButton.disabled = totalEvents === 0;
+  }
 }
 
 // Function to view task history
 function addTaskHistoryButton() {
-  const historyButton = document.createElement('button');
-  historyButton.textContent = 'View Task History';
-  historyButton.style.marginTop = '10px';
-  historyButton.style.backgroundColor = '#4CAF50';
-  historyButton.style.color = 'white';
-  historyButton.style.width = '100%';
-  
+  const historyButton = document.getElementById('historyButton');
+  if (!historyButton) return;
+
   historyButton.addEventListener('click', () => {
-    chrome.storage.local.get(['taskHistory'], (data) => {
-      const taskHistory = data.taskHistory || {};
-      
-      // Create a new window
-      const historyWindow = window.open('', 'Task History', 'width=800,height=600');
-      
-      // Write the HTML structure
-      historyWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <title>Task History</title>
-            <style>
-              body { font-family: Arial, sans-serif; padding: 20px; }
-              .task { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
-              .task:hover { background-color: #f5f5f5; }
-              .task-header { display: flex; justify-content: space-between; }
-              .task-title { font-weight: bold; }
-              .task-details { margin-top: 10px; }
-              button { padding: 5px 10px; margin-right: 5px; cursor: pointer; }
-            </style>
-          </head>
-          <body>
-            <h1>Task History</h1>
-            <div id="taskList">Loading...</div>
-          </body>
-        </html>
-      `);
-      
-      // Close the document write stream
-      historyWindow.document.close();
-      
-      // Get the task list container
-      const taskList = historyWindow.document.getElementById('taskList');
-      
-      if (Object.keys(taskHistory).length === 0) {
-        taskList.innerHTML = '<p>No tasks recorded yet.</p>';
-      } else {
-        // Sort tasks by start time (newest first)
-        const sortedTasks = Object.values(taskHistory).sort((a, b) => b.startTime - a.startTime);
-        
-        // Create task elements
-        sortedTasks.forEach(task => {
-          const duration = task.endTime ? Math.floor((task.endTime - task.startTime) / 1000) : 'In progress';
-          const formattedDuration = typeof duration === 'number' ? 
-            `${Math.floor(duration / 60)}m ${duration % 60}s` : duration;
-          
-          const taskElement = document.createElement('div');
-          taskElement.className = 'task';
-          taskElement.dataset.taskId = task.id;
-          
-          taskElement.innerHTML = `
-            <div class="task-header">
-              <span class="task-title">${task.title}</span>
-              <span class="task-date">${new Date(task.startTime).toLocaleString()}</span>
-            </div>
-            <div class="task-details">
-              <p><strong>Status:</strong> ${task.status}</p>
-              <p><strong>Duration:</strong> ${formattedDuration}</p>
-              <p><strong>Events:</strong> ${task.events ? task.events.length : 0}</p>
-              <button class="view-details">View Details</button>
-              <button class="export-task">Export</button>
-              <button class="delete-task" style="background-color: #f44336; color: white;">Delete</button>
-            </div>
-          `;
-          
-          // Add event listeners
-          taskElement.querySelector('.view-details').addEventListener('click', () => {
-            chrome.runtime.sendMessage({action: "viewTaskDetails", taskId: task.id});
-          });
-          
-          taskElement.querySelector('.export-task').addEventListener('click', () => {
-            chrome.runtime.sendMessage({action: "exportTask", taskId: task.id});
-          });
-          
-          taskElement.querySelector('.delete-task').addEventListener('click', () => {
-            if (confirm("Are you sure you want to delete this task?")) {
-              chrome.runtime.sendMessage({action: "deleteTask", taskId: task.id});
-              taskElement.remove();
-            }
-          });
-          
-          taskList.appendChild(taskElement);
-        });
-      }
-    });
+    const url = chrome.runtime.getURL('history.html');
+    chrome.tabs.create({ url });
   });
-  
-  // Add the button to the popup
-  document.body.appendChild(historyButton);
 }
 
 // Call this function when the popup is loaded
 document.addEventListener('DOMContentLoaded', async function() {
   console.log("Popup opened");
+  ensureToast();
   checkStorage();
   
-  chrome.storage.local.get(['isRecording', 'recordingStartTime'], (data) => {
-    if (data.isRecording) {
-      // We're already recording, update UI
-      document.getElementById('startTask').disabled = true;
-      document.getElementById('endTask').disabled = false;
-      
-      // Start timer
-      if (data.recordingStartTime) {
-        startTimer(data.recordingStartTime);
-      }
-    }
-  });
-  
+  mainPushButton = document.getElementById('pushToMongo');
+  taskDetailsButton = document.getElementById('taskDetailsButton');
   if (mainPushButton) {
     mainPushButton.disabled = true;
   }
-  addTaskHistoryButton();
-});
-
-if (mainPushButton) {
-  mainPushButton.addEventListener('click', () => {
-    if (!lastCompletedTaskId) {
-      alert('Finish recording a task before pushing to MongoDB.');
-      return;
+  
+  chrome.storage.local.get(['isRecording', 'recordingStartTime'], (data) => {
+    if (data.isRecording) {
+      document.getElementById('startTask').disabled = true;
+      document.getElementById('endTask').disabled = false;
+      
+      if (data.recordingStartTime) {
+        startTimer(data.recordingStartTime);
+      }
+      setRecordingStatus('Recording', 'recording');
+    } else {
+      setRecordingStatus('Idle', 'idle');
     }
+  });
+  
+  addTaskHistoryButton();
+  setSummaryBadge('No tasks yet', '#94a3b8');
 
-    chrome.storage.local.get(['taskHistory'], (data) => {
-      const taskHistory = data.taskHistory || {};
-      const taskData = taskHistory[lastCompletedTaskId];
+  refreshSummaryFromStorage();
 
-      if (!taskData) {
-        alert('Task data not found. Please record a task again.');
+  if (mainPushButton) {
+    mainPushButton.addEventListener('click', () => {
+      if (!lastCompletedTaskId) {
+        showToast('Finish a recording before syncing.', 'error');
         return;
       }
 
-      const updatedTitle = taskDescriptionInput ? (taskDescriptionInput.value.trim() || 'Untitled Task') : taskData.title;
-      taskData.title = updatedTitle;
-      taskData.task = updatedTitle;
-      if (taskDescriptionInput) {
-        taskDescriptionInput.value = updatedTitle;
-      }
-      taskHistory[lastCompletedTaskId] = taskData;
+      chrome.storage.local.get(['taskHistory'], (data) => {
+        const taskHistory = data.taskHistory || {};
+        const taskData = taskHistory[lastCompletedTaskId];
 
-      chrome.storage.local.set({ taskHistory, [TASK_TITLE_STORAGE_KEY]: updatedTitle }, () => {
-        pushTaskToMongo(taskData, mainPushButton);
+        if (!taskData) {
+          showToast('Latest task not found. Please record again.', 'error');
+          return;
+        }
+
+        const updatedTitle = taskDescriptionInput ? (taskDescriptionInput.value.trim() || 'Untitled Task') : taskData.title;
+        taskData.title = updatedTitle;
+        taskData.task = updatedTitle;
+        if (taskDescriptionInput) {
+          taskDescriptionInput.value = updatedTitle;
+        }
+        taskHistory[lastCompletedTaskId] = taskData;
+
+        chrome.storage.local.set({ taskHistory, [TASK_TITLE_STORAGE_KEY]: updatedTitle }, () => {
+          pushTaskToMongo(taskData, mainPushButton);
+        });
       });
     });
-  });
-}
+  }
+
+  if (taskDetailsButton) {
+    taskDetailsButton.addEventListener('click', () => {
+      if (!lastCompletedTaskId) {
+        showToast('Record a task to view details.', 'error');
+        return;
+      }
+      chrome.runtime.sendMessage({ action: 'viewTaskDetails', taskId: lastCompletedTaskId });
+    });
+  }
+});
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message?.action === 'refreshSummary') {
+    refreshSummaryFromStorage();
+  }
+});
