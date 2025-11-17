@@ -493,8 +493,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
   const target = sender.frameId != null
-    ? { tabId, frameIds: [sender.frameId], world: 'MAIN' }
-    : { tabId, allFrames: true, world: 'MAIN' };
+    ? { tabId, frameIds: [sender.frameId]}
+    : { tabId, allFrames: true };
 
     chrome.scripting.executeScript({
       target,

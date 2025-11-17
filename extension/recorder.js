@@ -616,9 +616,16 @@
     if (element.id !== '') {
       return `//*[@id="${element.id}"]`;
     }
+      // Handle document root
+    if (element === document.documentElement) {
+      return '/html';
+    }
     
     if (element === document.body) {
       return '/html/body';
+    }
+    if (!element.parentNode) {
+      return ''; // Detached element
     }
     
     let ix = 0;
@@ -626,7 +633,11 @@
     for (let i = 0; i < siblings.length; i++) {
       const sibling = siblings[i];
       if (sibling === element) {
-        return getElementXPath(element.parentNode) + '/' + element.tagName.toLowerCase() + '[' + (ix + 1) + ']';
+        const parentPath = getElementXPath(element.parentNode);
+        const tagName = element.tagName.toLowerCase();
+        const index = ix + 1;
+        return `${parentPath}/${tagName}[${index}]`;
+        // return getElementXPath(element.parentNode) + '/' + element.tagName.toLowerCase() + '[' + (ix + 1) + ']';
       }
       if (sibling.nodeType === 1 && sibling.tagName === element.tagName) {
         ix++;
@@ -1103,6 +1114,9 @@
     chrome.runtime.sendMessage({ type: 'recordedEvent', event: eventData });
     requestHtmlCapture(event.type);
 
+//     const criticalEvents = ['click', 'change', 'submit', 'focus', 'blur'];
+// if (criticalEvents.includes(event.type)) {
+//   remarkWithBrowserGym();  }
     // Also store locally for verification
     // events.push(eventData);
     // saveEvents();
@@ -1691,12 +1705,18 @@
       chrome.runtime.sendMessage({ action: 'injectBrowserGymScript' }, (response) => {
         if (chrome.runtime.lastError) {
           cleanup();
-          console.error('BrowserGym injection request failed:', chrome.runtime.lastError);
+          console.error('BrowserGym injection request failed:', chrome.runtime.lastError.message || 'Unknown error', {
+            fullError: chrome.runtime.lastError
+          });
           resolve(false);
           return;
         }
         if (!response || response.success !== true) {
-          console.warn('BrowserGym injection response failed:', response?.error);
+          console.error('BrowserGym injection response failed:', {
+            hasResponse: !!response,
+            error: response?.error,
+            fullResponse: response
+          });
         }
       });
     });
