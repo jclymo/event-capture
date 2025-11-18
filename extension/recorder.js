@@ -1258,6 +1258,17 @@
         detail: { timestamp: Date.now() }
       }));
       console.log('📤 Sent re-mark request to BrowserGym');
+      
+      // After re-marking, check for any new iframes that need instrumentation
+      setTimeout(() => {
+        const iframes = document.querySelectorAll('iframe, frame');
+        iframes.forEach(iframe => {
+          if (!trackedIframes.has(iframe)) {
+            console.log('🔍 Found new iframe during re-mark, instrumenting...');
+            instrumentIframe(iframe);
+          }
+        });
+      }, 200);
     } catch (err) {
       console.error('Failed to trigger BrowserGym re-marking:', err);
     }
@@ -1407,14 +1418,30 @@
         return;
       }
 
+      // Get or assign iframe index for BID prefix
+      let iframeIndex = iframe.getAttribute('data-iframe-index');
+      if (!iframeIndex) {
+        // Count existing iframes to assign index
+        const allIframes = Array.from(document.querySelectorAll('iframe, frame'));
+        iframeIndex = allIframes.indexOf(iframe);
+        if (iframeIndex === -1) iframeIndex = allIframes.length; // Fallback
+        iframe.setAttribute('data-iframe-index', iframeIndex);
+      }
+
+      // Set iframe BID prefix in the iframe's window before injection
+      // This will be used by browsergym-inject.js to prefix all BIDs
+      const prefixScript = iframeDoc.createElement('script');
+      prefixScript.textContent = `window.BROWSERGYM_IFRAME_PREFIX = "iframe${iframeIndex}_";`;
+      (iframeDoc.head || iframeDoc.documentElement)?.appendChild(prefixScript);
+
       // Inject the BrowserGym script into the iframe
       const script = iframeDoc.createElement('script');
       script.src = chrome.runtime.getURL('browsergym-inject.js');
       script.onload = () => {
-        console.log('📜 BrowserGym script loaded in iframe');
+        console.log(`📜 BrowserGym script loaded in iframe${iframeIndex} with prefix "iframe${iframeIndex}_"`);
       };
       script.onerror = () => {
-        console.error('❌ Failed to inject BrowserGym script into iframe');
+        console.error(`❌ Failed to inject BrowserGym script into iframe${iframeIndex}`);
       };
       (iframeDoc.head || iframeDoc.documentElement)?.appendChild(script);
     } catch (err) {
@@ -1423,10 +1450,18 @@
   }
 
   // Find and instrument all existing iframes
-  function instrumentAllIframes() {
+  function instrumentAllIframes(retryCount = 0) {
     try {
       const iframes = document.querySelectorAll('iframe, frame');
-      console.log(`Found ${iframes.length} iframes to instrument`);
+      console.log(`Found ${iframes.length} iframes to instrument (attempt ${retryCount + 1})`);
+      
+      if (iframes.length === 0 && retryCount < 3) {
+        // Retry after a delay to catch iframes that load after initial DOM ready
+        console.log(`No iframes found yet, retrying in ${(retryCount + 1) * 500}ms...`);
+        setTimeout(() => instrumentAllIframes(retryCount + 1), (retryCount + 1) * 500);
+        return;
+      }
+      
       iframes.forEach(iframe => {
         instrumentIframe(iframe);
       });
@@ -1518,18 +1553,21 @@
     if (injectionSuccess) {
       console.log('✅ BrowserGym injection successful');
       startBrowserGymObserver();
+      // Give BrowserGym a moment to initialize, then instrument iframes
+      setTimeout(() => {
+        startIframeObserver();
+        instrumentAllIframes();
+      }, 100);
     } else {
       console.warn('⚠️ BrowserGym injection failed, using fallback BIDs');
+      startIframeObserver();
+      instrumentAllIframes();
     }
   } catch (err) {
     console.error('❌ BrowserGym injection error:', err);
-  }
-    // // BrowserGym injection disabled: rely on fallback BIDs to avoid CSP issues
-    // console.log('BrowserGym BID injection disabled; using fallback element IDs.');
-
-    // Start iframe observer and instrument existing iframes
     startIframeObserver();
     instrumentAllIframes();
+  }
 
   }
 

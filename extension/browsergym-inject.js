@@ -110,10 +110,6 @@ window.injectBrowserGym = async ([parent_bid, bid_attr_name, tags_to_mark]) => {
         // recover the element id if it has one already, else compute a new element id
         let elem_global_bid = null;
         if (elem.hasAttribute(bid_attr_name)) {
-            // throw an error if the attribute is already set while this is the first visit of the page
-            if (browsergym_first_visit) {
-                throw new Error(`Attribute ${bid_attr_name} already used in element ${elem.outerHTML}`);
-            }
             elem_global_bid = elem.getAttribute(bid_attr_name);
             // if the bid has already been encountered, then this is a duplicate and a new bid should be set
             if (all_bids.has(elem_global_bid)) {
@@ -297,17 +293,24 @@ class IFrameIdGenerator {
 // Auto-execute on injection
 (async () => {
     try {
+        // Check if we're in an iframe and use the prefix if available
+        const parentBid = window.BROWSERGYM_IFRAME_PREFIX || "";
+        
         const warnings = await window.injectBrowserGym([
-            "",           // top-level frame
+            parentBid,    // Use iframe prefix if in iframe, empty string for main document
             "data-bid",   // attribute key to hold the BID
             "all"         // process every single element
         ]);
         
-        console.log("BrowserGym IDs set, warnings:", warnings);
+        if (parentBid) {
+            console.log(`✅ BrowserGym IDs set with prefix "${parentBid}", warnings:`, warnings);
+        } else {
+            console.log("✅ BrowserGym IDs set (main document), warnings:", warnings);
+        }
         window.browserGymInitialized = true;
         // Signal completion via custom event (content script can listen)
         document.dispatchEvent(new CustomEvent('browsergym-injection-complete', { 
-            detail: { success: true, warnings: warnings }
+            detail: { success: true, warnings: warnings, prefix: parentBid }
         }));
     } catch (err) {
         console.error("BrowserGym injection failed:", err);
@@ -321,12 +324,16 @@ class IFrameIdGenerator {
 document.addEventListener('browsergym-remark-request', async (event) => {
     try {
         console.log('🔄 Re-marking new DOM elements with BrowserGym...');
+        
+        // Use the same prefix that was used during initial injection
+        const parentBid = window.BROWSERGYM_IFRAME_PREFIX || "";
+        
         const warnings = await window.injectBrowserGym([
-            "",           // top-level frame
+            parentBid,    // Use iframe prefix if in iframe
             "data-bid",   // attribute key
             "all"         // process all elements
         ]);
-        console.log('✅ Re-marking complete, warnings:', warnings.length);
+        console.log(`✅ Re-marking complete${parentBid ? ` with prefix "${parentBid}"` : ''}, warnings:`, warnings.length);
         document.dispatchEvent(new CustomEvent('browsergym-remark-complete', { 
             detail: { success: true, warnings: warnings }
         }));
