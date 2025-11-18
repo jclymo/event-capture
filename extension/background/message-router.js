@@ -11,7 +11,6 @@ import {
 } from './video-recorder.js';
 
 import { handleRecordedEvent } from './event-storage.js';
-import { handleBrowserGymInjection } from './browsergym-injector.js';
 
 // Setup all message handlers
 export function setupMessageHandlers() {
@@ -44,11 +43,6 @@ export function setupMessageHandlers() {
     // Event recording messages
     if (message.type === 'recordedEvent' || message.type === 'htmlCapture') {
       return handleRecordedEvent(message, sender, sendResponse);
-    }
-    
-    // BrowserGym injection
-    if (message.action === 'injectBrowserGymScript') {
-      return handleBrowserGymInjection(message, sender, sendResponse);
     }
     
     // Task management actions

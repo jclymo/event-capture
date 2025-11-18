@@ -1726,7 +1726,7 @@
 
       const completionHandler = (event) => {
         cleanup();
-        console.log('BrowserGym injection complete:', event.detail);
+        console.log('✅ BrowserGym injection complete:', event.detail);
         resolve(event.detail?.success === true);
       };
 
@@ -1739,24 +1739,25 @@
       document.addEventListener('browsergym-injection-complete', completionHandler, { once: true });
       timeoutId = setTimeout(signalTimeout, 3000);
 
-      console.log('💉 Requesting BrowserGym injection via background');
-      chrome.runtime.sendMessage({ action: 'injectBrowserGymScript' }, (response) => {
-        if (chrome.runtime.lastError) {
+      // Direct DOM injection (same method as iframe injection)
+      console.log('💉 Injecting BrowserGym script directly into main document');
+      try {
+        const script = document.createElement('script');
+        script.src = chrome.runtime.getURL('browsergym-inject.js');
+        script.onload = () => {
+          console.log('📜 BrowserGym script loaded in main document');
+        };
+        script.onerror = () => {
           cleanup();
-          console.error('BrowserGym injection request failed:', chrome.runtime.lastError.message || 'Unknown error', {
-            fullError: chrome.runtime.lastError
-          });
+          console.error('❌ Failed to inject BrowserGym script');
           resolve(false);
-          return;
-        }
-        if (!response || response.success !== true) {
-          console.error('BrowserGym injection response failed:', {
-            hasResponse: !!response,
-            error: response?.error,
-            fullResponse: response
-          });
-        }
-      });
+        };
+        (document.head || document.documentElement)?.appendChild(script);
+      } catch (err) {
+        cleanup();
+        console.error('❌ BrowserGym injection error:', err);
+        resolve(false);
+      }
     });
   }
 
