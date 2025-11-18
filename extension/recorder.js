@@ -1449,17 +1449,39 @@
     }
   }
 
-  // Find and instrument all existing iframes
+  // Find and instrument all existing iframes (including in Shadow DOMs)
   function instrumentAllIframes(retryCount = 0) {
     try {
-      const iframes = document.querySelectorAll('iframe, frame');
+      // Get iframes from main document
+      let iframes = Array.from(document.querySelectorAll('iframe, frame'));
+      
+      // Also search inside Shadow DOMs
+      const searchShadowRoots = (root) => {
+        const elements = root.querySelectorAll('*');
+        elements.forEach(el => {
+          if (el.shadowRoot) {
+            // Found a shadow root, search for iframes inside it
+            const shadowIframes = el.shadowRoot.querySelectorAll('iframe, frame');
+            iframes.push(...Array.from(shadowIframes));
+            // Recursively search nested shadow roots
+            searchShadowRoots(el.shadowRoot);
+          }
+        });
+      };
+      
+      searchShadowRoots(document);
+      
       console.log(`Found ${iframes.length} iframes to instrument (attempt ${retryCount + 1})`);
       
-      if (iframes.length === 0 && retryCount < 3) {
+      if (iframes.length === 0 && retryCount < 5) {
         // Retry after a delay to catch iframes that load after initial DOM ready
         console.log(`No iframes found yet, retrying in ${(retryCount + 1) * 500}ms...`);
         setTimeout(() => instrumentAllIframes(retryCount + 1), (retryCount + 1) * 500);
         return;
+      }
+      
+      if (iframes.length > 0) {
+        console.log(`📍 Instrumenting ${iframes.length} iframes:`, iframes.map(f => f.id || f.name || '<unnamed>'));
       }
       
       iframes.forEach(iframe => {
@@ -1483,14 +1505,24 @@
             // Check if the added node is an iframe
             if (node.nodeType === Node.ELEMENT_NODE) {
               if (node.tagName === 'IFRAME' || node.tagName === 'FRAME') {
-                console.log('🆕 New iframe detected');
+                console.log('🆕 New iframe detected:', node.id || node.name || '<unnamed>');
                 instrumentIframe(node);
               }
+              
               // Check for iframes within the added node
               const iframes = node.querySelectorAll?.('iframe, frame');
               if (iframes && iframes.length > 0) {
                 console.log(`🆕 Found ${iframes.length} iframes in added content`);
                 iframes.forEach(iframe => instrumentIframe(iframe));
+              }
+              
+              // NEW: Check if node has Shadow DOM with iframes
+              if (node.shadowRoot) {
+                const shadowIframes = node.shadowRoot.querySelectorAll('iframe, frame');
+                if (shadowIframes.length > 0) {
+                  console.log(`🆕 Found ${shadowIframes.length} iframes in Shadow DOM`);
+                  shadowIframes.forEach(iframe => instrumentIframe(iframe));
+                }
               }
             }
           });
