@@ -28,7 +28,8 @@ window.injectBrowserGym = async ([parent_bid, bid_attr_name, tags_to_mark]) => {
     // if no yet set, set the frame (local) element counter to 0
     if (!("browsergym_elem_counter" in window)) {
         window.browsergym_elem_counter = 0;
-        window.browsergym_frame_id_generator = new IFrameIdGenerator();
+        // Use window.IFrameIdGenerator to ensure it's available (handles re-injection)
+        window.browsergym_frame_id_generator = new window.IFrameIdGenerator();
         browsergym_first_visit = true;
     }
 
@@ -128,12 +129,24 @@ window.injectBrowserGym = async ([parent_bid, bid_attr_name, tags_to_mark]) => {
             else {
                 elem_local_id = `${window.browsergym_elem_counter++}`;
             }
-            if (parent_bid == "") {
+            
+            // Debug first few elements to see prefix application
+            if (window.browsergym_elem_counter <= 3 || (window.browsergym_elem_counter - 1) <= 3) {
+                console.log(`🔍 BID generation - parent_bid: "${parent_bid}", elem_local_id: "${elem_local_id}", parent_bid type: ${typeof parent_bid}, parent_bid length: ${parent_bid ? parent_bid.length : 0}`);
+            }
+            
+            if (parent_bid == "" || !parent_bid) {
                 elem_global_bid = `${elem_local_id}`;
             }
             else {
                 elem_global_bid = `${parent_bid}${elem_local_id}`;
             }
+            
+            // Debug first few elements
+            if (window.browsergym_elem_counter <= 3 || (window.browsergym_elem_counter - 1) <= 3) {
+                console.log(`🔍 BID generated: "${elem_global_bid}" for element:`, elem.tagName);
+            }
+            
             elem.setAttribute(bid_attr_name, `${elem_global_bid}`);
         }
 
@@ -252,49 +265,98 @@ function elementFromPoint(x, y) {
 }
 
 // https://stackoverflow.com/questions/12504042/what-is-a-method-that-can-be-used-to-increment-letters
-class IFrameIdGenerator {
-    constructor(chars = 'abcdefghijklmnopqrstuvwxyz') {
-      this._chars = chars;
-      this._nextId = [0];
-    }
-
-    next() {
-      const r = [];
-      for (let i = 0; i < this._nextId.length; i++) {
-        let char = this._chars[this._nextId[i]];
-        // all but first character must be upper-cased (a, aA, bCD)
-        if (i < this._nextId.length - 1) {
-            char = char.toUpperCase();
+// Only declare class if it doesn't already exist (prevents redeclaration errors on re-injection)
+if (typeof window.IFrameIdGenerator === 'undefined') {
+    class IFrameIdGenerator {
+        constructor(chars = 'abcdefghijklmnopqrstuvwxyz') {
+          this._chars = chars;
+          this._nextId = [0];
         }
-        r.unshift(char);
-      }
-      this._increment();
-      return r.join('');
-    }
 
-    _increment() {
-      for (let i = 0; i < this._nextId.length; i++) {
-        const val = ++this._nextId[i];
-        if (val < this._chars.length) {
-          return;
+        next() {
+          const r = [];
+          for (let i = 0; i < this._nextId.length; i++) {
+            let char = this._chars[this._nextId[i]];
+            // all but first character must be upper-cased (a, aA, bCD)
+            if (i < this._nextId.length - 1) {
+                char = char.toUpperCase();
+            }
+            r.unshift(char);
+          }
+          this._increment();
+          return r.join('');
         }
-        this._nextId[i] = 0;
-      }
-      this._nextId.push(0);
-    }
 
-    *[Symbol.iterator]() {
-      while (true) {
-        yield this.next();
-      }
+        _increment() {
+          for (let i = 0; i < this._nextId.length; i++) {
+            const val = ++this._nextId[i];
+            if (val < this._chars.length) {
+              return;
+            }
+            this._nextId[i] = 0;
+          }
+          this._nextId.push(0);
+        }
+
+        *[Symbol.iterator]() {
+          while (true) {
+            yield this.next();
+          }
+        }
     }
+    // Make it globally available
+    window.IFrameIdGenerator = IFrameIdGenerator;
 }
 
 // Auto-execute on injection
 (async () => {
     try {
+        // Wait for document to be ready (especially important for iframes)
+        const waitForReady = () => {
+            return new Promise((resolve) => {
+                if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                    // Small delay to ensure DOM is fully rendered
+                    setTimeout(resolve, 100);
+                } else {
+                    document.addEventListener('DOMContentLoaded', () => {
+                        setTimeout(resolve, 100);
+                    }, { once: true });
+                }
+            });
+        };
+        
+        await waitForReady();
+        
         // Check if we're in an iframe and use the prefix if available
-        const parentBid = window.BROWSERGYM_IFRAME_PREFIX || "";
+        // Try multiple methods to get the prefix (window property or script data attribute)
+        let parentBid = window.BROWSERGYM_IFRAME_PREFIX || "";
+        
+        // Backup: Try to get prefix from the script tag that loaded this file
+        if (!parentBid) {
+          try {
+            const scripts = document.querySelectorAll('script[src*="browsergym-inject.js"]');
+            for (const script of scripts) {
+              const prefixFromScript = script.getAttribute('data-iframe-prefix');
+              if (prefixFromScript) {
+                parentBid = prefixFromScript;
+                // Also set it on window for consistency
+                window.BROWSERGYM_IFRAME_PREFIX = parentBid;
+                console.log(`🔧 Found prefix from script data attribute: "${parentBid}"`);
+                break;
+              }
+            }
+          } catch (e) {
+            console.warn(`⚠️ Could not read prefix from script tag:`, e);
+          }
+        }
+        
+        console.log(`🔍 BrowserGym starting injection, prefix: "${parentBid}", document ready: ${document.readyState}`);
+        console.log(`🔍 Document has ${document.querySelectorAll('*').length} elements`);
+        console.log(`🔍 window.BROWSERGYM_IFRAME_PREFIX value:`, window.BROWSERGYM_IFRAME_PREFIX);
+        console.log(`🔍 typeof window.BROWSERGYM_IFRAME_PREFIX:`, typeof window.BROWSERGYM_IFRAME_PREFIX);
+        console.log(`🔍 parentBid value:`, parentBid);
+        console.log(`🔍 parentBid length:`, parentBid.length);
+        console.log(`🔍 parentBid truthy check:`, !!parentBid);
         
         const warnings = await window.injectBrowserGym([
             parentBid,    // Use iframe prefix if in iframe, empty string for main document
@@ -302,15 +364,20 @@ class IFrameIdGenerator {
             "all"         // process every single element
         ]);
         
+        // Verify that BIDs were actually assigned
+        const elementsWithBid = document.querySelectorAll('[data-bid]');
+        console.log(`🔍 Found ${elementsWithBid.length} elements with data-bid after injection`);
+        
         if (parentBid) {
-            console.log(`✅ BrowserGym IDs set with prefix "${parentBid}", warnings:`, warnings);
+            console.log(`✅ BrowserGym IDs set with prefix "${parentBid}", ${elementsWithBid.length} elements marked, warnings:`, warnings);
         } else {
-            console.log("✅ BrowserGym IDs set (main document), warnings:", warnings);
+            console.log(`✅ BrowserGym IDs set (main document), ${elementsWithBid.length} elements marked, warnings:`, warnings);
         }
+        
         window.browserGymInitialized = true;
         // Signal completion via custom event (content script can listen)
         document.dispatchEvent(new CustomEvent('browsergym-injection-complete', { 
-            detail: { success: true, warnings: warnings, prefix: parentBid }
+            detail: { success: true, warnings: warnings, prefix: parentBid, elementsMarked: elementsWithBid.length }
         }));
     } catch (err) {
         console.error("BrowserGym injection failed:", err);

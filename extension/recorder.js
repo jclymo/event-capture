@@ -1418,6 +1418,14 @@
         return;
       }
 
+      // Check if script is already loaded (prevent duplicate injection)
+      const scriptUrl = chrome.runtime.getURL('browsergym-inject.js');
+      const existingScript = iframeDoc.querySelector(`script[src="${scriptUrl}"]`);
+      if (existingScript) {
+        console.log('BrowserGym script already present in iframe, skipping injection');
+        return;
+      }
+
       // Get or assign iframe index for BID prefix
       let iframeIndex = iframe.getAttribute('data-iframe-index');
       if (!iframeIndex) {
@@ -1428,22 +1436,89 @@
         iframe.setAttribute('data-iframe-index', iframeIndex);
       }
 
-      // Set iframe BID prefix in the iframe's window before injection
-      // This will be used by browsergym-inject.js to prefix all BIDs
-      const prefixScript = iframeDoc.createElement('script');
-      prefixScript.textContent = `window.BROWSERGYM_IFRAME_PREFIX = "iframe${iframeIndex}_";`;
-      (iframeDoc.head || iframeDoc.documentElement)?.appendChild(prefixScript);
+      // Set iframe BID prefix directly on window (bypasses CSP restrictions)
+      // Content scripts can manipulate iframe window objects without CSP violations
+      // This MUST be set before browsergym-inject.js loads
+      const prefixValue = `iframe${iframeIndex}_`;
+      iframeWindow.BROWSERGYM_IFRAME_PREFIX = prefixValue;
+      console.log(`🔧 Set iframe prefix directly:`, iframeWindow.BROWSERGYM_IFRAME_PREFIX);
+      console.log(`🔍 Iframe document ready state: ${iframeDoc.readyState}, elements: ${iframeDoc.querySelectorAll('*').length}`);
 
-      // Inject the BrowserGym script into the iframe
-      const script = iframeDoc.createElement('script');
-      script.src = chrome.runtime.getURL('browsergym-inject.js');
-      script.onload = () => {
-        console.log(`📜 BrowserGym script loaded in iframe${iframeIndex} with prefix "iframe${iframeIndex}_"`);
+      // Verify prefix is accessible immediately
+      if (iframeWindow.BROWSERGYM_IFRAME_PREFIX !== prefixValue) {
+        console.error(`❌ Prefix not set correctly! Expected: ${prefixValue}, Got:`, iframeWindow.BROWSERGYM_IFRAME_PREFIX);
+        // Try setting again
+        iframeWindow.BROWSERGYM_IFRAME_PREFIX = prefixValue;
+      }
+
+      // Listen for injection completion event from the iframe
+      const injectionCompleteHandler = (event) => {
+        console.log(`✅ BrowserGym injection complete in iframe${iframeIndex}:`, event.detail);
+        if (event.detail?.success) {
+          console.log(`✅ Iframe${iframeIndex} marked ${event.detail.elementsMarked || 0} elements with prefix "${event.detail.prefix}"`);
+        } else {
+          console.error(`❌ Iframe${iframeIndex} injection failed:`, event.detail?.error);
+        }
+        iframeDoc.removeEventListener('browsergym-injection-complete', injectionCompleteHandler);
       };
-      script.onerror = () => {
-        console.error(`❌ Failed to inject BrowserGym script into iframe${iframeIndex}`);
-      };
-      (iframeDoc.head || iframeDoc.documentElement)?.appendChild(script);
+      iframeDoc.addEventListener('browsergym-injection-complete', injectionCompleteHandler, { once: true });
+
+      // Set prefix again right before injection to ensure it's available
+      // Small delay to ensure property is accessible before script executes
+      setTimeout(() => {
+        // Re-set prefix right before injection to ensure it's available
+        iframeWindow.BROWSERGYM_IFRAME_PREFIX = prefixValue;
+        console.log(`🔧 Re-verified prefix before injection:`, iframeWindow.BROWSERGYM_IFRAME_PREFIX);
+        
+        // Inject the BrowserGym script into the iframe
+        const script = iframeDoc.createElement('script');
+        script.src = scriptUrl;
+        // Store prefix in data attribute as backup (in case window property isn't accessible)
+        script.setAttribute('data-iframe-prefix', prefixValue);
+        script.onload = () => {
+          console.log(`📜 BrowserGym script loaded in iframe${iframeIndex} with prefix "iframe${iframeIndex}_"`);
+          console.log(`🔍 Iframe document ready state after load: ${iframeDoc.readyState}`);
+          
+          // Verify prefix is accessible from iframe's window context
+          try {
+            const prefixFromIframe = iframeWindow.BROWSERGYM_IFRAME_PREFIX;
+            console.log(`🔍 Prefix verification - From content script:`, iframeWindow.BROWSERGYM_IFRAME_PREFIX);
+            console.log(`🔍 Prefix verification - From iframe window:`, prefixFromIframe);
+            console.log(`🔍 Prefix verification - Type:`, typeof prefixFromIframe);
+            console.log(`🔍 Prefix verification - Expected: "iframe${iframeIndex}_"`);
+            console.log(`🔍 Prefix verification - Match:`, prefixFromIframe === `iframe${iframeIndex}_`);
+            
+            if (!prefixFromIframe || prefixFromIframe !== `iframe${iframeIndex}_`) {
+              console.error(`❌ PREFIX MISMATCH! Setting it again...`);
+              iframeWindow.BROWSERGYM_IFRAME_PREFIX = `iframe${iframeIndex}_`;
+              console.log(`🔧 Re-set prefix to:`, iframeWindow.BROWSERGYM_IFRAME_PREFIX);
+            }
+          } catch (e) {
+            console.error(`❌ Error accessing prefix from iframe window:`, e);
+          }
+          
+          // Wait a bit longer for the script to execute and mark elements
+          setTimeout(() => {
+            const elementsWithBid = iframeDoc.querySelectorAll('[data-bid]');
+            console.log(`🔍 Found ${elementsWithBid.length} elements with data-bid in iframe${iframeIndex}`);
+            
+            if (elementsWithBid.length > 0) {
+              const sampleElement = elementsWithBid[0];
+              console.log(`✅ Sample iframe BID:`, sampleElement.getAttribute('data-bid'));
+            } else {
+              console.warn(`⚠️ No elements with data-bid found in iframe${iframeIndex}!`);
+              console.warn(`⚠️ Total elements in iframe: ${iframeDoc.querySelectorAll('*').length}`);
+              console.warn(`⚠️ Iframe prefix available:`, iframeWindow.BROWSERGYM_IFRAME_PREFIX);
+              console.warn(`⚠️ BrowserGym initialized flag:`, iframeWindow.browserGymInitialized);
+            }
+          }, 500); // Increased delay to allow script execution
+        };
+        script.onerror = () => {
+          console.error(`❌ Failed to inject BrowserGym script into iframe${iframeIndex}`);
+          iframeDoc.removeEventListener('browsergym-injection-complete', injectionCompleteHandler);
+        };
+        (iframeDoc.head || iframeDoc.documentElement)?.appendChild(script);
+      }, 50);
     } catch (err) {
       console.warn('Failed to inject BrowserGym into iframe:', err);
     }
