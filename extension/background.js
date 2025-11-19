@@ -30,7 +30,9 @@ async function injectRecorderIntoTab(tabId, reason = '') {
 
   try {
     await chrome.scripting.executeScript({
-      target: { tabId, allFrames: true },
+      // Inject only into the top frame; iframe documents are
+      // instrumented by recorder.js itself to avoid duplicates.
+      target: { tabId },
       files: ['recorder.js']
     });
     if (reason) {
