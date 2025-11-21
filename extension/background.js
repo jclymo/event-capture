@@ -15,22 +15,8 @@ import { setupTabListeners } from './background/tab-manager.js';
 
 console.log('🚀 Task Recorder Background Service Worker starting...');
 
-  try {
-    await chrome.scripting.executeScript({
-      // Inject only into the top frame; iframe documents are
-      // instrumented by recorder.js itself to avoid duplicates.
-      target: { tabId },
-      files: ['recorder.js']
-    });
-    if (reason) {
-      console.log(`Recorder injected into tab ${tabId} (${reason})`);
-    } else {
-      console.log(`Recorder injected into tab ${tabId}`);
-    }
-  } catch (err) {
-    console.error(`Recorder injection failed${reason ? ` (${reason})` : ''}:`, err);
-  }
-}
+// Initialize message routing
+setupMessageHandlers();
 
 // Initialize tab lifecycle listeners
 setupTabListeners();

@@ -33,7 +33,7 @@
   let htmlCaptureLocked = false;
   let HTMLCOOLDOWNOVERRIDE = Date.now() - 3000;
 
-  function requestHtmlCapture(eventType, sourceDocument = document) {
+  function requestHtmlCapture(eventTimestamp) {
     if (htmlCaptureLocked) {
       return;
     }
@@ -41,9 +41,9 @@
     const now = Date.now();
     
     // Always capture immediately on first page load, otherwise require gap between
-    if (isNewPageLoad || (now - HTMLCOOLDOWNOVERRIDE) < 250 || (now - lastHtmlCapture) >= HTMLCOOLDOWN) {
+    if (isNewPageLoad || (now - HTMLCOOLDOWNOVERRIDE)<250 || (now - lastHtmlCapture) >= HTMLCOOLDOWN) {
       lastHtmlCapture = Date.now();
-      captureHtml(eventType, sourceDocument);
+      captureHtml(eventTimestamp);
       isNewPageLoad = false;
     }
     // else ignore this event
@@ -164,9 +164,6 @@
     ],
     observers: {
       dynamicDom: true
-    },
-    htmlCapture: {
-      enabled: true
     }
   };
 
@@ -302,14 +299,8 @@
       configClone.observers.dynamicDom = userConfig.observers.dynamicDom;
     }
 
-    if (userConfig.htmlCapture && typeof userConfig.htmlCapture.enabled === 'boolean') {
-      configClone.htmlCapture.enabled = userConfig.htmlCapture.enabled;
-    }
-
     return configClone;
   }
-
-  let htmlCaptureEnabled = true;
 
   async function loadEventConfig() {
     if (cachedEventConfig) {
@@ -328,8 +319,6 @@
       console.warn('Falling back to default event configuration.', error);
       cachedEventConfig = mergeEventConfig(null);
     }
-
-    htmlCaptureEnabled = !!cachedEventConfig.htmlCapture?.enabled;
 
     return cachedEventConfig;
   }
@@ -379,14 +368,10 @@
 
 
 
-  function captureHtml(eventType, sourceDocument = document) {
-    if (!htmlCaptureEnabled) {
-      return;
-    }
+  function captureHtml(eventType) {
     console.log('XXXXX approved html capture')
 
-    const doc = sourceDocument || document;
-    const clone = doc.documentElement.cloneNode(true);
+    const clone = document.documentElement.cloneNode(true);
 
     // --- 1. Remove scripts and noscripts ---
     clone.querySelectorAll('script, noscript').forEach(el => el.remove());
@@ -397,19 +382,13 @@
       }
     });
     // --- 3. Inline all stylesheets, minified ---
-    let styles = [];
-    try {
-      styles = Array.from(doc.styleSheets);
-    } catch (err) {
-      console.warn('Unable to access stylesheets for HTML capture:', err);
-      styles = [];
-    }
+    const styles = Array.from(document.styleSheets);
     for (const sheet of styles) {
       try {
         const rules = Array.from(sheet.cssRules)
           .map(r => r.cssText.replace(/\s+/g, ' ').trim())
           .join('');
-        const style = doc.createElement('style');
+        const style = document.createElement('style');
         style.textContent = rules;
         clone.querySelector('head').appendChild(style);
       } catch (err) {
@@ -447,9 +426,7 @@
         type: 'htmlCapture',
         eventType: eventType,
         timestamp: Date.now(),
-        url: (doc.defaultView && doc.defaultView.location)
-          ? doc.defaultView.location.href
-          : window.location.href
+        url: window.location.href
       } 
     });
     if (eventType ==="change") {
@@ -1135,9 +1112,7 @@
 
     // Send event to background script
     chrome.runtime.sendMessage({ type: 'recordedEvent', event: eventData });
-    // Capture HTML for the specific document this event came from
-    const sourceDocument = metadataElement.ownerDocument || document;
-    requestHtmlCapture(event.type, sourceDocument);
+    requestHtmlCapture(event.type);
 
 //     const criticalEvents = ['click', 'change', 'submit', 'focus', 'blur'];
 // if (criticalEvents.includes(event.type)) {
