@@ -53,7 +53,18 @@ export function addRelativeRecordingTimestampToEvent(eventData, fallbackBase = n
   let relative = null;
   const base = videoRecording.startedAtMs || fallbackBase;
   if (base != null && eventData?.timestamp != null) {
-    relative = Math.max(0, Number(eventData.timestamp) - Number(base));
+    let ts = eventData.timestamp;
+    // Support both numeric and ISO string timestamps
+    if (typeof ts === 'string') {
+      const parsed = Date.parse(ts);
+      if (!Number.isNaN(parsed)) {
+        ts = parsed;
+      }
+    }
+    const tsNum = Number(ts);
+    if (Number.isFinite(tsNum)) {
+      relative = Math.max(0, tsNum - Number(base));
+    }
   }
 
   if (relative == null) {
@@ -114,4 +125,3 @@ export function handleRecordedEvent(message, sender, sendResponse) {
   }
   return false;
 }
-

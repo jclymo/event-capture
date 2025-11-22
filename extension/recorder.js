@@ -1018,11 +1018,21 @@
     
     // Check if event originated from an iframe
     const inIframe = window !== window.top;
-    const iframeInfo = inIframe ? {
-      isInIframe: true,
-      iframeUrl: window.location.href,
-      topUrl: window.top?.location?.href || 'unknown'
-    } : { isInIframe: false };
+    let iframeInfo = { isInIframe: false };
+    if (inIframe) {
+      let topUrl = 'unknown';
+      try {
+        // Can throw on cross-origin, so guard it
+        topUrl = window.top.location.href;
+      } catch (err) {
+        console.warn('Unable to read top window URL from iframe:', err);
+      }
+      iframeInfo = {
+        isInIframe: true,
+        iframeUrl: window.location.href,
+        topUrl
+      };
+    }
 
     // Create event object with BrowserGym-like structure
     const eventData = {
@@ -1942,29 +1952,9 @@
     // Stop iframe observer
     stopIframeObserver();
     
-    // Log recorded events
-    console.log("Recorded events to save:", events);
-    
-    // Save the events to the task history
-    if (currentTaskId) {
-      chrome.storage.local.get(['taskHistory'], function(data) {
-        const taskHistory = data.taskHistory || {};
-        
-        if (taskHistory[currentTaskId]) {
-          taskHistory[currentTaskId].events = events;
-          
-          // Save the updated task history
-          chrome.storage.local.set({ taskHistory: taskHistory }, function() {
-            if (chrome.runtime.lastError) {
-              console.error("Events failed to save:", chrome.runtime.lastError);
-              return;
-            }
-            // console.log("Events saved to task history");
-          });
-        }
-      });
-    }
-    
+    // Log recorded events (background script is the source of truth for storage)
+    console.log("Recorded events to save (debug only):", events);
+
     currentTaskId = null;
   }
 
@@ -2071,10 +2061,11 @@
         return;
       }
     }
+    const now = Date.now();
     const eventData = {
       type: eventType,
       category: EVENT_TYPES.NAVIGATION,
-      timestamp: formatTimestamp(Date.now()),
+      timestamp: formatTimestamp(now),
       fromUrl: fromUrl,
       toUrl: toUrl,
       title: document.title,
@@ -2082,14 +2073,15 @@
       fromUserInput: clickState.clickCount > 0
     };
 
-    events.push(eventData);
+    // Persist via background event-storage (same path as DOM events)
+    chrome.runtime.sendMessage({ type: 'recordedEvent', event: eventData });
+
     eventVerification.navigations.push({
-      time: Date.now(),
+      time: now,
       type: eventType,
       fromUrl,
       toUrl
     });
-    saveEvents();
     
     // Update navigation state
     navigationState.lastUrl = toUrl;
