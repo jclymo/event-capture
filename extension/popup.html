@@ -1,18 +1,63 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Task Recorder</title>
-  <link rel="stylesheet" href="popup.css">
-</head>
-<body>
-  <h1>Task Recorder</h1>
-  <label for="taskDescription">Task:</label>
-  <input type="text" id="taskDescription" value="Complete the task: Click on something" />
-  <!-- Timer will be inserted here by JavaScript -->
-  <button id="startTask">Start Task</button>
-  <button id="endTask" disabled>End Task</button>
-  <button id="pushToMongo" disabled>Push to MongoDB</button>
-  <script src="config.js"></script>
-  <script src="popup.js"></script>
-</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Recorder</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup-shell">
+      <header class="popup-header">
+        <div>
+          <p class="tagline">Capture every click and keystroke</p>
+          <h1>Task Recorder</h1>
+        </div>
+        <div class="header-actions">
+          <button id="historyButton" class="history-button">Task history</button>
+          <div id="recordingStatus" class="status-pill">Idle</div>
+        </div>
+      </header>
+
+      <section class="task-card">
+        <label for="taskDescription">Task title</label>
+        <input
+          type="text"
+          id="taskDescription"
+          placeholder="Name this task before you start recording"
+          autocomplete="off"
+        />
+        <div id="timer" class="timer-display">00:00</div>
+      </section>
+
+      <section class="action-bar">
+        <button id="startTask" class="primary">Start Recording</button>
+        <button id="endTask" disabled>Stop Recording</button>
+      </section>
+
+      <section class="summary-panel">
+        <div class="summary-header">
+          <div>
+            <h2>Latest Recording</h2>
+            <p>Review the last task you captured and decide whether to sync it to MongoDB.</p>
+          </div>
+          <span id="summaryBadge" class="summary-badge">No tasks yet</span>
+        </div>
+        <div id="results" class="results-area">
+          <p class="placeholder-text">
+            Finish a recording to populate this summary area.
+          </p>
+        </div>
+        <button id="pushToMongo" class="summary-push-button" disabled>
+          Sync to MongoDB
+        </button>
+        <button id="taskDetailsButton" class="summary-details-button" disabled>
+          Task details
+        </button>
+      </section>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="popup.js"></script>
+  </body>
 </html>

@@ -30,8 +30,8 @@ function normalizeEvents(events = []) {
 }
 
 async function pushTaskToMongo(buttonElement) {
-  if (!currentTask || !Array.isArray(currentTask.events) || currentTask.events.length === 0) {
-    alert('No event data available to push.');
+  if (!currentTask) {
+    alert('Task data not available.');
     return;
   }
 
@@ -46,6 +46,7 @@ async function pushTaskToMongo(buttonElement) {
   if (currentTask.video_server_path) payload.video_server_path = currentTask.video_server_path;
 
   try {
+    let pushedOk = false;
     if (buttonElement) {
       buttonElement.disabled = true;
       buttonElement.textContent = 'Pushing...';
@@ -72,7 +73,20 @@ async function pushTaskToMongo(buttonElement) {
       console.warn('Failed to archive payload locally:', archiveError);
     }
 
-    alert('Data successfully pushed to MongoDB!');
+    if (result && result.success) {
+      pushedOk = true;
+      chrome.storage.local.get(['taskHistory'], (data) => {
+        const taskHistory = data.taskHistory || {};
+        if (taskHistory[currentTask.id]) {
+          taskHistory[currentTask.id].pushedToMongo = true;
+          taskHistory[currentTask.id].pushedAt = Date.now();
+          chrome.storage.local.set({ taskHistory });
+        }
+      });
+      alert('Task synced to MongoDB.');
+    } else {
+      alert('Task sent to MongoDB (check server response).');
+    }
   } catch (error) {
     console.error('Error pushing to MongoDB:', error);
     try {
@@ -80,11 +94,16 @@ async function pushTaskToMongo(buttonElement) {
     } catch (archiveError) {
       console.warn('Failed to archive payload after error:', archiveError);
     }
-    alert('Error pushing to MongoDB: ' + error.message);
+    alert('Could not sync to MongoDB: ' + error.message);
   } finally {
     if (buttonElement) {
-      buttonElement.disabled = false;
-      buttonElement.textContent = 'Push to MongoDB';
+      if (pushedOk) {
+        buttonElement.disabled = true;
+        buttonElement.textContent = 'Already synced';
+      } else {
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Sync to MongoDB';
+      }
     }
   }
 }
@@ -99,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    document.getElementById('taskTitle').textContent = task.title;
+    document.getElementById('taskTitle').textContent = task.title + (task.pushedToMongo ? ' (synced to MongoDB)' : '');
     const events = normalizeEvents(task.events || []);
     const eventTypes = Array.from(new Set(events.map(e => e.type))).sort();
     currentTask = { ...task, events };
@@ -153,7 +172,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     if (pushButton) {
-      pushButton.disabled = events.length === 0;
+      pushButton.disabled = events.length === 0 || !!task.pushedToMongo;
+      if (task.pushedToMongo) {
+        pushButton.textContent = 'Already synced';
+      }
       pushButton.addEventListener('click', function() {
         pushTaskToMongo(pushButton);
       });

@@ -1,0 +1,748 @@
+<!DOCTYPE html><html lang="en" class="ltr date-calendar tabbed" data-doctype="true" dir="ltr" ontouchend="CustomEvent.fireAll('body_clicked', event);"><head><script>document.addEventListener('click', function (event) {
+				CustomEvent.fireAll('body_clicked', event);
+			});
+			document.hasBodyClickedTrigger = 'true';</script><script type="text/javascript"></script><title>Model Categories | ServiceNow</title><meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"><meta http-equiv="cache-control" content="public"><meta name="viewport" content="initial-scale=1.0"><script type="text/javascript" data-description="globals population">
+	window.NOW = window.NOW || {};
+	var g_loadTime = new Date();
+	var lastActivity = new Date();
+	var g_lang = 'en';
+	var g_system_lang = 'en';
+	var g_enhanced_activated = 'true';
+	  var g_popup_timeout = parseInt(100);
+	var g_export_warn_threshold = parseInt(10000);
+	  var g_event_handler_ids = {};
+	var g_event_handlers = [];
+	var g_event_handlers_onLoad = [];
+	var g_event_handlers_onSubmit = [];
+	var g_event_handlers_onChange = [];
+	var g_event_handlers_onCellEdit = {};
+	var g_event_handlers_localCache = {};
+	var g_event_handlers_queryTracking = true;
+	var g_user_date_time_format = "yyyy-MM-dd HH:mm:ss";
+	var g_user_date_format = "yyyy-MM-dd";
+	var g_user_decimal_separator = ".";
+	var g_user_grouping_separator = ",";
+	var g_glide_list_separator = ", ";
+	var g_allow_field_dependency_for_templates = ("true" === "true");
+	var g_tz_offset = -28800000;
+	  var g_tz_user_offset = true;
+	var g_first_day_of_week = parseInt(1, 10);
+	var g_date_picker_first_day_of_week = parseInt(0, 10);
+	  var g_full_calendar_edit = true;
+	var g_submitted = false;
+	var g_max_table_length = 80;
+	var g_fontSizePreference = "";
+	var g_fontSize = "10pt";
+	// use to be the sys_property glide.ui.js_error_notify, hard coded for PRB603998
+	var g_jsErrorNotify = "true";
+	var g_cancelPreviousTransaction = true;
+	var g_text_direction = "ltr";
+	var g_glide_list_filter_max_length =  parseInt("0", 10);
+	var g_accessibility = false;
+	var g_accessibility_tooltips = false;
+	var g_accessibility_tooltip_duration = parseInt("10", 10);
+	var g_accessibility_visual_patterns = false;
+	var g_accessibility_screen_reader_table = false;
+	var g_accessibility_date_format = false;
+	var g_detail_row = false;
+	var g_builddate = "07-13-2025_0705";
+	// default values to be used in absence of user preferences are hard coded below
+	// as well as in keyboardShortcuts.js and keyboard_preference_changer.xml
+	window.g_keyboard_shortcuts = {};
+	window.g_keyboard_shortcuts.allow_in_input_fields = false;
+	window.g_keyboard_shortcuts.enabled = true;
+	window.g_keyboard_shortcuts.global_search = {};
+	window.g_keyboard_shortcuts.global_search.enabled = true;
+	window.g_keyboard_shortcuts.global_search.key_combination = 'ctrl+alt+g';
+	window.g_keyboard_shortcuts.main_frame = {};
+	window.g_keyboard_shortcuts.main_frame.enabled = true;
+	window.g_keyboard_shortcuts.main_frame.key_combination = 'ctrl+alt+p';
+	window.g_keyboard_shortcuts.navigator_toggle = {};
+	window.g_keyboard_shortcuts.navigator_toggle.enabled = true;
+	window.g_keyboard_shortcuts.navigator_toggle.key_combination = 'ctrl+alt+c';
+	window.g_keyboard_shortcuts.navigator_filter = {};
+	window.g_keyboard_shortcuts.navigator_filter.enabled = true;
+	window.g_keyboard_shortcuts.navigator_filter.key_combination = 'ctrl+alt+f';
+	window.g_keyboard_shortcuts.impersonator = {}
+	window.g_keyboard_shortcuts.impersonator.enabled = true;
+	window.g_keyboard_shortcuts.impersonator.key_combination = 'ctrl+alt+i';
+	// The `g_concourse_onmessage_enforce_same_origin` and `g_concourse_onmessage_enforce_same_origin_whitelist` variables
+    // do not appear to be used anywhere other than the CustomEventManager, but leaving these for backwards compatability
+	var g_concourse_onmessage_enforce_same_origin = 'true'.toLowerCase() === 'true';
+	var g_concourse_onmessage_enforce_same_origin_whitelist = '';
+	window.g_load_functions = [];
+	window.g_render_functions = [];
+	window.g_late_load_functions = [];
+	window.g_tiny_url = {};
+	window.g_tiny_url.use_tiny = 'true' === 'true';
+	window.g_tiny_url.min_length = parseInt('1024');
+	
+	
+	var g_ck = '82568dd993ddf2105cf7ff95dd03d659010bde7943b649c2a97cc985eaef58ee40c87c3e';
+	
+
+	
+	var g_acWaitTime = parseInt(250);
+	
+
+	var g_autoRequest = '';
+
+	try {
+		window.NOW.dateFormat = JSON.parse("{\"timeAgo\": false, \"dateBoth\": false}");
+	} catch (e) {
+		window.NOW.dateFormat = {timeAgo: false, dateBoth: false};
+	}
+
+	window.NOW.dateFormat.dateStringFormat = "yyyy-MM-dd";
+	window.NOW.dateFormat.timeStringFormat = "HH:mm:ss";
+	window.NOW.shortDateFormat = false;
+	window.NOW.listTableWrap = true;
+	window.NOW.compact = false;
+  	window.NOW.templateToggle = false;
+	window.NOW.tabbed = true;
+	window.NOW.permalink = true;
+	window.NOW.useSimpleStorage = true;
+	window.NOW.httpRequestCompressionThreshold = 40000;
+	window.NOW.httpRequestCompressionLevel = -1;
+	window.NOW.httpRequestCompressionMemoryLevel = -1;
+	window.NOW.httpRequestCompressionExcludeUrls = 'xmlhttp.do'.split(',');
+	window.NOW.deferAmbConnection = false;
+	window.NOW.deferredAmbConnectionTimeout = 10000;
+	window.NOW.simpleStorageSynch = "42cd3200931132105cf7ff95dd03d670";
+	window.NOW.language =  'en';
+	window.NOW.listOpenInAppTab = false;
+	window.NOW.floatingScrollbars = 'false'.toLowerCase() === 'true';
+	
+	window.NOW.user = {};
+	window.NOW.user.preferences = [];
+	window.NOW.user.roles = 'platform_ml_create,import_transformer,taxonomy_admin,ais_admin,catalog_builder_editor,nlu_admin,catalog_template_editor,catalog,catalog_lookup_admin,admin,ml_admin,platform_ml_read,platform_ml_write,chat_admin,search_application_admin,search_relevancy_model_admin,import_set_loader,catalog_admin,sn_ace.ace_user,import_scheduler,pa_viewer,nlu_editor,sn_hr_sp.esc_admin,sn_templated_snip.template_snippet_admin,nlu_user,personalize_dictionary,live_feed_admin,evam_admin,sn_hr_sp.admin,sn_templated_snip.template_snippet_writer,sp_admin,ml_labeler,pa_data_collector,import_admin,announcement_admin,sn_templated_snip.template_snippet_reader,teamdev_code_reviewer,agent_security_admin,user_criteria_admin,image_admin,sn_employee.admin,sn_nlu_workbench.nlu_feedback_admin';
+	window.NOW.user.allRoles = 'platform_ml_create,import_transformer,taxonomy_admin,ais_admin,catalog_builder_editor,nlu_admin,catalog_template_editor,catalog,catalog_lookup_admin,admin,ml_admin,platform_ml_read,platform_ml_write,chat_admin,search_application_admin,search_relevancy_model_admin,import_set_loader,catalog_admin,sn_ace.ace_user,import_scheduler,pa_viewer,nlu_editor,sn_hr_sp.esc_admin,sn_templated_snip.template_snippet_admin,nlu_user,personalize_dictionary,live_feed_admin,evam_admin,sn_hr_sp.admin,sn_templated_snip.template_snippet_writer,sp_admin,ml_labeler,pa_data_collector,import_admin,announcement_admin,sn_templated_snip.template_snippet_reader,teamdev_code_reviewer,agent_security_admin,user_criteria_admin,image_admin,sn_employee.admin,sn_nlu_workbench.nlu_feedback_admin';
+	window.NOW.user.userID = '6816f79cc0a8016401c5a33be04be441';
+	window.NOW.user.departmentID = 'a581ab703710200044e0bfc8bcbe5de8';
+	window.NOW.user.firstName = 'System';
+	window.NOW.user.lastName = 'Administrator';
+	window.NOW.user.name = 'admin';
+  	window.NOW.user.isImpersonating = false;
+	window.NOW.batch_glide_ajax_requests = 'true' === 'true';
+	window.NOW.batch_glide_ajax_requests_max_time_in_queue = ~~'50';
+	window.NOW.batch_glide_ajax_disable_time = ~~'1000';
+
+	window.NOW.currency = {};
+	window.NOW.currency.code = 'USD';
+	window.NOW.locale = {};
+	window.NOW.locale.code = 'en_US';
+
+	window.NOW.attachment = {};
+	
+	window.NOW.attachment.overflow_limit =  parseInt('3', 10);
+	window.NOW.isPolarisEnabled = "true";
+	window.NOW.polaris_page_info ={"canUsePolarisCSS":true,"canUsePolarisTemplates":true,"jvar_form_name":"sys_list_template2"};</script><script data-comment="GlideUser initialization">(function() {
+		 g_render_functions.push(setGlideUser);
+		function setGlideUser() {
+			if (window.g_user || !window.GlideUser)
+		return;
+
+		window.g_user = new GlideUser(NOW.user.name,
+			  NOW.user.firstName,
+			  NOW.user.lastName,
+			  NOW.user.roles,
+			  NOW.user.userID,
+			  NOW.user.departmentID);
+		window.g_user.setRoles(NOW.user.allRoles, true);
+		}
+	})();</script><script data-description="NOW glide web analytics siteid and url">window.snWebaConfig = window.snWebaConfig || {};
+		// glide web analytics config
+		window.snWebaConfig.siteId = "0";
+		window.snWebaConfig.trackerURL = "";
+		window.snWebaConfig.webaScriptPath = "/scripts/piwik-3.1.1/thirdparty/piwik.min.js";
+		window.snWebaConfig.ambClient = (window.g_ambClient) ? window.g_ambClient : ((window.amb)? window.amb.getClient(): "");
+		window.snWebaConfig.subscribed = false;</script><script type="text/javascript" src="/ConditionalFocus.jsdbx?v=07-13-2025_0705&amp;c=9_123"></script><script data-description="UX Metrics Data">(function () {
+				try {
+					window.NOW = window.NOW || {};
+					window.NOW.UXMetrics = window.NOW.UXMetrics || {};
+					var config = '';
+					if (config) {
+						window.NOW.UXMetrics.config = JSON.parse(config);
+						window.NOW.UXMetrics.ucmInfo = {
+							user_analytics_consent_text: '',
+							user_consent : ""
+						};
+					}
+				} catch(err) {}
+			})();</script><link href="favicon.ico?v=5" rel="shortcut icon"><script type="text/javascript" src="/scripts/doctype/xperf_timing.jsx?v=07-13-2025_0705"></script><link type="text/css" rel="stylesheet" href="/styles/css_includes_doctype_polaris.cssx?v=07-13-2025_0705&amp;c=63c2c51993ddf2105cf7ff95dd03d65a&amp;theme=Polaris"><script>window.NOW = window.NOW || {};
+		 NOW.isUsingPolaris = true;</script><script type="text/javascript" src="/scripts/polaris_theme_refresh_observer.jsx?v=07-13-2025_0705"></script><link type="text/css" rel="stylesheet" href="/styles/polarisberg/css_includes_polarisberg.cssx?v=07-13-2025_0705&amp;c=63c2c51993ddf2105cf7ff95dd03d65a&amp;theme=Polaris"><script>NOW.exclude_dark_theme = "false";</script><link type="text/css" rel="stylesheet" href="/polarisberg_theme_variables.do?c=falsee3cTgBGXY0cf%2BYcTzu1rehvD38E%3D" id="polarisberg_theme_variables"><script>NOW.xperf.cssEnd = NOW.xperf.now();
+			NOW.xperf.scriptBegin = NOW.xperf.now();</script><script src="/legacy_date_time_choices_processor.do?lang=en"></script><script type="text/javascript" src="/scripts/doctype/js_includes_doctype.jsx?v=07-13-2025_0705&amp;lp=Fri_Oct_10_10_08_37_PDT_2025&amp;c=9_123"></script><script type="text/javascript" src="/scripts/js_includes_customer.jsx?v=07-13-2025_0705&amp;lp=Fri_Oct_10_10_08_37_PDT_2025&amp;c=9_123"></script><script type="text/javascript" src="/scripts/doctype/history_across_tabs.jsx?v=07-13-2025_0705"></script><script type="text/javascript" data-comment="navpage layout preferences, onfocus observation">/**
+	* Every window needs to observe these events.
+	*/
+	if (Prototype.Browser.IE && !isMSIE9) {
+		document.onfocusout = function() { CustomEvent.fireTop(GlideEvent.WINDOW_BLURRED, window); };
+		document.onfocusin = function() { CustomEvent.fireTop(GlideEvent.WINDOW_FOCUSED, window); };
+	} else {
+		Event.observe(window, 'blur', function() { CustomEvent.fireTop(GlideEvent.WINDOW_BLURRED, window); });
+		Event.observe(window, 'focus', function() { CustomEvent.fireTop(GlideEvent.WINDOW_FOCUSED, window); });
+	}</script><script type="text/javascript">g_swLoadTime = new StopWatch(g_loadTime);
+
+    if (window.CustomEvent){
+        CustomEvent.fireAll("ck_updated", "82568dd993ddf2105cf7ff95dd03d659010bde7943b649c2a97cc985eaef58ee40c87c3e");
+	    CustomEvent.fireTop("navigation.complete", window);
+	}
+
+    addLoadEvent( function() {
+
+		if (isValidTouchDevice())
+			addTouchScrollClassToBody();
+
+      if (typeof g_ck != 'undefined') {
+        CustomEvent.observe("ck_updated", function(ck) { g_ck = ck; });
+        CustomEvent.fireAll("ck_updated", "82568dd993ddf2105cf7ff95dd03d659010bde7943b649c2a97cc985eaef58ee40c87c3e");CustomEvent.fireTop('user.impersonation', '');}try {
+              var helpico = getTopWindow().document.getElementById("help_ico");
+
+              if (helpico) {
+                var urlname=window.location.pathname.split("?");
+                var search_str = window.location.search;
+                
+                // if this is a form, extract the record's sys_id...
+                var sys_id_loc = search_str.search(/sys_id=[0-9a-f]{32}/i);
+                var sys_id_str = (sys_id_loc != -1) ? search_str.substr(sys_id_loc, 39) : null;
+                
+                // make the URL to our context help processor...
+                var url_search = "?sysparm_url=" + urlname[0];
+                if (sys_id_loc != -1)
+                   url_search += "&" + sys_id_str;
+
+               	helpico.href="context_help.do" + url_search;                	
+              }
+            } catch (exception) {}
+
+      synchCache();
+      pageLoaded();
+    });
+    
+    function synchCache() {
+      try {
+        var w = getTopWindow();
+        if (w.g_cache_message)
+          w.g_cache_message.stamp("42cd3200931132105cf7ff95dd03d670");
+  
+        if (w.g_cache_td)
+          w.g_cache_td.stamp("84cf309593ddf2105cf7ff95dd03d6a3");
+      } catch(e) {}
+    }
+
+    function isValidTouchDevice() {
+		var navigator = window.navigator || {};
+		var devices;
+		try {
+			devices = 'iPad,Android'.split(',');
+		} catch(ex) {
+			devices = [];
+		}
+		return devices.some(function(item) {return item.trim() === navigator.platform;});
+	}
+
+	function addTouchScrollClassToBody() {
+		if ('ontouchstart' in window ||
+				(navigator.maxTouchPoints !== 'undefined' && navigator.maxTouchPoints > 0) ||
+				(navigator.msMaxTouchPoints !== 'undefined' && navigator.msMaxTouchPoints > 0)) {
+			if (typeof document.body != undefined) {
+				document.body.classList.add('touch_scroll');
+			}
+		}
+	}
+  </script><script>window.NOW = window.NOW || {};
+        NOW.amb_themed_login = true;</script><script type="text/javascript" src="/scripts/js_includes_amb.jsx?v=07-13-2025_0705&amp;lp=Fri_Oct_10_10_08_37_PDT_2025&amp;c=9_123"></script><!--googleoff: all--><noscript>This site requires JavaScript to be enabled</noscript> <!--googleon: all--><script>NOW.xperf.scriptEnd = NOW.xperf.now();
+				NOW.xperf.parseEnd = NOW.xperf.now();</script></head><body class="chrome        -polaris" data-formname="sys_list_template2"><span class="sr-only"><div id="html_page_aria_live_polite" role="region" aria-relevant="additions text" aria-atomic="false" aria-live="polite"></div><div id="html_page_aria_live_assertive" role="region" aria-relevant="additions text" aria-atomic="false" aria-live="assertive"></div></span><div style="margin:0px;" class="list_wrap_n_scroll"><script>if (window.opener && !window.opener.closed && window.opener != window.self)
+			window.opener.popupCurrent = window.self;</script><script>
+		// GlideList2 initialization	
+	    var f = function() {
+			// register the handlers at most once per page
+			if (typeof(g_listHandlersLoaded) == 'undefined') {
+				g_listHandlersLoaded = true;
+				new GlideList2NewHandler();
+				new GlideList2ChecksHandler();
+				new GlideList2SecurityHandler();
+
+				addLoadEvent(function() {
+					CustomEvent.observe("toggle.sections", GlideList2.toggleAll);
+				});
+			}
+			// Initialize GwtListEditor for Dashboards.
+			CustomEvent.fire('init.gwt_editor');
+
+			// create the GlideList2 object for this list
+			var list = new GlideList2("cmdb_model_category", "cmdb_model_category", "");
+			list.isReport = '';
+			list.groupSort = '';
+
+			
+
+			list.setListName('cmdb_model_category');
+			list.setFields('name');
+			list.setTitle('Model Categories');
+			list.setListControlID('-1');
+			list.setProperties('H4sIAAAAAAAA/51STW/bMAz9K4buXZdhSzMgToB9tJe2K4rt0BOhWLQjlBYNSk7qf1/KTbKlQIBgN/E98fHxY758aanYoETPoTSTDx9NgaFi50NTmj+/ry9mZrmY3/qYHoQ7lOQxFjXZJpZmejWZfp58+WreAEhbVomZhlz1ETiAYC0Y16VJ0qMp1jYCvlTUO3QgTPgvkeyKEHINm1hUvrYUlfMR+ogCpB4OYA6gIhv13w15h9nhpz3OIak6eFeai8kOzEHVuhW07JCgsgkblmHHsjiU1VCaX48/fj5+ewq23VdJQ6c+tZPRgSkydUJKsGNJ0Aj3HWS1nVvhLfjgMGgDanLs9IRE8ilzdxkuvr/BOvIdAVH30pOVdz80ceNxW5o4RDhYXcxrj+TyBBVD0cXi3wnaFVJp7sdG41odkg/P+4UkKw0mqFnaE0Y3lnpVGwd1uZh3VvSV9JD2A2IirJIfr4BsfsS17w6JZyXpmdSe8OykZxz+o4DO6Cjr8vjcF69M/BuaJQMAAA==');
+			// pass order by, since it can come from sources other than the query string
+            list.setOrderBy('ORDERBYname');
+
+			if (list.setOmitCount) {
+				list.setOmitCount(false);
+			}
+            
+			// save the data that we will need to refresh the list
+			list.setView('sys_ref_list');
+			list.setSubmitValue('sysparm_list_css', '');
+			list.setSubmitValue('sysparm_target', 'alm_asset.model_category.227e6002273a90227b880227a7102272');
+            list.setSubmitValue('sysparm_fixed_query', '');
+            list.setSubmitValue('sysparm_group_sort', '');
+            // if rows per page is specified, carry it along
+            if ('')
+               list.setSubmitValue('sysparm_rows_per_page', '');
+               
+            if ('reflist')
+               list.setSubmitValue('sysparm_nameofstack', 'reflist');
+               
+            if ('')
+               list.setSubmitValue('sysparm_transaction_scope', '');
+               
+            if ('')
+               list.setSubmitValue('sysparm_record_scope', '');
+               
+            if ('')
+            	list.setSubmitValue('sysparm_query_no_domain', '');
+
+			list.setReferringURL("cmdb_model_category_list.do?sysparm_target=alm_asset.model_category.227e6002273a90227b880227a7102272@99@sysparm_reference=cmdb_model_category@99@sysparm_view=sys_ref_list@99@sysparm_domain_restore=false@99@sysparm_nameofstack=reflist@99@sysparm_element=model_category@99@");if ('')
+					list.setSubmitValue('sysparm_domain', '');list.handlePrint(true);list = null;
+		  };
+		  
+		  // hierarchical list patch - all lists have to be loaded before the context menus can be built
+		  // this is wokring by trick, not design -- code pre 25 dec 2011 had a similar trick 
+		  // better design would be to create the context menus after all the hiererchical lists are loaded
+		  if (typeof GlideList2 == "undefined")
+		  	addLoadEvent(f);
+		  else 
+		    f.call();</script><div id="cmdb_model_category_list" class="tabs2_list list_v2    " tab_caption="Model Categories" tab_list_name_raw="cmdb_model_category" tab_rows_v2="128" style="display: block;" sn-atf-blacklist="IS_LIST" data-is-excluded-role="true" data-disable-sorting="false"><span class=" -tab-body"><div id="cmdb_model_category_expanded" class="list-container"><div role="region" aria-label="Model Categories, filtering toolbar" id="list_nav_cmdb_model_category" class="navbar navbar-default list_nav list_nav_top  list_nav_top_border" style="display: block; width: 100%;" cellpadding="0" cellspacing="0" data-list_id="cmdb_model_category" data-has-bottom-vcr="true"><div class="container-fluid "><div class="navbar-header"><button title="List controls" class="btn btn-default icon-menu navbar-btn" data-type="list2_top_title" data-context-menu-label="List controls" id="cmdb_model_category_control_button" aria-haspopup="true" aria-expanded="false" aria-label="Actions" data-list_id="cmdb_model_category" data-original-title="List controls"><span class="sr-only">List controls</span></button><a role="button" class="list_filter_toggle icon-filter btn btn-icon  " tabindex="0" title="Show / hide filter" id="cmdb_model_category_filter_toggle_image" aria-controls="cmdb_model_categoryfilterdiv" aria-expanded="false" data-original-title="Show / hide filter"><span class="sr-only">Show / hide filter</span></a><h1 class="navbar-title list_title "><a class="list_action list_top_title" title="Model Categories Context Menu" data-list_id="cmdb_model_category" data-type="list2_top_title" style="border:none;" role="button" tabindex="0" aria-haspopup="menu" aria-expanded="false" data-original-title="Model Categories Context Menu"><span>Model Categories</span><span class="other_lists_span" id="cmdb_model_category_other_lists_span" style="display: none;"></span></a></h1></div><span id="cmdb_model_category_hide_search" class="nav navbar-left"><span style="float: left; display:inherit" class="list_search_title navbar-text " id="8d66c11d93ddf2105cf7ff95dd03d6e6_title">Search</span><div style="float: left; display:inherit"><div class="input-group" style="" role="search"><span class="input-group-addon input-group-select"><span style="position: relative; width: 100%; display: inline-flex;"><select id="8d66c11d93ddf2105cf7ff95dd03d6e6_select" class="form-control default-focus-outline" role="listbox" aria-label="Search a specific field of the Model Categories list, 2 items"><option value="name">Name</option></select><i class="select-indicator icon-vcr-down"></i></span></span><span id="8d66c11d93ddf2105cf7ff95dd03d6e6_describedby" class="sr-only" style="display: none;">Press Enter from within the input to submit the search.</span><input type="search" id="8d66c11d93ddf2105cf7ff95dd03d6e6_text" placeholder="Search" class="form-control" style="width: 150px;" name="8d66c11d93ddf2105cf7ff95dd03d6e6_text" aria-label="Search" aria-describedby="8d66c11d93ddf2105cf7ff95dd03d6e6_describedby"></div></div><script data-comment="widget search load event">addLoadEvent(function () {
+			new GlideWidgetSearch('8d66c11d93ddf2105cf7ff95dd03d6e6', 'cmdb_model_category', 'true', 'false');
+		});</script></span><div class="nav navbar-right text-align-right"><span id="4166c11d93ddf2105cf7ff95dd03d6e7_vcr" style=""><button id="4166c11d93ddf2105cf7ff95dd03d6e7_first" name="vcr_first" data-nav="true" class="list_nav  btn btn-icon h_flip_content tab_button_disabled" title="First page" aria-label="First page" disabled="" data-original-title="First page"><span class="icon-vcr-left" aria-hidden="true"></span><span class="icon-vcr-left" aria-hidden="true"></span></button><button id="4166c11d93ddf2105cf7ff95dd03d6e7_back" data-nav="true" name="vcr_back" class="list_nav  btn btn-icon h_flip_content tab_button_disabled" title="Previous page" aria-label="Previous page" disabled="" data-original-title="Previous page"><span class="icon-vcr-left" aria-hidden="true"></span></button><div class="vcr_controls"><input aria-label="Skip to row" id="listv2_4166c11d93ddf2105cf7ff95dd03d6e7_first_row" aria-describedby="4166c11d93ddf2105cf7ff95dd03d6e7_description_of_skip_to" class="list_row_number_input form-control  " autocomplete="off" title="Skip to row" style="color:rgb(72, 85, 99); display:inline; height:21px" data-original-title="Skip to row"><span class="sr-only" id="4166c11d93ddf2105cf7ff95dd03d6e7_description_of_skip_to">Showing rows 1 to 20 of 128</span><span style="margin-left: 5px;" class=" list_row_number_input ">
+					to
+					<span id="listv2_4166c11d93ddf2105cf7ff95dd03d6e7_last_row" style="margin-left: 1px; margin-right: 1px">20</span>
+								of
+								<span id="listv2_4166c11d93ddf2105cf7ff95dd03d6e7_total_rows" style="margin-left: 1px;">128</span></span></div><button id="4166c11d93ddf2105cf7ff95dd03d6e7_next" data-nav="true" name="vcr_next" class="list_nav  btn btn-icon h_flip_content" title="Next page" aria-label="Next page" data-original-title="Next page"><span class="icon-vcr-right" aria-hidden="true"></span></button><button id="4166c11d93ddf2105cf7ff95dd03d6e7_last" data-nav="true" name="vcr_last" class="list_nav  btn btn-icon h_flip_content" title="Last page" aria-label="Last page" data-original-title="Last page"><span class="icon-vcr-right" aria-hidden="true"></span><span class="icon-vcr-right" aria-hidden="true"></span></button></span><span id="4166c11d93ddf2105cf7ff95dd03d6e7_rep_vcr" style="display: none;"><span class="list_nav_vcr list_row_number_input "><span id="4166c11d93ddf2105cf7ff95dd03d6e7_rep_total_rows" style="padding-right: 5px;">0</span><span id="4166c11d93ddf2105cf7ff95dd03d6e7_rep_plural_label" style="display: none;">Model Categories</span><span id="4166c11d93ddf2105cf7ff95dd03d6e7_rep_singular_label" style="display: none;">Model Category</span>
+                 &nbsp;
+            </span></span><script>addLoadEvent(function() {new GlideWidgetVCR('4166c11d93ddf2105cf7ff95dd03d6e7', 'cmdb_model_category', false && true)})</script><button type="submit" class="selected_action action_context btn btn-primary" onclick="return GlideList2.get('cmdb_model_category').action('80c8c3a60a0a0b34003364513f7d9d27', 'sysverb_new');" id="sysverb_new" value="sysverb_new" gsft_id="80c8c3a60a0a0b34003364513f7d9d27" gsft_condition="true" data-ux-list-metrics-ui-action="true" data-action-label="New" table="cmdb_model_category">New</button></div></div></div><div class="list_nav_top list_nav list_nav_spacer"></div><div class="list_filter_row"><script>g_com_glide_offering = 'enterprise';
+			g_dynamic_filter_options = '16438083dbf073000aef892a48961971::Portal Knowledge Bases::::##1fd9358887203300e0ef0cf888cb0baa::Portal Catalogs::::##2a8320cbeb820110d9b201c7c152288d::OneAPI Feature Document Dynamic Filter::sys_metadata::##2ce328b2537230106d43ddeeff7b12d5::Admin Console - Chat System Messages::::##b637bd21ef3221002841f7f775c0fbb6::Subject::::sysevent_in_email_action##367bf121ef3221002841f7f775c0fbe2::Body(Text)::::sysevent_in_email_action##e009a97bef3221002841f7f775c0fb16::Recipients::::sysevent_in_email_action##2fd8e97bef3221002841f7f775c0fbc1::Sender::::sysevent_in_email_action##90d1921e5f510100a9ad2572f2b477fe::Me::sys_user::##d27bf240ef0321002841f7f775c0fbeb::Sender->Company::::sysevent_in_email_action##6d418b40ef0321002841f7f775c0fb46::Sender->Location::::sysevent_in_email_action##fa128b40ef0321002841f7f775c0fbe6::Sender->Language::::sysevent_in_email_action##0f63961e5f510100a9ad2572f2b47745::One of My Assignments::sys_user::##d6435e965f510100a9ad2572f2b47744::One of My Groups::sys_user_group::##54635e965f510100a9ad2572f2b4774c::One of My Approvals::sys_user::##32a39a165f510100a9ad2572f2b477a0::Users With Roles::sys_user::##5dfde277c7f200102e65e122c7c2604e::On-Call Groups managed by me::sys_user_group::##b5eccd2e531b01100917ddeeff7b1296::All On-Call Groups::sys_user_group::##08d5eb00c70300102e65e122c7c260f2::On-Call Groups I belong to::sys_user_group::##';</script><div><div id="cmdb_model_categoryfilterdiv" class="list_filter" style="display: none; visibility: hidden;" gsft_empty="true"><div class="list_filter_loader now-progress-bar-container"><span>Loading...</span><div class="now-progress-bar -md"><div class="now-progress-bar-path -initial -indeterminate"></div></div></div><script></script></div></div><script data-comment="load event and messages">addLoadEvent(function() {
+		  new GlideWidgetFilter('cmdb_model_category', 'cmdb_model_category', 'cmdb_model_category', '', 'false', false);
+		})</script></div><div class="list_message_row"><div id="output_messages" class="outputmsg_container outputmsg_hide"><button type="button" aria-label="Close Messages" id="close-messages-btn" class="btn btn-icon close icon-cross" onclick="GlideUI.get().onCloseMessagesButtonClick(this); return false;"></button><div class="outputmsg_div" aria-live="polite" role="region" data-server-messages="false"></div></div><script>addRenderEvent(function() {CustomEvent.fire('glide_optics_inspect_update_watchfield', '');});
+
+			var accessibilityEnabled = Boolean(false);
+			var hasMessages = false;
+			if (accessibilityEnabled && hasMessages) {
+				$j(function() {
+					$j('#output_messages .btn.btn-icon.close').focus();
+				});
+			}</script></div><div role="region" aria-label="Filter"><div class="breadcrumb_container" colspan="99"><span id="cmdb_model_category_breadcrumb" class="breadcrumb_container" table="cmdb_model_category" fixed_query="" role="list" list_id="cmdb_model_category" view="sys_ref_list"><a filter="" draggable="true" href="javascript:void(0)" title="Click to remove subsequent conditions." data-omit-aria-describedby="true" aria-label="All Press enter to remove all subsequent conditions." role="link" class="breadcrumb_link" data-original-title="Click to remove subsequent conditions."><b style="font-weight: normal;" aria-hidden="true">All</b></a></span></div></div><div class=" list_div_parent " role="main" aria-label="Model Categories"><div id="cmdb_model_category" class="list_div " type="list_div" snlisteditcontainer="false" ispolaris="true"><script type="text/javascript" data-description="list white space wrapping">// setting 
+			function setListTableWrap() {
+				if (window.NOW.listTableWrap) 
+					$j('HTML').removeClass('list-nowrap-whitespace');
+				else
+					$j('HTML').addClass('list-nowrap-whitespace');
+			}
+			
+			setListTableWrap();
+			CustomEvent.observe('table_wrap', function (trueFalse) {
+				window.NOW.listTableWrap = trueFalse; 
+				setListTableWrap();
+			});</script><a name="cmdb_model_category_hash" tabindex="-1"></a><button id="cmdb_model_category_edit" tabindex="0" type="button" class="list2-edit-button btn btn-default sn-tooltip-basic sr-only sr-only-focusable" aria-controls="cmdb_model_category_table" data-html="true" title="In inline edit mode:&lt;br/&gt;      Press Enter to edit the selected field.&lt;br/&gt;      Press the spacebar to open the field context menu.&lt;br/&gt;      Press Escape to exit inline edit mode." data-original-title="In inline edit mode:&lt;br/&gt;      Press Enter to edit the selected field.&lt;br/&gt;      Press the spacebar to open the field context menu.&lt;br/&gt;      Press Escape to exit inline edit mode.">Edit table data inline</button><span id="reference-list-caption" class="sr-only" aria-hidden="true">This reference list was opened with the "Lookup using list" button to update the model_category reference field for one or more records. Choose a record from the table to use as the value for the reference field you wish to update.</span><table id="cmdb_model_category_table" style="width: 100%; margin-bottom: 0px; outline: none;" class="data_list_table list_table table table-hover " query="" data-list_id="cmdb_model_category" parsed_query="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;xml table=&quot;cmdb_model_category&quot;/&gt;" role="grid" tabindex="-1" aria-label="Model Categories. " parsed_choice_query="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;xml table=&quot;cmdb_model_category&quot;&gt;&lt;item endquery=&quot;false&quot; field=&quot;&quot; goto=&quot;false&quot; newquery=&quot;false&quot; operator=&quot;=&quot; or=&quot;false&quot; value=&quot;&quot;/&gt;&lt;/xml&gt;" sort="cmdb_model_category.name" sort_dir="ASC" list_name="cmdb_model_category" first_row="1" last_row="20" rows_per_page="20" total_rows="128" grand_total_rows="128" can_hide_nav="false" filter-enabled="true" glide_table="cmdb_model_category" glide_list_can_create="true" glide_list_can_delete="true" glide_list_edit_type="" glide_list_edit_id="cmdb_model_category" glide_list_edit_ref_qual_tag="" glide_list_query="ORDERBYname" glide_list_edit_insert_row="false" glide_list_has_hierarchy="false" glide_list_has_header="true" glide_list_omit_links="false" glide_list_has_actions="false" glide_list_omit_count="false" maintain_order="false"><caption class="sr-only" aria-live="polite" data-edit-label="Model Categories table. Currently in edit mode. Use the arrow and tab keys to navigate cells. Press enter on a cell to edit the value. Press spacebar to open the menu for a cell. Press escape to exit edit mode." data-read-label="Model Categories table. Currently in read mode. This reference list was opened with the &quot;Lookup using list&quot; button to update the model_category reference field for one or more records. Choose a record from the table to use as the value for the reference field you wish to update."><span>Model Categories table. Currently in read mode. This reference list was opened with the "Lookup using list" button to update the model_category reference field for one or more records. Choose a record from the table to use as the value for the reference field you wish to update.</span></caption><thead><tr id="hdr_cmdb_model_category" class="" style=""><th class="" style=";"><div class="sr-only">Empty Column</div></th><th name="search" align="center" class=" col-control list-decoration-table" scope="col" style="; vertical-align:middle;"><div><button aria-expanded="false" title="Show column search row" class="list_header_search_toggle icon-search btn btn-icon table-btn-lg" aria-controls="cmdb_model_category_table_header_search_control" style="margin-left:0px" data-original-title="Show column search row"><span class="sr-only">Show column search row</span></button></div></th><th name="name" class="text-align-left list_header_cell list_hdr " glide_label="Name" glide_field="cmdb_model_category.name" composite_edit_field="" glide_type="string" filterable="true" groupable="true" sortable="true" sort_dir="ASC" align="left" scope="col" style=";" data-type="list2_hdrcell" data-list_id="cmdb_model_category" role="columnheader" aria-sort="ascending"><span class="list_header_cell_container"><a class="column_head list_hdrcell table-col-header" role="button" title="Sorted in ascending order. Display name of the category" tabindex="0" data-type="list2_hdrcell" data-list_id="cmdb_model_category" data-original-title="Sorted in ascending order. Display name of the category">Name</a><span aria-hidden="true" class="sort-icon column_header_icon"><a href="#" class="col-change-sort sort_column_header" tabindex="-1" data-type="list2_hdrcell"><i class="sort-icon-padding list-column-icon icon-vcr-up" style="visibility: visible;"></i></a></span><i class="icon-ellipsis-vertical col-menu list_header_context list-column-icon" aria-haspopup="true" data-type="list2_hdricon" role="button" tabindex="0" title="Column options" aria-label="Name column options" data-original-title="Column options"></i></span></th></tr><tr class="list_header list_header_search_row" data-open-onload="false" data-open-ongoto="true"><td></td><td></td><td name="name" class="text-align-left list_hdrcell list_hdr" align="left" style="" data-type="list2_hdrcell" data-glide-type="string" data-glide-reference-name="" data-choice="0" data-list_id="cmdb_model_category"><div class="list_header_search"><div class="list_header_search"><div class="input-group-transparent"><input type="search" placeholder="Search" aria-label="Search column: name" class="list_header_search  form-control form-control-search" id="cmdb_model_category_table_header_search_control"></div></div></div></td></tr></thead><tbody class="list2_body -sticky-group-headers"><tr id="row_cmdb_model_category_c9d5bc50c3031000b959fd251eba8fbc" class="list_row list_odd  " style="" sys_id="c9d5bc50c3031000b959fd251eba8fbc" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:27" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="c9d5bc50c3031000b959fd251eba8fbc" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','c9d5bc50c3031000b959fd251eba8fbc','Accessory'); return false;" tabindex="0">Accessory</a></td></tr><tr id="row_cmdb_model_category_55d57c14c3031000b959fd251eba8fa6" class="list_row list_even  " style="" sys_id="55d57c14c3031000b959fd251eba8fa6" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:26" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="55d57c14c3031000b959fd251eba8fa6" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','55d57c14c3031000b959fd251eba8fa6','AIX Server'); return false;" tabindex="0">AIX Server</a></td></tr><tr id="row_cmdb_model_category_37d57c14c3031000b959fd251eba8fad" class="list_row list_odd  " style="" sys_id="37d57c14c3031000b959fd251eba8fad" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:26" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="37d57c14c3031000b959fd251eba8fad" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','37d57c14c3031000b959fd251eba8fad','Application'); return false;" tabindex="0">Application</a></td></tr><tr id="row_cmdb_model_category_aad57c14c3031000b959fd251eba8fc0" class="list_row list_even  " style="" sys_id="aad57c14c3031000b959fd251eba8fc0" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:27" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="aad57c14c3031000b959fd251eba8fc0" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','aad57c14c3031000b959fd251eba8fc0','Application Server'); return false;" tabindex="0">Application Server</a></td></tr><tr id="row_cmdb_model_category_83c92540732623008b516cb63cf6a7b1" class="list_row list_odd  " style="" sys_id="83c92540732623008b516cb63cf6a7b1" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:27" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="83c92540732623008b516cb63cf6a7b1" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','83c92540732623008b516cb63cf6a7b1','Application Service'); return false;" tabindex="0">Application Service</a></td></tr><tr id="row_cmdb_model_category_69d57c14c3031000b959fd251eba8fc7" class="list_row list_even  " style="" sys_id="69d57c14c3031000b959fd251eba8fc7" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:26" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="69d57c14c3031000b959fd251eba8fc7" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','69d57c14c3031000b959fd251eba8fc7','Application Software'); return false;" tabindex="0">Application Software</a></td></tr><tr id="row_cmdb_model_category_a0d5bc14c3031000b959fd251eba8f0d" class="list_row list_odd  " style="" sys_id="a0d5bc14c3031000b959fd251eba8f0d" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:27" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="a0d5bc14c3031000b959fd251eba8f0d" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','a0d5bc14c3031000b959fd251eba8f0d','BEA Weblogic'); return false;" tabindex="0">BEA Weblogic</a></td></tr><tr id="row_cmdb_model_category_94028b6a1b5310002502fbcd2c071315" class="list_row list_even  " style="" sys_id="94028b6a1b5310002502fbcd2c071315" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:27" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="94028b6a1b5310002502fbcd2c071315" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','94028b6a1b5310002502fbcd2c071315','Bundle'); return false;" tabindex="0">Bundle</a></td></tr><tr id="row_cmdb_model_category_2dd5bc14c3031000b959fd251eba8f32" class="list_row list_odd  " style="" sys_id="2dd5bc14c3031000b959fd251eba8f32" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:26" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="2dd5bc14c3031000b959fd251eba8f32" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','2dd5bc14c3031000b959fd251eba8f32','Business Process'); return false;" tabindex="0">Business Process</a></td></tr><tr id="row_cmdb_model_category_a1d5bc14c3031000b959fd251eba8f5f" class="list_row list_even  " style="" sys_id="a1d5bc14c3031000b959fd251eba8f5f" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:27" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="a1d5bc14c3031000b959fd251eba8f5f" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','a1d5bc14c3031000b959fd251eba8f5f','Business Service'); return false;" tabindex="0">Business Service</a></td></tr><tr id="row_cmdb_model_category_89d5f814c3031000b959fd251eba8f08" class="list_row list_odd  " style="" sys_id="89d5f814c3031000b959fd251eba8f08" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:27" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="89d5f814c3031000b959fd251eba8f08" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','89d5f814c3031000b959fd251eba8f08','Circuit'); return false;" tabindex="0">Circuit</a></td></tr><tr id="row_cmdb_model_category_68d5f814c3031000b959fd251eba8f0f" class="list_row list_even  " style="" sys_id="68d5f814c3031000b959fd251eba8f0f" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:26" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="68d5f814c3031000b959fd251eba8f0f" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','68d5f814c3031000b959fd251eba8f0f','Cluster'); return false;" tabindex="0">Cluster</a></td></tr><tr id="row_cmdb_model_category_b2d5bc14c3031000b959fd251eba8f96" class="list_row list_odd  " style="" sys_id="b2d5bc14c3031000b959fd251eba8f96" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:27" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="b2d5bc14c3031000b959fd251eba8f96" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','b2d5bc14c3031000b959fd251eba8f96','Cluster Node'); return false;" tabindex="0">Cluster Node</a></td></tr><tr id="row_cmdb_model_category_ddd5bc14c3031000b959fd251eba8fb5" class="list_row list_even  " style="" sys_id="ddd5bc14c3031000b959fd251eba8fb5" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:27" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="ddd5bc14c3031000b959fd251eba8fb5" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','ddd5bc14c3031000b959fd251eba8fb5','Cluster Resource'); return false;" tabindex="0">Cluster Resource</a></td></tr><tr id="row_cmdb_model_category_8cd5bc14c3031000b959fd251eba8fbc" class="list_row list_odd  " style="" sys_id="8cd5bc14c3031000b959fd251eba8fbc" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:27" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="8cd5bc14c3031000b959fd251eba8fbc" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','8cd5bc14c3031000b959fd251eba8fbc','Cluster Virtual IP'); return false;" tabindex="0">Cluster Virtual IP</a></td></tr><tr id="row_cmdb_model_category_b7d5bc14c3031000b959fd251eba8fd0" class="list_row list_even  " style="" sys_id="b7d5bc14c3031000b959fd251eba8fd0" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:27" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="b7d5bc14c3031000b959fd251eba8fd0" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','b7d5bc14c3031000b959fd251eba8fd0','Communication Device'); return false;" tabindex="0">Communication Device</a></td></tr><tr id="row_cmdb_model_category_8c4cfdfb77b1a110da1f99f69c5a99d3" class="list_row list_odd  " style="" sys_id="8c4cfdfb77b1a110da1f99f69c5a99d3" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:27" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="8c4cfdfb77b1a110da1f99f69c5a99d3" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','8c4cfdfb77b1a110da1f99f69c5a99d3','Communication Hardware'); return false;" tabindex="0">Communication Hardware</a></td></tr><tr id="row_cmdb_model_category_81feb9c137101000deeabfc8bcbe5dc4" class="list_row list_even  " style="" sys_id="81feb9c137101000deeabfc8bcbe5dc4" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:27" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="81feb9c137101000deeabfc8bcbe5dc4" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','81feb9c137101000deeabfc8bcbe5dc4','Computer'); return false;" tabindex="0">Computer</a></td></tr><tr id="row_cmdb_model_category_57d5bc14c3031000b959fd251eba8fd7" class="list_row list_odd  " style="" sys_id="57d5bc14c3031000b959fd251eba8fd7" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:26" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="57d5bc14c3031000b959fd251eba8fd7" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','57d5bc14c3031000b959fd251eba8fd7','Computer Peripheral'); return false;" tabindex="0">Computer Peripheral</a></td></tr><tr id="row_cmdb_model_category_a5d63890c3031000b959fd251eba8f75" class="list_row list_even  " style="" sys_id="a5d63890c3031000b959fd251eba8f75" record_class="cmdb_model_category" data-updated-on="2023-08-24 07:21:27" collapsed="true" data-type="list2_row" data-list_id="cmdb_model_category"><td class="list_decoration_cell col-control col-small col-center " style="white-space:nowrap;" rowspan="1" colspan=""></td><td class="list_decoration_cell col-small col-center " rowspan="1"><span class="table-btn-lg" align="center" style="margin-left:12px" aria-hidden="true"><i class="icon-circle-solid"></i></span></td><td style="" adp_encrypted="false"><a role="button" class="glide_ref_item_link" sys_id="a5d63890c3031000b959fd251eba8f75" onclick="top.window.opener.reflistPick('alm_asset.model_category.227e6002273a90227b880227a7102272','a5d63890c3031000b959fd251eba8f75','Computer Room'); return false;" tabindex="0">Computer Room</a></td></tr></tbody></table></div><div class="list_hide_empty" style=""><table class="list_nav list_nav_bottom " role="presentation"><tbody><tr class="list_nav  "><td></td><td width="100%" class="text-align-right" nowrap="true"><span id="0966c11d93ddf2105cf7ff95dd03d6e7_vcr" style=""><button id="0966c11d93ddf2105cf7ff95dd03d6e7_first" name="vcr_first" data-nav="true" class="list_nav  btn btn-icon h_flip_content tab_button_disabled" title="First page" aria-label="First page" disabled="" data-original-title="First page"><span class="icon-vcr-left" aria-hidden="true"></span><span class="icon-vcr-left" aria-hidden="true"></span></button><button id="0966c11d93ddf2105cf7ff95dd03d6e7_back" data-nav="true" name="vcr_back" class="list_nav  btn btn-icon h_flip_content tab_button_disabled" title="Previous page" aria-label="Previous page" disabled="" data-original-title="Previous page"><span class="icon-vcr-left" aria-hidden="true"></span></button><div class="vcr_controls"><input aria-label="Skip to row" id="listv2_0966c11d93ddf2105cf7ff95dd03d6e7_first_row" aria-describedby="0966c11d93ddf2105cf7ff95dd03d6e7_description_of_skip_to" class="list_row_number_input form-control  " autocomplete="off" title="Skip to row" style="color:rgb(72, 85, 99); display:inline; height:21px" data-original-title="Skip to row"><span class="sr-only" id="0966c11d93ddf2105cf7ff95dd03d6e7_description_of_skip_to">Showing rows 1 to 20 of 128</span><span style="margin-left: 5px;" class=" list_row_number_input ">
+					to
+					<span id="listv2_0966c11d93ddf2105cf7ff95dd03d6e7_last_row" style="margin-left: 1px; margin-right: 1px">20</span>
+								of
+								<span id="listv2_0966c11d93ddf2105cf7ff95dd03d6e7_total_rows" style="margin-left: 1px;">128</span></span></div><button id="0966c11d93ddf2105cf7ff95dd03d6e7_next" data-nav="true" name="vcr_next" class="list_nav  btn btn-icon h_flip_content" title="Next page" aria-label="Next page" data-original-title="Next page"><span class="icon-vcr-right" aria-hidden="true"></span></button><button id="0966c11d93ddf2105cf7ff95dd03d6e7_last" data-nav="true" name="vcr_last" class="list_nav  btn btn-icon h_flip_content" title="Last page" aria-label="Last page" data-original-title="Last page"><span class="icon-vcr-right" aria-hidden="true"></span><span class="icon-vcr-right" aria-hidden="true"></span></button></span><span id="0966c11d93ddf2105cf7ff95dd03d6e7_rep_vcr" style="display: none;"><span class="list_nav_vcr list_row_number_input "><span id="0966c11d93ddf2105cf7ff95dd03d6e7_rep_total_rows" style="padding-right: 5px;">0</span><span id="0966c11d93ddf2105cf7ff95dd03d6e7_rep_plural_label" style="display: none;">Model Categories</span><span id="0966c11d93ddf2105cf7ff95dd03d6e7_rep_singular_label" style="display: none;">Model Category</span>
+                 &nbsp;
+            </span></span><script>addLoadEvent(function() {new GlideWidgetVCR('0966c11d93ddf2105cf7ff95dd03d6e7', 'cmdb_model_category', false && true)})</script></td><td></td></tr></tbody></table><script>addLoadEvent(function() {new GlideWidgetHideOnEmpty('c966c11d93ddf2105cf7ff95dd03d6e7', 'cmdb_model_category')})</script></div></div></div></span></div><script id="context.titleMenu.cmdb_model_category" type="text/context">var list = GlideList2.get('cmdb_model_category');
+		list.titleMenu.clear();list.titleMenu.add('216ac28a0a0a0bb200af43eb879c30ae','216ac28a0a0a0bb200af43eb879c30ae','','Refresh List','action','','1000','','true');
+    list.titleMenu.add('385356ad0a0a0b7c00b3d75ea03e5eb4','385356ad0a0a0b7c00b3d75ea03e5eb4','','Show','menu','','990','','true');
+    list.titleMenu.add('b17a69630a0a0bbb00f2601a9fa1e2da','b17a69630a0a0bbb00f2601a9fa1e2da','','Filters','menu','','300','','true');
+    list.titleMenu.add('5333d89053301300edf6296906dc3483','--personal--','b17a69630a0a0bbb00f2601a9fa1e2da','\u003Cspan>Edit personal filters\u003C/span>','action','editPersonalFilters();','0','','false');
+    list.titleMenu.add('b16a46bd0a0a0bbb007f8195366a63c0','','b169dd7f0a0a0bbb0062fb97a5ea1e1c','Default view','action','changeView(\'\')','0','','false');
+    list.titleMenu.add('b16a46bd0a0a0bbb007f8195366a63c0','','b169dd7f0a0a0bbb0062fb97a5ea1e1c','Reference List','action','','1','images/checked.pngx','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','--none--','b16a5dbe0a0a0bbb00043b7b284050b6','-- None --','action','groupList(\'\');','0','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','allow_as_master','b16a5dbe0a0a0bbb00043b7b284050b6','Allow as main','action','groupList(\'allow_as_master\');','1','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','allow_in_bundle','b16a5dbe0a0a0bbb00043b7b284050b6','Allow in bundle','action','groupList(\'allow_in_bundle\');','2','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','allow_pre_allocation','b16a5dbe0a0a0bbb00043b7b284050b6','Allow pre-allocation','action','groupList(\'allow_pre_allocation\');','3','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','asset_class','b16a5dbe0a0a0bbb00043b7b284050b6','Asset class','action','groupList(\'asset_class\');','4','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','bundle','b16a5dbe0a0a0bbb00043b7b284050b6','Bundle','action','groupList(\'bundle\');','5','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','cmdb_ci_class','b16a5dbe0a0a0bbb00043b7b284050b6','CI class','action','groupList(\'cmdb_ci_class\');','6','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','sys_created_by','b16a5dbe0a0a0bbb00043b7b284050b6','Created by','action','groupList(\'sys_created_by\');','7','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','sys_domain','b16a5dbe0a0a0bbb00043b7b284050b6','Domain','action','groupList(\'sys_domain\');','8','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','sys_domain_path','b16a5dbe0a0a0bbb00043b7b284050b6','Domain Path','action','groupList(\'sys_domain_path\');','9','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','enforce_verification','b16a5dbe0a0a0bbb00043b7b284050b6','Enforce CI verification','action','groupList(\'enforce_verification\');','10','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','is_product_instance','b16a5dbe0a0a0bbb00043b7b284050b6','Is product instance','action','groupList(\'is_product_instance\');','11','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','name','b16a5dbe0a0a0bbb00043b7b284050b6','Name','action','groupList(\'name\');','12','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','ootb_category','b16a5dbe0a0a0bbb00043b7b284050b6','Out of the box category','action','groupList(\'ootb_category\');','13','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','parent_cateogry','b16a5dbe0a0a0bbb00043b7b284050b6','Parent category','action','groupList(\'parent_cateogry\');','14','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','picture','b16a5dbe0a0a0bbb00043b7b284050b6','Picture or icon','action','groupList(\'picture\');','15','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','product_model_class','b16a5dbe0a0a0bbb00043b7b284050b6','Product model class','action','groupList(\'product_model_class\');','16','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','sys_tags','b16a5dbe0a0a0bbb00043b7b284050b6','Tags','action','groupList(\'sys_tags\');','17','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','code','b16a5dbe0a0a0bbb00043b7b284050b6','UNSPSC code','action','groupList(\'code\');','18','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','sys_updated_by','b16a5dbe0a0a0bbb00043b7b284050b6','Updated by','action','groupList(\'sys_updated_by\');','19','','false');
+    list.titleMenu.add('b179cdcb0a0a0bbb0042ab71456d775d','sys_mod_count','b16a5dbe0a0a0bbb00043b7b284050b6','Updates','action','groupList(\'sys_mod_count\');','20','','false');
+    list.titleMenu.add('385f79170a0a0b7c001c5cbbe69fc175','10','385356ad0a0a0b7c00b3d75ea03e5eb4','10 rows per page','action','showRowsPerPage(\"10\");','10','','false');
+    list.titleMenu.add('385f79170a0a0b7c001c5cbbe69fc175','15','385356ad0a0a0b7c00b3d75ea03e5eb4','15 rows per page','action','showRowsPerPage(\"15\");','15','','false');
+    list.titleMenu.add('385f79170a0a0b7c001c5cbbe69fc175','20','385356ad0a0a0b7c00b3d75ea03e5eb4','20 rows per page','action','showRowsPerPage(\"20\");','20','images/checked.pngx','false');
+    list.titleMenu.add('385f79170a0a0b7c001c5cbbe69fc175','50','385356ad0a0a0b7c00b3d75ea03e5eb4','50 rows per page','action','showRowsPerPage(\"50\");','50','','false');
+    list.titleMenu.add('385f79170a0a0b7c001c5cbbe69fc175','100','385356ad0a0a0b7c00b3d75ea03e5eb4','100 rows per page','action','showRowsPerPage(\"100\");','100','','false');
+    list.titleMenu.add('b187d9030a0a0bbb0039fce0ffe1e5c1','--none--','b17a69630a0a0bbb00f2601a9fa1e2da','-- None --','action','g_list.setFilterAndRefresh(\"\");','1','','false');
+    list.titleMenu.add('create_favorite','create_favorite', '','Create Favorite','action','showCreateFavoriteModal()','2000','','false');
+			function showCreateFavoriteModal() {
+				MagellanCreateFavorites.addFavorite({
+					title : 'Model Categories',
+					icon : 'list'
+				});
+			}if (list && list.getRelated() && list.titleMenu && GlideList2.listsMap){ list.setupRelatedListContextMenuItems(); }</script><script id="context.headerMenu.cmdb_model_category" type="text/context">var list = GlideList2.get('cmdb_model_category');
+			list.headerMenu.clear();list.headerMenu.add('41a60a53471331004695d7527c9a7164','41a60a53471331004695d7527c9a7164','d1ad2f010a0a0b3e005c8b7fbd7c4e28','Export Set','action','','500','','false');
+    list.headerMenu.add('5402b80e9fa322005cf3ffa4677fcf10','5402b80e9fa322005cf3ffa4677fcf10','d1ad2f010a0a0b3e005c8b7fbd7c4e28','JSON','action','','350','','false');
+    list.headerMenu.add('731a31e7bf460100e628555b3f073957','731a31e7bf460100e628555b3f073957','','','line','','1300','','false');
+    list.headerMenu.add('a2c38e980a0a0b3000d5190f4752094c','a2c38e980a0a0b3000d5190f4752094c','','Configure','menu','','1040','','false');
+    list.headerMenu.add('ab7f76d70ad33702005f177f6d3a7145','ab7f76d70ad33702005f177f6d3a7145','','Sort (a to z)','action','','1000','','false');
+    list.headerMenu.add('ab8369ac0ad337020058ada2a743863a','ab8369ac0ad337020058ada2a743863a','','Sort (z to a)','action','','1010','','false');
+    list.headerMenu.add('ab845d300ad33702008cbf08895d727b','ab845d300ad33702008cbf08895d727b','','','line','','1030','','false');
+    list.headerMenu.add('b0b807c087702100deddb882a2e3ece0','b0b807c087702100deddb882a2e3ece0','','Create Application Files','action','','1115','','false');
+    list.headerMenu.add('c144b37c0a0a0b3e00949d7e31182a94','c144b37c0a0a0b3e00949d7e31182a94','a2c38e980a0a0b3000d5190f4752094c','List Layout','action','','10','','false');
+    list.headerMenu.add('c229daa70a0a0b3e00bfd5294a92cb0e','c229daa70a0a0b3e00bfd5294a92cb0e','a2c38e980a0a0b3000d5190f4752094c','List Calculations','action','','20','','false');
+    list.headerMenu.add('c28441330a0a0b3e009ac756d9348c5a','c28441330a0a0b3e009ac756d9348c5a','a2c38e980a0a0b3000d5190f4752094c','List Control','action','','30','','false');
+    list.headerMenu.add('c8c2eae10a0004e30084537138ba00ed','c8c2eae10a0004e30084537138ba00ed','','Expand/Collapse All','action','','500','','true');
+    list.headerMenu.add('d1cd92f20a0a0b3e00b44ff90470380e','d1cd92f20a0a0b3e00b44ff90470380e','d1ad2f010a0a0b3e005c8b7fbd7c4e28','CSV','action','','200','','false');
+    list.headerMenu.add('d1ceb4790a0a0b3e0086e9a19b8d9657','d1ceb4790a0a0b3e0086e9a19b8d9657','d1ad2f010a0a0b3e005c8b7fbd7c4e28','XML','action','','300','','false');
+    list.headerMenu.add('d1e5d8a50a0a0b3e00459c252c81e649','d1e5d8a50a0a0b3e00459c252c81e649','d1ad2f010a0a0b3e005c8b7fbd7c4e28','PDF','menu','','400','','false');
+    list.headerMenu.add('d1e68f410a0a0b3e002c9785414de051','d1e68f410a0a0b3e002c9785414de051','d1e5d8a50a0a0b3e00459c252c81e649','Portrait','action','','100','','false');
+    list.headerMenu.add('d1e7d68b0a0a0b3e002f4618e3755d86','d1e7d68b0a0a0b3e002f4618e3755d86','d1e5d8a50a0a0b3e00459c252c81e649','Landscape','action','','200','','false');
+    list.headerMenu.add('d1e8971a0a0a0b3e00c9e1fc881affd3','d1e8971a0a0a0b3e00c9e1fc881affd3','d1e5d8a50a0a0b3e00459c252c81e649','Detailed Portrait','action','','300','','false');
+    list.headerMenu.add('d1e93cc80a0a0b3e007e913c2485c9e1','d1e93cc80a0a0b3e007e913c2485c9e1','d1e5d8a50a0a0b3e00459c252c81e649','Detailed Landscape','action','','400','','false');
+    list.headerMenu.add('f13f0041473012003db6d7527c9a71f0','f13f0041473012003db6d7527c9a71f0','d1ad2f010a0a0b3e005c8b7fbd7c4e28','Excel (.xlsx)','action','','100','','false');
+    </script><script id="context.rowMenu.cmdb_model_category" type="text/context">var list = GlideList2.get('cmdb_model_category');
+			list.rowMenu.clear();list.rowMenu.add('3dce86d3c0a800664664155da3434875','3dce86d3c0a800664664155da3434875','','Assign Tag','menu','','95','','false');
+    list.rowMenu.add('e1990773c0a80a6d0f81499a5c80c069','e1990773c0a80a6d0f81499a5c80c069','','Show After','action','','25','','false');
+    list.rowMenu.add('e1d5cb8ec0a80a6d006da0404916035e','e1d5cb8ec0a80a6d006da0404916035e','','Show Before','action','','25','','false');
+    list.rowMenu.add('eaeb7ec50a0a0b3e00e0a8a429344e86','eaeb7ec50a0a0b3e00e0a8a429344e86','','Copy sys_id','action','','50','','false');
+    list.rowMenu.add('eb6c4d1b0a0a0b3e0029fbb8fee7a7a8','eb6c4d1b0a0a0b3e0029fbb8fee7a7a8','','','line','','30','','false');
+    list.rowMenu.add('ed38768dc0a80066001cd51eca319cc9','ed38768dc0a80066001cd51eca319cc9','','Show Matching','action','','10','','false');
+    list.rowMenu.add('ee21f9a7c0a8006600a47b4baccf6a83','ee21f9a7c0a8006600a47b4baccf6a83','','Filter Out','action','','20','','false');
+    list.rowMenu.add('eeca263ac0a80066000245d1d9169203','eeca263ac0a80066000245d1d9169203','','','line','','90','','false');
+    list.rowMenu.add('eadec6df0a0a0b3e00a3c8b0465c1ed9','copy_url','','Copy URL to Clipboard','action','copyURL(\'https://empmassimo23.service-now.com/\');','40','','false');list.rowMenu.add('eb7353310a0a0b3e0067aebf230c81db','--newTag--','3dce86d3c0a800664664155da3434875','New Tag...','action','assignNewLabelAction()','100','','false');
+    list.rowMenu.add('eb7353310a0a0b3e0067aebf230c81db','assign_label','3dce86d3c0a800664664155da3434875','Android','action','assignLabelAction(\'Android\')','101','','false');
+    list.rowMenu.add('eb7353310a0a0b3e0067aebf230c81db','assign_label','3dce86d3c0a800664664155da3434875','Java','action','assignLabelAction(\'Java\')','102','','false');
+    list.rowMenu.add('eb7353310a0a0b3e0067aebf230c81db','assign_label','3dce86d3c0a800664664155da3434875','JavaScript','action','assignLabelAction(\'JavaScript\')','103','','false');
+    list.rowMenu.add('eb7353310a0a0b3e0067aebf230c81db','assign_label','3dce86d3c0a800664664155da3434875','Development','action','assignLabelAction(\'Development\')','104','','false');
+    list.rowMenu.add('eb7353310a0a0b3e0067aebf230c81db','assign_label','3dce86d3c0a800664664155da3434875','Security Center Suites','action','assignLabelAction(\'Security Center Suites\')','105','','false');
+    list.rowMenu.add('eb7353310a0a0b3e0067aebf230c81db','assign_label','3dce86d3c0a800664664155da3434875','EVAM configuration for Search','action','assignLabelAction(\'EVAM configuration for Search\')','106','','false');
+    list.rowMenu.add('eb7353310a0a0b3e0067aebf230c81db','assign_label','3dce86d3c0a800664664155da3434875','Includes code','action','assignLabelAction(\'Includes code\')','107','','false');
+    list.rowMenu.add('eb7353310a0a0b3e0067aebf230c81db','assign_label','3dce86d3c0a800664664155da3434875','Now Intelligence','action','assignLabelAction(\'Now Intelligence\')','108','','false');
+    list.rowMenu.add('eb7353310a0a0b3e0067aebf230c81db','--moreTags--','3dce86d3c0a800664664155da3434875','More...','action','promptWithMoreTagChoices()','109','','false');
+    </script><script data-comment="list edit js variables">g_list_edit_enable_property = 'true';
+			g_list_edit_enable = true;
+			g_list_edit_double = true;
+			g_list_edit_ignore_types = "html,document_id,conditions,template_value,glide_time,currency,price,user_image,video,field_list,domain_number,domain_path,glide_list,glide_action_list,currency2,file_attachment,translated_html";
+			g_list_edit_version_2 = "true";
+			g_list_edit_grid = "false";addLoadEvent(function() {addUnloadEvent(GlideList2.unload);});</script><script data-comment="onCellEdit">
+</script><script>addLoadEvent(function() { GlideList2.get('cmdb_model_category').loaded(); });
+
+        
+          if(false == false)
+              if(false == false)
+                  if(true == true)
+                      $j(window).on('load resize', function() {
+                          $j('.navbar .list_nav_top').css({position: 'fixed', top: 0});
+                      }).resize();</script>
+	
+	<div class="modal" id="createFavoritesModal" aria-labelledby="favorite_modal_title" name="create_favorites_modal" role="dialog">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content">
+				<header class="modal-header clearfix">
+					<button data-dismiss="modal" class="btn btn-icon close icon-cross">
+						<span class="sr-only">Close</span></button>
+					<h2 id="favorite_modal_title" class="modal-title pull-left h4">Create Favorite</h2></header>
+				<form class="create-favorite" name="create_favorite_form">
+					<div class="modal-body clearfix">
+					<div id="output_messages_favorite" class="outputmsg_container outputmsg_hide compact">
+						<button aria-label="Close Messages" class="btn btn-icon close icon-cross"></button>
+						<div class="outputmsg_div" aria-live="polite" role="region" data-server-messages="false"></div></div>
+						<div id="favorite_preview"><span></span></div>
+						<label class="sr-only" for="create_favorite_title" aria-labelledby="create_favorite_title">Bookmark title</label>
+						<input type="text" id="create_favorite_title" name="title" class="form-control" value="" aria-label="Bookmark title" aria-required="true" aria-invalid="false" placeholder="Bookmark title">
+						<input type="hidden" name="url" value="">
+						<input type="hidden" name="window_name" value="">
+						<input type="hidden" name="id" value="">
+						<input type="hidden" name="color" value="">
+						<div class="color-picker">
+							<fieldset id="icon_colors">
+								<legend class="sr-only">Color</legend><ul role="radiogroup" id="magellan-color-picker-colors"><li role="radio" name="color" aria-label="purple" id="favorite-color-purple" value="purple" class="color-option color-bg-purple" title="Purple" tabindex="0" aria-checked="false" data-original-title="Purple"></li><li role="radio" name="color" aria-label="blue" id="favorite-color-blue" value="blue" class="color-option color-bg-blue" title="Blue" tabindex="-1" aria-checked="false" data-original-title="Blue"></li><li role="radio" name="color" aria-label="cyan" id="favorite-color-cyan" value="cyan" class="color-option color-bg-cyan" title="Cyan" tabindex="-1" aria-checked="false" data-original-title="Cyan"></li><li role="radio" name="color" aria-label="aquamarine" id="favorite-color-aquamarine" value="aquamarine" class="color-option color-bg-aquamarine" title="Aquamarine" tabindex="-1" aria-checked="false" data-original-title="Aquamarine"></li><li role="radio" name="color" aria-label="green" id="favorite-color-green" value="green" class="color-option color-bg-green" title="Green" tabindex="-1" aria-checked="false" data-original-title="Green"></li><li role="radio" name="color" aria-label="yellow" id="favorite-color-yellow" value="yellow" class="color-option color-bg-yellow" title="Yellow" tabindex="-1" aria-checked="false" data-original-title="Yellow"></li><li role="radio" name="color" aria-label="orange" id="favorite-color-orange" value="orange" class="color-option color-bg-orange" title="Orange" tabindex="-1" aria-checked="false" data-original-title="Orange"></li><li role="radio" name="color" aria-label="burnt-orange" id="favorite-color-burnt-orange" value="burnt-orange" class="color-option color-bg-burnt-orange" title="Burnt-orange" tabindex="-1" aria-checked="false" data-original-title="Burnt-orange"></li><li role="radio" name="color" aria-label="red" id="favorite-color-red" value="red" class="color-option color-bg-red" title="Red" tabindex="-1" aria-checked="false" data-original-title="Red"></li><li role="radio" name="color" aria-label="pink" id="favorite-color-pink" value="pink" class="color-option color-bg-pink" title="Pink" tabindex="-1" aria-checked="false" data-original-title="Pink"></li><li role="radio" name="color" aria-label="fuschia" id="favorite-color-fuschia" value="fuschia" class="color-option color-bg-fuschia" title="Fuschia" tabindex="-1" aria-checked="false" data-original-title="Fuschia"></li><li role="radio" name="color" aria-label="white" id="favorite-color-white" value="white" class="color-option color-bg-white" title="White" tabindex="-1" aria-checked="false" data-original-title="White"></li></ul></fieldset></div>
+						<input type="hidden" name="icon" value="">
+						<div class="icon-picker">
+							<fieldset id="icon_picker" class="nav-edit-favorites-icon-grid">
+								<legend class="sr-only">Icon</legend><ul role="radiogroup" id="magellan-color-picker-icons"><li role="radio" name="icon" aria-label="favorite icon article-document" id="favorite-icon-article-document" class="option-icon icon-article-document" value="article-document" title="Article-document" tabindex="0" aria-checked="false" data-original-title="Article-document"></li><li role="radio" name="icon" aria-label="favorite icon user" id="favorite-icon-user" class="option-icon icon-user" value="user" title="User" tabindex="-1" aria-checked="false" data-original-title="User"></li><li role="radio" name="icon" aria-label="favorite icon user-group" id="favorite-icon-user-group" class="option-icon icon-user-group" value="user-group" title="User-group" tabindex="-1" aria-checked="false" data-original-title="User-group"></li><li role="radio" name="icon" aria-label="favorite icon lightbulb" id="favorite-icon-lightbulb" class="option-icon icon-lightbulb" value="lightbulb" title="Lightbulb" tabindex="-1" aria-checked="false" data-original-title="Lightbulb"></li><li role="radio" name="icon" aria-label="favorite icon home" id="favorite-icon-home" class="option-icon icon-home" value="home" title="Home" tabindex="-1" aria-checked="false" data-original-title="Home"></li><li role="radio" name="icon" aria-label="favorite icon mobile" id="favorite-icon-mobile" class="option-icon icon-mobile" value="mobile" title="Mobile" tabindex="-1" aria-checked="false" data-original-title="Mobile"></li><li role="radio" name="icon" aria-label="favorite icon comment" id="favorite-icon-comment" class="option-icon icon-comment" value="comment" title="Comment" tabindex="-1" aria-checked="false" data-original-title="Comment"></li><li role="radio" name="icon" aria-label="favorite icon mail" id="favorite-icon-mail" class="option-icon icon-mail" value="mail" title="Mail" tabindex="-1" aria-checked="false" data-original-title="Mail"></li><li role="radio" name="icon" aria-label="favorite icon locked" id="favorite-icon-locked" class="option-icon icon-locked" value="locked" title="Locked" tabindex="-1" aria-checked="false" data-original-title="Locked"></li><li role="radio" name="icon" aria-label="favorite icon database" id="favorite-icon-database" class="option-icon icon-database" value="database" title="Database" tabindex="-1" aria-checked="false" data-original-title="Database"></li><li role="radio" name="icon" aria-label="favorite icon book" id="favorite-icon-book" class="option-icon icon-book" value="book" title="Book" tabindex="-1" aria-checked="false" data-original-title="Book"></li><li role="radio" name="icon" aria-label="favorite icon drawer" id="favorite-icon-drawer" class="option-icon icon-drawer" value="drawer" title="Drawer" tabindex="-1" aria-checked="false" data-original-title="Drawer"></li><li role="radio" name="icon" aria-label="favorite icon folder" id="favorite-icon-folder" class="option-icon icon-folder" value="folder" title="Folder" tabindex="-1" aria-checked="false" data-original-title="Folder"></li><li role="radio" name="icon" aria-label="favorite icon catalog" id="favorite-icon-catalog" class="option-icon icon-catalog" value="catalog" title="Catalog" tabindex="-1" aria-checked="false" data-original-title="Catalog"></li><li role="radio" name="icon" aria-label="favorite icon tab" id="favorite-icon-tab" class="option-icon icon-tab" value="tab" title="Tab" tabindex="-1" aria-checked="false" data-original-title="Tab"></li><li role="radio" name="icon" aria-label="favorite icon cards" id="favorite-icon-cards" class="option-icon icon-cards" value="cards" title="Cards" tabindex="-1" aria-checked="false" data-original-title="Cards"></li><li role="radio" name="icon" aria-label="favorite icon tree-right" id="favorite-icon-tree-right" class="option-icon icon-tree-right" value="tree-right" title="Tree-right" tabindex="-1" aria-checked="false" data-original-title="Tree-right"></li><li role="radio" name="icon" aria-label="favorite icon tree" id="favorite-icon-tree" class="option-icon icon-tree" value="tree" title="Tree" tabindex="-1" aria-checked="false" data-original-title="Tree"></li><li role="radio" name="icon" aria-label="favorite icon book-open" id="favorite-icon-book-open" class="option-icon icon-book-open" value="book-open" title="Book-open" tabindex="-1" aria-checked="false" data-original-title="Book-open"></li><li role="radio" name="icon" aria-label="favorite icon paperclip" id="favorite-icon-paperclip" class="option-icon icon-paperclip" value="paperclip" title="Paperclip" tabindex="-1" aria-checked="false" data-original-title="Paperclip"></li><li role="radio" name="icon" aria-label="favorite icon edit" id="favorite-icon-edit" class="option-icon icon-edit" value="edit" title="Edit" tabindex="-1" aria-checked="false" data-original-title="Edit"></li><li role="radio" name="icon" aria-label="favorite icon trash" id="favorite-icon-trash" class="option-icon icon-trash" value="trash" title="Trash" tabindex="-1" aria-checked="false" data-original-title="Trash"></li><li role="radio" name="icon" aria-label="favorite icon image" id="favorite-icon-image" class="option-icon icon-image" value="image" title="Image" tabindex="-1" aria-checked="false" data-original-title="Image"></li><li role="radio" name="icon" aria-label="favorite icon search" id="favorite-icon-search" class="option-icon icon-search" value="search" title="Search" tabindex="-1" aria-checked="false" data-original-title="Search"></li><li role="radio" name="icon" aria-label="favorite icon power" id="favorite-icon-power" class="option-icon icon-power" value="power" title="Power" tabindex="-1" aria-checked="false" data-original-title="Power"></li><li role="radio" name="icon" aria-label="favorite icon cog" id="favorite-icon-cog" class="option-icon icon-cog" value="cog" title="Cog" tabindex="-1" aria-checked="false" data-original-title="Cog"></li><li role="radio" name="icon" aria-label="favorite icon star" id="favorite-icon-star" class="option-icon icon-star" value="star" title="Star" tabindex="-1" aria-checked="false" data-original-title="Star"></li><li role="radio" name="icon" aria-label="favorite icon star-empty" id="favorite-icon-star-empty" class="option-icon icon-star-empty" value="star-empty" title="Star-empty" tabindex="-1" aria-checked="false" data-original-title="Star-empty"></li><li role="radio" name="icon" aria-label="favorite icon new-ticket" id="favorite-icon-new-ticket" class="option-icon icon-new-ticket" value="new-ticket" title="New-ticket" tabindex="-1" aria-checked="false" data-original-title="New-ticket"></li><li role="radio" name="icon" aria-label="favorite icon dashboard" id="favorite-icon-dashboard" class="option-icon icon-dashboard" value="dashboard" title="Dashboard" tabindex="-1" aria-checked="false" data-original-title="Dashboard"></li><li role="radio" name="icon" aria-label="favorite icon cart-full" id="favorite-icon-cart-full" class="option-icon icon-cart-full" value="cart-full" title="Cart-full" tabindex="-1" aria-checked="false" data-original-title="Cart-full"></li><li role="radio" name="icon" aria-label="favorite icon view" id="favorite-icon-view" class="option-icon icon-view" value="view" title="View" tabindex="-1" aria-checked="false" data-original-title="View"></li><li role="radio" name="icon" aria-label="favorite icon label" id="favorite-icon-label" class="option-icon icon-label" value="label" title="Label" tabindex="-1" aria-checked="false" data-original-title="Label"></li><li role="radio" name="icon" aria-label="favorite icon filter" id="favorite-icon-filter" class="option-icon icon-filter" value="filter" title="Filter" tabindex="-1" aria-checked="false" data-original-title="Filter"></li><li role="radio" name="icon" aria-label="favorite icon calendar" id="favorite-icon-calendar" class="option-icon icon-calendar" value="calendar" title="Calendar" tabindex="-1" aria-checked="false" data-original-title="Calendar"></li><li role="radio" name="icon" aria-label="favorite icon script" id="favorite-icon-script" class="option-icon icon-script" value="script" title="Script" tabindex="-1" aria-checked="false" data-original-title="Script"></li><li role="radio" name="icon" aria-label="favorite icon add" id="favorite-icon-add" class="option-icon icon-add" value="add" title="Add" tabindex="-1" aria-checked="false" data-original-title="Add"></li><li role="radio" name="icon" aria-label="favorite icon delete" id="favorite-icon-delete" class="option-icon icon-delete" value="delete" title="Delete" tabindex="-1" aria-checked="false" data-original-title="Delete"></li><li role="radio" name="icon" aria-label="favorite icon help" id="favorite-icon-help" class="option-icon icon-help" value="help" title="Help" tabindex="-1" aria-checked="false" data-original-title="Help"></li><li role="radio" name="icon" aria-label="favorite icon check-circle" id="favorite-icon-check-circle" class="option-icon icon-check-circle" value="check-circle" title="Check-circle" tabindex="-1" aria-checked="false" data-original-title="Check-circle"></li><li role="radio" name="icon" aria-label="favorite icon alert" id="favorite-icon-alert" class="option-icon icon-alert" value="alert" title="Alert" tabindex="-1" aria-checked="false" data-original-title="Alert"></li><li role="radio" name="icon" aria-label="favorite icon sort-ascending" id="favorite-icon-sort-ascending" class="option-icon icon-sort-ascending" value="sort-ascending" title="Sort-ascending" tabindex="-1" aria-checked="false" data-original-title="Sort-ascending"></li><li role="radio" name="icon" aria-label="favorite icon console" id="favorite-icon-console" class="option-icon icon-console" value="console" title="Console" tabindex="-1" aria-checked="false" data-original-title="Console"></li><li role="radio" name="icon" aria-label="favorite icon list" id="favorite-icon-list" class="option-icon icon-list" value="list" title="List" tabindex="-1" aria-checked="false" data-original-title="List"></li><li role="radio" name="icon" aria-label="favorite icon form" id="favorite-icon-form" class="option-icon icon-form" value="form" title="Form" tabindex="-1" aria-checked="false" data-original-title="Form"></li><li role="radio" name="icon" aria-label="favorite icon livefeed" id="favorite-icon-livefeed" class="option-icon icon-livefeed" value="livefeed" title="Livefeed" tabindex="-1" aria-checked="false" data-original-title="Livefeed"></li><li role="radio" name="icon" aria-label="favorite icon key" id="favorite-icon-key" class="option-icon icon-key" value="key" title="Key" tabindex="-1" aria-checked="false" data-original-title="Key"></li><li role="radio" name="icon" aria-label="favorite icon hr" id="favorite-icon-hr" class="option-icon icon-hr" value="hr" title="Hr" tabindex="-1" aria-checked="false" data-original-title="Hr"></li></ul></fieldset></div></div>
+					<div class="modal-footer">
+						<button data-dismiss="modal" type="button" class="btn btn-default">Cancel</button>
+						<button type="submit" class="btn btn-primary">Done</button></div></form>
+				<script type="text/javascript">
+					
+						window.MagellanCreateFavorites = {
+							navColors : ["purple","blue","cyan","aquamarine","green","yellow","orange","burnt-orange","red","pink","fuschia","white"],
+							navIcons : ["article-document","user","user-group","lightbulb","home","mobile","comment","mail","locked","database","book","drawer","folder","catalog","tab","cards","tree-right","tree","book-open","paperclip","edit","trash","image","search","power","cog","star","star-empty","new-ticket","dashboard","cart-full","view","label","filter","calendar","script","add","delete","help","check-circle","alert","sort-ascending","console","list","form","livefeed","key","hr"],
+							paramBlackList : ["sysparm_no_stack","sysparm_userpref_module","sysparm_record_target","sysparm_record_row","sysparm_record_rows","sysparm_record_list"]
+						};
+					</script>
+				<script type="text/javascript" src="/scripts/thirdparty/radio/radioButton.jsx?v=07-13-2025_0705"></script>
+				<script type="text/javascript" src="/scripts/thirdparty/radio/radioGroup.jsx?v=07-13-2025_0705"></script>
+				<script type="text/javascript" src="/scripts/magellan.CreateFavoriteModal.jsx?v=07-13-2025_0705"></script></div></div></div><script>CustomEvent.fireTop('magellanNavigator.historyAdded', {history : JSON.parse("{\"table\":\"cmdb_model_category\",\"timestamp\":1763419174000,\"id\":\"0166c11d93ddf2105cf7ff95dd03d6ea\",\"title\":\"Model Categories\",\"url\":\"cmdb_model_category_list.do?sysparm_target=alm_asset.model_category.227e6002273a90227b880227a7102272&sysparm_reference=cmdb_model_category&sysparm_view=sys_ref_list&sysparm_domain_restore=false&sysparm_clear_stack=true&sysparm_nameofstack=reflist&sysparm_element=model_category&\",\"prettyTitle\":\"Model Categories\",\"timestampOffset\":1763418274000,\"createdString\":\"2025-11-17 14:39:34\"}")});</script><script>(function() {
+			if (typeof openRL != 'function') {
+				openRL = function openRL() {
+					return true;
+				};
+			}
+		})();</script><script data-description="MessagesTag">(function() {
+ var messages = new GwtMessage();
+messages.set('{0} ({1})');
+messages.set('({0} of {1})');
+messages.set('%d ago');
+messages.set('%d from now');
+messages.set('just now');
+messages.set('less than a minute');
+messages.set('about a minute','%dm');
+messages.set('%d minutes','%dm');
+messages.set('about an hour');
+messages.set('about %d hours','%dh');
+messages.set('a day');
+messages.set('%d days','%dd');
+messages.set('about a month');
+messages.set('%d months','%dmo');
+messages.set('about a year');
+messages.set('about a year');
+messages.set('%d years','%dy');
+messages.set('(empty)');
+messages.set('New row');
+messages.set('New rows');
+messages.set('Insert a new row...');
+messages.set('Mark record for List Action');
+messages.set('View');
+messages.set('Delete');
+messages.set('Undelete');
+messages.set('Mark deleted');
+messages.set('Loading...');
+messages.set('A new {0} identified by {1} will be created upon save');
+messages.set('Display / hide hierarchical lists');
+messages.set('Show / hide filter');
+messages.set('Show / hide natural language filter');
+messages.set('Displays previous search result content');
+messages.set('Displays Next search result content');
+messages.set('Filtered {0} related list showing {1} to {2} of {3} records');
+messages.set('Unfiltered {0} related list showing {1} to {2} of {3} records');
+messages.set('Filtered {0} related list showing 0 records');
+messages.set('Unfiltered {0} related list showing 0 records');
+messages.set('Filtered {0} list showing {1} to {2} of {3} records');
+messages.set('Unfiltered {0} list showing {1} to {2} of {3} records');
+messages.set('Filtered {0} list showing 0 records');
+messages.set('Unfiltered {0} list showing 0 records');
+messages.set('from','From');
+messages.set('Coordinates');
+messages.set('Convert value to a different unit');
+})()</script><input type="hidden" id="sys_target" value="cmdb_model_category"><script data-comment="GlideUser initialization">
+		addTopRenderEvent( function() {
+			// user may have already been created
+			if (!window.g_user) {
+				window.g_user = new GlideUser('admin', 
+					  'System',
+					  'Administrator',
+					  'platform_ml_create,import_transformer,taxonomy_admin,ais_admin,catalog_builder_editor,nlu_admin,catalog_template_editor,catalog,catalog_lookup_admin,admin,ml_admin,platform_ml_read,platform_ml_write,chat_admin,search_application_admin,search_relevancy_model_admin,import_set_loader,catalog_admin,sn_ace.ace_user,import_scheduler,pa_viewer,nlu_editor,sn_hr_sp.esc_admin,sn_templated_snip.template_snippet_admin,nlu_user,personalize_dictionary,live_feed_admin,evam_admin,sn_hr_sp.admin,sn_templated_snip.template_snippet_writer,sp_admin,ml_labeler,pa_data_collector,import_admin,announcement_admin,sn_templated_snip.template_snippet_reader,teamdev_code_reviewer,agent_security_admin,user_criteria_admin,image_admin,sn_employee.admin,sn_nlu_workbench.nlu_feedback_admin',
+					  '6816f79cc0a8016401c5a33be04be441',
+					  'a581ab703710200044e0bfc8bcbe5de8');
+				window.g_user.setRoles('platform_ml_create,import_transformer,taxonomy_admin,ais_admin,catalog_builder_editor,nlu_admin,catalog_template_editor,catalog,catalog_lookup_admin,admin,ml_admin,platform_ml_read,platform_ml_write,chat_admin,search_application_admin,search_relevancy_model_admin,import_set_loader,catalog_admin,sn_ace.ace_user,import_scheduler,pa_viewer,nlu_editor,sn_hr_sp.esc_admin,sn_templated_snip.template_snippet_admin,nlu_user,personalize_dictionary,live_feed_admin,evam_admin,sn_hr_sp.admin,sn_templated_snip.template_snippet_writer,sp_admin,ml_labeler,pa_data_collector,import_admin,announcement_admin,sn_templated_snip.template_snippet_reader,teamdev_code_reviewer,agent_security_admin,user_criteria_admin,image_admin,sn_employee.admin,sn_nlu_workbench.nlu_feedback_admin', true);
+			}
+		    
+		    // We want to preload all useful client preferences that will be used by the UI. At the moment
+		    // we have to do this manually, but this should be replaced by a dynamic list.
+		    window.g_user.setPreference('glide.ui.accessibility', 'false');
+		});
+	</script><script>(function(){
+				if (NOW.isUsingPolaris) {
+					var timeOut = null;
+
+					CustomEvent.observe('content_frame.resized', debounceListResized);
+					CustomEvent.observe('frame.resized', debounceListResized);
+
+					function debounceListResized() {
+						clearTimeout(timeOut);
+						timeOut = setTimeout(listResize, 100);
+					}
+
+					function listResize() {
+						if (140 >= $j('.list_div').height())
+							$j(document.body).addClass('-zoom');
+						else
+							$j(document.body).removeClass('-zoom');
+					}
+				}
+			})()</script></div><div style="border:none; visibility:hidden"><form name="sys_personalize" method="GET" action="slushbucket.do"><input type="hidden" name="sysparm_referring_url" value="cmdb_model_category_list.do?sysparm_target=alm_asset.model_category.227e6002273a90227b880227a7102272@99@sysparm_reference=cmdb_model_category@99@sysparm_view=sys_ref_list@99@sysparm_domain_restore=false@99@sysparm_nameofstack=reflist@99@sysparm_element=model_category@99@"><input type="hidden" name="sysparm_view" value="sys_ref_list"></form></div><script type="text/javascript" src="/scripts/ui_page_footer.jsx?v=07-13-2025_0705"></script><span style="display:none" data-comments="js_includes_last_doctype"></span><script type="text/javascript" src="/scripts/thirdparty/dom_purify/purify.jsx?v=07-13-2025_0705&amp;sysparm_substitute=false"></script><script>NOW.xperf.lastDoctypeBegin = NOW.xperf.now();</script><script type="text/javascript" src="/scripts/doctype/js_includes_last_doctype.jsx?v=07-13-2025_0705&amp;lp=Fri_Oct_10_10_08_37_PDT_2025&amp;c=9_123"></script><script type="text/javascript" src="/scripts/heisenberg/heisenberg_all.jsx?v=07-13-2025_0705"></script><script type="text/javascript" src="/scripts/js_includes_list_edit_doctype.jsx?v=07-13-2025_0705&amp;lp=Fri_Oct_10_10_08_37_PDT_2025&amp;c=9_123"></script><script type="text/javascript" src="/scripts/transaction_scope_includes.jsx?v=07-13-2025_0705"></script><script>if ('') 
+			GlideTransactionScope.setTransactionScope('');
+		if ('') 
+			GlideTransactionScope.setRecordScope('');
+		if ('') 
+			GlideTransactionScope.setTransactionUpdateSet('');
+		if (typeof g_form != 'undefined')
+			$(g_form.getFormElement()).fire('glidescope:initialized', {gts : GlideTransactionScope});</script><span style="display:none" data-comments="requires"></span><script type="text/javascript" src="/scripts/classes/doctype/js_includes_listv2_doctype.jsx?v=07-13-2025_0705&amp;lp=Fri_Oct_10_10_08_37_PDT_2025&amp;c=9_123"></script><script type="text/javascript" src="/scripts/classes/timeAgo.jsx?v=07-13-2025_0705"></script><script>NOW.xperf.lastDoctypeEnd = NOW.xperf.now();</script><span style="display:none" data-comments="db_context_menu_script"></span><script>NOW.xperf.dbContextBegin = NOW.xperf.now();</script><script>GlideMenu.addScripts({"onScripts":{"216ac28a0a0a0bb200af43eb879c30ae":" \n","41a60a53471331004695d7527c9a7164":" \n","5402b80e9fa322005cf3ffa4677fcf10":" \n","731a31e7bf460100e628555b3f073957":" \n","ab7f76d70ad33702005f177f6d3a7145":"setSortable();\nfunction setSortable() {\n   var hdrCell = g_list.getHeaderCell(g_fieldName);\n   if (!hdrCell)\n      return;\n   var sortable = (getAttributeValue(hdrCell, 'sortable') == \"true\" && getAttributeValue(hdrCell, 'sort_dir') != \"ASC\");\n   if (sortable)\n      g_menu.setEnabled(g_item);\n   else\n      g_menu.setDisabled(g_item);\n}\n","ab8369ac0ad337020058ada2a743863a":"setSortable();\nfunction setSortable() {\n   var hdrCell = g_list.getHeaderCell(g_fieldName);\n   if (!hdrCell)\n      return;\n   var sortable = (getAttributeValue(hdrCell, 'sortable') == \"true\" && getAttributeValue(hdrCell, 'sort_dir') != \"DESC\");\n   if (sortable)\n      g_menu.setEnabled(g_item);\n   else\n      g_menu.setDisabled(g_item);\n}\n","b0b807c087702100deddb882a2e3ece0":" \n","b17a69630a0a0bbb00f2601a9fa1e2da":"setFilter();\r\n\r\nfunction setFilter() {\r\n   var menu = g_item.subMenu;\r\n   var query = g_list.getQuery({groupby: true});\r\n   if (query.endsWith('^'))\r\n      query = query.substring(0, query.length - 1);\r\n\r\n   menu.clearSelected();\r\n   if (query.startsWith('^'))\r\n      query = query.substring(1);\r\n\r\n   var item = menu.getItem(query);\r\n   if (item)\r\nmenu.setImage(item, \"images/checked.pngx\");\n}\n","c8c2eae10a0004e30084537138ba00ed":"setWorkflowExpandable();\r\n\r\nfunction setWorkflowExpandable() {\r\n   var hdrCell = g_list.getHeaderCell(g_fieldName);\r\n   if (!hdrCell)\r\n      return;\r\n\r\n   var workflow = (getAttributeValue(hdrCell, 'glide_type') == \"workflow\");\r\n   if (workflow)\r\n      g_menu.setVisible(g_item);\r\n   else\r\n      g_menu.setHidden(g_item);\r\n}\r\n","e1990773c0a80a6d0f81499a5c80c069":"setDateColumn();\nfunction setDateColumn() {\n   var hdrCell = g_list.getHeaderCell(g_fieldName);\n   if (!hdrCell)\n      return;\n   var type = getAttributeValue(hdrCell, 'glide_type');\n   var sortable = (getAttributeValue(hdrCell, 'sortable') == \"true\");\n   var isDateTime = (type == \"glide_date_time\" || type == \"glide_date\");\n   if (isDateTime) {\n\t   if(sortable)\n\t\t  g_menu.setVisible(g_item);\n\t   else\n\t\t  g_menu.setDisabled(g_item);\n   } else\n\t   g_menu.setHidden(g_item);\n}\n","e1d5cb8ec0a80a6d006da0404916035e":"setDateColumn();\nfunction setDateColumn() {\n   var hdrCell = g_list.getHeaderCell(g_fieldName);\n   if (!hdrCell)\n      return;\n   var type = getAttributeValue(hdrCell, 'glide_type');\n   var sortable = (getAttributeValue(hdrCell, 'sortable') == \"true\");\n   var isDateTime = (type == \"glide_date_time\" || type == \"glide_date\");\n   if (isDateTime) {\n\t   if(sortable)\n\t\t  g_menu.setVisible(g_item);\n\t   else\n\t\t  g_menu.setDisabled(g_item);\n   } else\n\t   g_menu.setHidden(g_item);\n}\n","ed38768dc0a80066001cd51eca319cc9":"setMatchable();\nfunction setMatchable() {\n   var hdrCell = g_list.getHeaderCell(g_fieldName);\n   if (!hdrCell)\n      return;\n   var filterable = (getAttributeValue(hdrCell, 'filterable') == \"true\");\n   var columnOK = (hdrCell.getAttribute('glide_type') != 'related_tags');\n\t\n   if (filterable && columnOK)\n      g_menu.setEnabled(g_item);\n   else\n      g_menu.setDisabled(g_item);\n}\n","ee21f9a7c0a8006600a47b4baccf6a83":"setFilterable();\nfunction setFilterable() {\n\t\n   var hdrCell = g_list.getHeaderCell(g_fieldName);\n\t\n   if (!hdrCell)\n      return;\n   var filterable = (getAttributeValue(hdrCell, 'filterable') == \"true\") && !(hdrCell.getAttribute('glide_type') == 'related_tags');\n\t   \n   if (filterable)\n      g_menu.setEnabled(g_item);\n   else\n      g_menu.setDisabled(g_item);\n}\n"},"scripts":{"216ac28a0a0a0bb200af43eb879c30ae":"g_list.refreshWithOrderBy(1);\n","41a60a53471331004695d7527c9a7164":"runContextAction();\nfunction runContextAction() {\n\tvar tableName = g_list.getTableName();\n\tvar fields = g_list.fields;\n\tvar query = g_list.getQuery({orderby:true});\n\t \n\tvar gr = new GlideRecord('sys_export_definition');\n\tgr.setValue('name', 'ed_t_'+tableName);\n\tgr.setValue('filter', query);\n\tgr.setValue('field_list', fields);\n\tgr.setValue('table_name', tableName);\n\tvar sysId = gr.insert();\n\t\n\tif(!sysId){\n\t\talert(\"Failed to create temporary export definition based on list view.\");\n\t}else{\n\t\tvar url = new GlideURL('sys_export_set.do');\n\t\turl.addParam('sys_id', '-1');\n\t\turl.addParam('sysparm_query', 'export_definition=' + sysId + '^name=es_t_' + tableName);\n\t\turl.addParam('sysparm_easy_export', 'true');\n\t\turl.addParam('sysparm_table', tableName);\t\t\n\t\twindow.location = url.getURL();\n\t}    \t\t\t\t\t\n} \n","5333d89053301300edf6296906dc3483":" \nfunction editPersonalFilters() {\n   var url = new GlideURL(\"sys_filter_list.do\");\n   url.addEncodedString(\"sysparm_query=table%3D\" + g_list.tableName + \"^user%3D\" + g_user.userID);\n   self.location = url.getURL();\n}\n","5402b80e9fa322005cf3ffa4677fcf10":"runContextAction();\n function runContextAction() {\n    var exportHandler = new ContextMenuExportHandler(g_list,'unload_json');\n    exportHandler.exportRecords();\n }\n \n","731a31e7bf460100e628555b3f073957":" \n","ab7f76d70ad33702005f177f6d3a7145":"runContextAction();\nfunction runContextAction() {\n   g_list.sort(g_fieldName);\n}\n","ab8369ac0ad337020058ada2a743863a":"runContextAction();\nfunction runContextAction() {\n   g_list.sortDescending(g_fieldName);\n}\n","b0b807c087702100deddb882a2e3ece0":"popAddMetadataDialog(); \nfunction popAddMetadataDialog() {\t\n  \tvar dialog = new GlideModal('add_selected_metadata_link_dialog');\n    dialog.setTitle(new GwtMessage().getMessage('Create Application Files from Records'));\n    dialog.setPreference('current_query', g_list.getQuery());\n\tdialog.setPreference('current_table', g_list.getTableName());\n\tdialog.render();\n}\n","b16a46bd0a0a0bbb007f8195366a63c0":"function changeView(view) {\r\n   var url = new GlideURL(g_list.getTableName() + '_list.do');\r\n   url.addParam('sysparm_view', view);\r\n   url.addParam('sysparm_userpref.' + g_list.getTableName() + '_list.view', view);\r\n   url.addParam('sysparm_userpref.' + g_list.getTableName() + '.view', view);\r\n   url.addParam('sysparm_query', g_list.getQuery({groupby: true}));\r\n   url.addParam('sysparm_fixed_query', g_list.getFixedQuery());\r\n   window.location = url.getURL();\r\n}\n","b179cdcb0a0a0bbb0042ab71456d775d":"function groupList(fieldName) {\n   g_list.setGroupBy(fieldName);\n   g_list.refresh(1);\n}\n","c144b37c0a0a0b3e00949d7e31182a94":" \nrunContextAction();\nfunction runContextAction() {\n   var url = new GlideURL('slushbucket.do');\n   url.addParam('sysparm_view', g_list.getView());\n   url.addParam('sysparm_referring_url', g_list.getReferringURL());\n   url.addParam('sysparm_form', 'list');\n   url.addParam('sysparm_user_list', g_list.isUserList().toString());\n   url.addParam('sysparm_list', g_list.tableName);\n   url.addParam('sysparm_collection', g_list.getParentTable());\n   var rel = g_list.getSubmitValue('sysparm_collection_relationship');\n   if (rel)\n      url.addParam('sysparm_collection_relationship' , rel);\n   \n   window.location = url.getURL();\n}\n","c229daa70a0a0b3e00bfd5294a92cb0e":"runContextAction();\nfunction runContextAction() {\n   var g = new GlideDialogWindow('Calculations');\n   g.setTitle(g_fieldLabel + ' (calculations)');\n   g.setDialog('personalize_aggregate');\n   g.setPreference(\"sysparm_list\", g_list.tableName);\n   g.setPreference(\"sysparm_list_element\", g_fieldName);\n   \n   var view = g_list.view;\n   if (!view)\n      view = '';\n   g.setPreference(\"sysparm_list_view\", view);\n   \n   var collection = g_list.getParentTable();\n   if (!collection)\n      collection = '';\n   g.setPreference(\"sysparm_list_parent\", collection);\n   \n   var rel = g_list.getSubmitValue('sysparm_collection_relationship');\n   if (!rel)\n      rel = '';\n   g.setPreference(\"sysparm_list_relationship\", rel);\n   g.render();\n}\n","c28441330a0a0b3e009ac756d9348c5a":"runContextAction();\nfunction runContextAction() {\n   var query;\n   var parentName = g_list.getParentTable();\n   if (parentName) {\n      var query = 'name=' + g_list.getParentTable();\n      query += '^related_list=' + g_list.getRelated();\n   } else\n      query = \"name=\" + g_list.getTableName() + \"^related_list=\";\n   var url;\n   if (!g_list.isEmbedded())\n      url = new GlideURL('sys_ui_list_control.do');\n   else\n      url = new GlideURL('sys_ui_list_control_embedded.do');\n   url.addParam('sys_id', g_list.getListControlID());\n   if (query)\n      url.addEncodedString(\"&sysparm_query=\" + query);\n   window.location = url.getURL();\n}\n","c8c2eae10a0004e30084537138ba00ed":"\r\nexpandThisColumn();\r\nfunction expandThisColumn() {\r\n  var cp = getPreference('workflow.expanded.' + g_list.getTableName());\r\n  setPreference('workflow.expanded.' + g_list.getTableName(), cp == 'true' ? 'false' : 'true');\r\n  toggleItems(null, cp);\r\n}\n","d1cd92f20a0a0b3e00b44ff90470380e":" runContextAction();\n  \n function runContextAction() {\n    var exportHandler = new ContextMenuExportHandler(g_list,'unload_csv');\n    exportHandler.exportRecords();\n }\n","d1ceb4790a0a0b3e0086e9a19b8d9657":"runContextAction();\nfunction runContextAction() {\n    var exportHandler = new ContextMenuExportHandler(g_list,'unload_xml');\n    exportHandler.exportRecords();\n}\n","d1e68f410a0a0b3e002c9785414de051":"runContextAction();\nfunction runContextAction() {\n   \n   var sysparm_rows = g_list.grandTotalRows;\n   var num_rows = parseInt(sysparm_rows);\n   var sysparm_query = g_list.getQuery({all: true});\n   \n   var sysparm_view = g_list.view;\n   if (num_rows < g_export_warn_threshold) {\n      var dialog = new GwtPollDialog(g_list.tableName, sysparm_query, sysparm_rows, sysparm_view, 'unload_pdf');\n      dialog.execute();\n      return;\n   }\n   var dialog = new GwtExportScheduleDialog(g_list.tableName, sysparm_query, sysparm_rows, sysparm_view, 'unload_pdf');\n   dialog.execute();\n}\n","d1e7d68b0a0a0b3e002f4618e3755d86":"runContextAction();\nfunction runContextAction() {\n   \n   var sysparm_rows = g_list.grandTotalRows;\n   var num_rows = parseInt(sysparm_rows);\n   var sysparm_query = g_list.getQuery({all: true});\n   var sysparm_view = g_list.view;\n   if (num_rows < g_export_warn_threshold) {\n      var dialog = new GwtPollDialog(g_list.tableName, sysparm_query, sysparm_rows, sysparm_view, 'unload_pdflandscape');\n      dialog.execute();\n      return;\n   }\n   var dialog = new GwtExportScheduleDialog(g_list.tableName, sysparm_query, sysparm_rows, sysparm_view, 'unload_pdflandscape');\n   dialog.execute();\n}\n","d1e8971a0a0a0b3e00c9e1fc881affd3":"runContextAction();\nfunction runContextAction() {\n   var sysparm_rows = g_list.grandTotalRows;\n   var num_rows = parseInt(sysparm_rows);\n   var sysparm_query = g_list.getQuery({all: true});\n   \n   var sysparm_view = g_list.view;\n   if (num_rows < g_export_warn_threshold) {\n      var dialog = new GwtPollDialog(g_list.tableName, sysparm_query, sysparm_rows, sysparm_view, 'unload_pdf+');\n      dialog.execute();\n      return;\n   }\n   var dialog = new GwtExportScheduleDialog(g_list.tableName, sysparm_query, sysparm_rows, sysparm_view, 'unload_pdf+');\n   dialog.execute();\n}\n","d1e93cc80a0a0b3e007e913c2485c9e1":"runContextAction();\nfunction runContextAction() {\n   \n   var sysparm_rows = g_list.grandTotalRows;\n   var num_rows = parseInt(sysparm_rows);\n   var sysparm_query = g_list.getQuery({all: true});\n   \n   var sysparm_view = g_list.view;\n   if (num_rows < g_export_warn_threshold) {\n      var dialog = new GwtPollDialog(g_list.tableName, sysparm_query, sysparm_rows, sysparm_view, 'unload_pdf+landscape');\n      dialog.execute();\n      return;\n   }\n   var dialog = new GwtExportScheduleDialog(g_list.tableName, sysparm_query, sysparm_rows, sysparm_view, 'unload_pdf+landscape');\n   dialog.execute();\n}\n","e1990773c0a80a6d0f81499a5c80c069":"runContextAction();\nfunction runContextAction() {\n   var ajax = new GlideAjax(\"RowFieldQueryTerm\");\n   ajax.addParam('table', g_list.tableName);\n   ajax.addParam('field_name', g_fieldName);\n   ajax.addParam('sys_id', g_sysId);\n   ajax.addParam('oper', '>=');\n   ajax.getXML(rowAndFieldQueryTermResponse, \"\", g_list.listID);\n}\nfunction rowAndFieldQueryTermResponse(response, listID) {\n   if (!response || !response.responseXML)\n      return;\n   var items = response.responseXML.getElementsByTagName(\"item\");\n   var item = items[0];\n   if (!item)\n      return;\n   var term = item.getAttribute(\"term\");\n   var list = GlideList2.get(listID);\n   list.addFilter(term);\n   list.refresh(1);\n}\n","e1d5cb8ec0a80a6d006da0404916035e":"runContextAction();\nfunction runContextAction() {\n   var ajax = new GlideAjax(\"RowFieldQueryTerm\");\n   ajax.addParam('table', g_list.tableName);\n   ajax.addParam('field_name', g_fieldName);\n   ajax.addParam('sys_id', g_sysId);\n   ajax.addParam('oper', '<=');\n   ajax.getXML(rowAndFieldQueryTermResponse, \"\", g_list.listID);\n}\nfunction rowAndFieldQueryTermResponse(response, listID) {\n   if (!response || !response.responseXML)\n      return;\n   var items = response.responseXML.getElementsByTagName(\"item\");\n   var item = items[0];\n   if (!item)\n      return;\n   var term = item.getAttribute(\"term\");\n   var list = GlideList2.get(listID);\n   list.addFilter(term);\n   list.refresh(1);\n}\n","eadec6df0a0a0b3e00a3c8b0465c1ed9":" function copyURL(uri) {\r\n      copyRowToClipboard(uri, g_list.tableName, g_sysId, g_list.view); \r\n }\n","eaeb7ec50a0a0b3e00e0a8a429344e86":" runContextAction();\r\n \r\n function runContextAction() {\r\n     copyToClipboard(g_sysId); \r\n }\n","eb6c4d1b0a0a0b3e0029fbb8fee7a7a8":"\r\n","ed38768dc0a80066001cd51eca319cc9":"runContextAction();\nfunction runContextAction() {\n   var ajax = new GlideAjax(\"RowFieldQueryTerm\");\n   ajax.addParam('table', g_list.tableName);\n   ajax.addParam('field_name', g_fieldName);\n   ajax.addParam('sys_id', g_sysId);\n   ajax.addParam('oper', '=');\n   ajax.getXML(rowAndFieldQueryTermResponse, \"\", g_list.listID);\n}\nfunction rowAndFieldQueryTermResponse(response, listID) {\n   if (!response || !response.responseXML)\n      return;\n   var items = response.responseXML.getElementsByTagName(\"item\");\n   var item = items[0];\t\n   if (!item)\n      return;\n\t\t\n   var term = item.getAttribute(\"term\");\n   var list = GlideList2.get(listID);\n   list.addFilter(term);\n   list.refresh(1);\n}\n","ee21f9a7c0a8006600a47b4baccf6a83":"runContextAction();\nfunction runContextAction() {\n   var ajax = new GlideAjax(\"RowFieldQueryTerm\");\n   ajax.addParam('table', g_list.tableName);\n   ajax.addParam('field_name', g_fieldName);\n   ajax.addParam('sys_id', g_sysId);\n   ajax.addParam('oper', '!=');\n   ajax.getXML(rowAndFieldQueryTermResponse, \"\", g_list.listID);\n}\nfunction rowAndFieldQueryTermResponse(response, listID) {\n   if (!response || !response.responseXML)\n      return;\n   var items = response.responseXML.getElementsByTagName(\"item\");\n   var item = items[0];\t\n   if (!item)\n      return;\n\t\t\n   var term = item.getAttribute(\"term\");\n   var list = GlideList2.get(listID);\n   list.addFilter(term);\n   list.refresh(1);\n}\n","eeca263ac0a80066000245d1d9169203":"\r\n","f13f0041473012003db6d7527c9a71f0":" runContextAction();\n function runContextAction() {\n    var exportHandler = new ContextMenuExportHandler(g_list,'unload_excel_xlsx');\n    exportHandler.exportRecords();\n }\n"}});</script><script>GlideMenu.addScripts({"onScripts":{},"scripts":{"385f79170a0a0b7c001c5cbbe69fc175":"function showRowsPerPage(count) {\r\n   g_list.setRowsPerPage(count);\r\n}\n","eb7353310a0a0b3e0067aebf230c81db":"function assignNewLabelAction() {\n   var tableName = g_list.getTableName();\n   var view = g_list.getView();\n   var sysId = g_sysId;\n   newLabel(tableName, sysId, function(labelName) { assignLabel(labelName, tableName, sysId, view) });\n}\nfunction assignLabelAction(labelName) {\n   assignLabel(labelName, g_list.getTableName(), g_sysId, g_list.getView());\n}\nfunction promptWithMoreTagChoices() {\n\tassignLabelViaLookup(g_list.getTableName(), g_sysId, g_list.getView());\n}\n"}});</script><script>NOW.xperf.dbContextEnd = NOW.xperf.now();</script><span style="display:none" data-comments="db_context_menu_script"></span><script data-description="MessagesTag">(function() {
+ var messages = new GwtMessage();
+messages.set('Timing Type');
+messages.set('Time Range');
+messages.set('Total Time');
+messages.set('{0}ms');
+messages.set('{0} ms');
+messages.set('Browser response time');
+messages.set('Server');
+messages.set('Timing details');
+messages.set('{0} of {1} {2}: {3}');
+messages.set('{0} of {1} Other: {2}');
+messages.set('{0} of {1} {2}: {3}');
+messages.set('Show Timing Breakdown');
+messages.set('Browser timing detail');
+messages.set('Time');
+messages.set('Other');
+messages.set('Timing details breakdown');
+messages.set('Response time(ms): {0}');
+messages.set('Network: {0}');
+messages.set('Network: {0}ms');
+messages.set('Server: {0}');
+messages.set('Server: {0}ms');
+messages.set('Browser: {0}');
+messages.set('Browser: {0}ms');
+messages.set('Response time','Response Time');
+messages.set('Close');
+messages.set('Cache/DNS/TCP');
+messages.set('DOM Processing');
+messages.set('Script Load/Parse');
+messages.set('CSS and JS Parse');
+messages.set('Form Sections');
+messages.set('UI Policy - On Load');
+messages.set('Client Scripts - On Load');
+messages.set('Client Scripts - On Change (initial load)');
+messages.set('Browser processing before onload');
+messages.set('DOMContentLoaded to LoadEventEnd');
+messages.set('addLoadEvent functions');
+messages.set('Related Lists');
+messages.set('Related Lists (sync)');
+messages.set('Related Lists (async)');
+messages.set('onLoad');
+messages.set('Unload');
+})()</script><script type="text/javascript">var g_serverTime = parseInt("414") + parseInt("0");
+            var g_logClientViewRoles = "";
+
+			// do not do this for the navigation menu
+            if (window.name != 'gsft_nav') {
+				 addAfterPageLoadedEvent(function() {
+					 if (window.performance)
+						setTimeGraph();
+					 else 
+						firePageTimer();
+				 });
+			 }
+			 
+			function setTimeGraph() {
+				if (window.performance.timing.loadEventEnd > 0)
+			 		firePageTimer();
+			 	else 
+			 		setTimeout(setTimeGraph, 300);
+			 }
+			 
+			function firePageTimer() {
+				 if (window.performance && performance.timing.requestStart != performance.timing.responseStart) {
+				 	var p = performance.timing;
+
+				 	CustomEvent.fire('page_timing', { name: 'SERV', ms: p.responseEnd - p.requestStart});
+				 	CustomEvent.fire('page_timing', { name: 'REND', ms: (p.loadEventEnd - p.responseEnd) });
+				 	CustomEvent.fire('page_timing_network', { name: 'NETW', ms: (p.responseEnd - p.navigationStart) });
+				 } else {
+				    CustomEvent.fire('page_timing', { name: 'SERV', ms: g_serverTime });
+					CustomEvent.fire('page_timing', { name: 'REND', startTime: g_loadTime });
+					CustomEvent.fire('page_timing_network', { name: 'NETW', loadTime: g_loadTime });
+				 }CustomEvent.fire('page_timing_show', {
+						isFixed: 'true', 
+						show: '' 
+					 });var o = {};
+	      o.types = {};o.types['SECT'] = true;o.types['RLV2'] = true;o.types['UIOL'] = true;o.types['CSOL'] = true;
+	
+	      o.transaction_id = 'c56685d993ddf2105cf7ff95dd03d6ec';
+	      o.table_name = 'cmdb_model_category';
+	      o.form_name = 'sys_list_template2';
+	      o.view_id = '681eb370932032105cf7ff95dd03d671';
+	      o.logged_in = true;
+	      o.win = window;
+	      CustomEvent.fire('page_timing_client', o);}
+			 
+            // The following line is used to set the time when we start requesting a new page
+            Event.observe(window, 'beforeunload', function() {
+				new CookieJar({sameSite: 'strict'}).put('g_startTime', new Date().getTime());
+                CustomEvent.fireTop('request_start', document);
+            });
+
+            // simple pages fire this (stats.do, etc.)
+            CustomEvent.observe('simple_page.unload', function() {
+				new CookieJar({sameSite: 'strict'}).put('g_startTime', new Date().getTime());
+            }); 
+
+            // indicate we have completed the request (used by RequestManager.js for cancel widget)
+            addLoadEvent(function() {
+            	CustomEvent.fireTop("request_complete", window.location);
+            });</script><script data-description="MessagesTag">(function() {
+ var messages = new GwtMessage();
+messages.set('Delete');
+messages.set('New rows');
+messages.set('This filter query cannot be edited');
+messages.set('%d from now');
+messages.set('just now');
+messages.set('Go to');
+messages.set('about an hour');
+messages.set('Filter Limit Reached');
+messages.set('Changes have been made. Continuing will discard the changes.');
+messages.set('Open new window');
+messages.set('List editing disabled - to enable, click the gear icon at top of list');
+messages.set('URLs/query omit relationship to parent record');
+messages.set('Show / hide filter');
+messages.set('Mark deleted');
+messages.set('The following mandatory fields are not filled in');
+messages.set('Pin the filters');
+messages.set('Search');
+messages.set('Insert a new row...');
+messages.set('(empty)');
+messages.set('%d months','%dmo');
+messages.set('%d days','%dd');
+messages.set('New row');
+messages.set('There is a cell editor open on this page. Continuing will discard the changes.');
+messages.set('There is a cell editor open on this page, continuing will discard the changes');
+messages.set('Mark record for List Action');
+messages.set('Undelete');
+messages.set('Changes have been made, continuing will discard the changes');
+messages.set('Copy query');
+messages.set('Save');
+messages.set('%d years','%dy');
+messages.set('a day');
+messages.set('The filter you are using is too big. Remove some conditions to make it smaller.');
+messages.set('about a year');
+messages.set('a day,%d days');
+messages.set('less than a minute');
+messages.set('A new {0} identified by {1} will be created upon save');
+messages.set('about a minute','%dm');
+messages.set('Unpin the filters');
+messages.set('Security does not allow the execution of that action against the specified record');
+messages.set('about %d hours','%dh');
+messages.set('Copy URL');
+messages.set('Display / hide hierarchical lists');
+messages.set('Security allows the execution of that action against {0} of {1} records. Proceed?');
+messages.set('%d minutes','%dm');
+messages.set('View');
+messages.set('--None--');
+messages.set('Loading...');
+messages.set('about a month');
+messages.set('%d ago');
+})()</script><script data-description="MessagesTag">
+(function() {
+ var messages = new GwtMessage();
+messages.set('Search');
+})()
+</script><script type="text/javascript" src="/scripts/doctype/z_last_include.jsx?v=07-13-2025_0705"></script><span id="ac.status" role="status" aria-live="polite" class="sr-only"></span><span aria-live="polite" class="sr-only"></span><script type="text/html" id="popup_template"><div class="popup popup_form" style=""><iframe src="$src" style=""></iframe></div></script><div id="page_timing_div" role="complementary" aria-label="Timing details" class="timingDiv"><svg class="patterns_svg" width="0" height="0"><defs><pattern id="pattern_timing_network" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><line class="pattern_stroke" x1="0" y1="0" x2="0" y2="5" stroke-width="2"></line></pattern><pattern id="pattern_timing_server" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)"><line class="pattern_stroke" x1="0" y1="3" x2="2" y2="3" stroke-width="2"></line><line class="pattern_stroke" x1="4" y1="3" x2="6" y2="3" stroke-width="2"></line></pattern><pattern id="pattern_timing_browser" patternUnits="userSpaceOnUse" width="5.5" height="5.5" patternTransform="rotate(135)"><line class="pattern_stroke" x1="0" y1="0" x2="0" y2="5.5" stroke-width="7"></line></pattern></defs></svg><button class="pointerhand icon-stop-watch btn btn-icon btn-response-time -fixed-response-time" type="button" aria-controls="glide:timing_widget" title="Response time(ms): 571, Network: 1, Server: 532, Browser: 38" aria-label="Response Time"></button><div style="display: none;"><div class="timing_span" id="glide:timing_widget">Response time(ms): 571, Network: 1, Server: 532, Browser: 38<div class="timingGraphDiv"><span class="timing_graph" data-aria-label="Show Timing Breakdown"><span class="timing_network" title="Network: 1ms" style="width: 6%;"><svg class="breakdown_svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="url(#pattern_timing_network)"></rect></svg></span><span class="timing_server" title="Server: 532ms" style="width: 99%;"><svg class="breakdown_svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="url(#pattern_timing_server)"></rect></svg></span><span class="timing_browser" title="Browser: 38ms" style="width: 13%;"><svg class="breakdown_svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="url(#pattern_timing_browser)"></rect></svg></span></span></div><table class="timing_breakdown table table-condensed" id="glide:timingBreakdown_widget" aria-hidden="false" aria-label="Timing details breakdown"><thead>       <tr><th aria-hidden="true"></th>       <th class="timing_label" scope="col">Timing Type</th>       <th id="time_range" scope="col">Time Range</th>       <th id="total_time" scope="col">Total Time</th></tr></thead><tbody><tr><td aria-hidden="true" rowspan="1" class="timing_network"><div class="wrapper_div"><svg class="table_svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="url(#pattern_timing_network)"></rect></svg></div></td><th scope="row" id="timing_network" class="timing_label">Cache/DNS/TCP</th><td headers="time_range timing_network">1-1ms</td><td headers="total_time timing_network">0ms</td></tr><tr><td aria-hidden="true" rowspan="1" class="timing_server"><div class="wrapper_div"><svg class="table_svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="url(#pattern_timing_server)"></rect></svg></div></td><th scope="row" id="timing_server" class="timing_label">Server</th><td headers="time_range timing_server">1-533ms</td><td headers="total_time timing_server">532ms</td></tr><tr><td aria-hidden="true" rowspan="3" class="timing_browser"><div class="wrapper_div"><svg class="table_svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="url(#pattern_timing_browser)"></rect></svg></div></td><th scope="row" id="timing_browser_unload" class="timing_label">Unload</th><td headers="time_range timing_browser">0ms</td><td headers="total_time timing_browser">0ms</td></tr><tr><th scope="row" id="timing_browser_dom" class="timing_label">DOM Processing</th><td headers="time_range timing_browser">482-569ms</td><td headers="total_time timing_browser">87ms</td></tr><tr><th scope="row" id="timing_browser_onload" class="timing_label">onLoad</th><td headers="time_range timing_browser">569-571ms</td><td headers="total_time timing_browser">2ms</td></tr></tbody></table><table class="table table-condensed table-timing-detail" aria-label="Browser timing detail"><thead><tr><th>Browser timing detail</th><th>Time</th></tr></thead><tbody id="page_timing_details"></tbody></table></div></div></div></body></html>
