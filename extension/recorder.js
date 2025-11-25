@@ -186,7 +186,7 @@
   // site-level capturing handlers that may stop propagation (e.g., Amazon)
   function preAttachCriticalListeners(targetDocument = document) {
     try {
-      // Removed mousedown/mouseup (redundant with pointerdown) and added selectstart (sorting) and selectionchange (custom dropdowns)
+      // Removed mousedown/mouseup (redundant with pointerdown) and added selectstart (sorting) 
       const critical = ['pointerdown', 'click', 'submit', 'input', 'change', 'keydown', 'selectstart'];
       critical.forEach((name) => {
         // Use document as key to track which documents have listeners
