@@ -24,7 +24,14 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["event-config.json", "offscreen.html", "offscreen.js", "browsergym-inject.js"],
+      "resources": [
+        "event-config.json", 
+        "offscreen.html", 
+        "offscreen.js", 
+        "browsergym-inject.js",
+        "recorder/*.js",
+        "recorder/**/*.js"
+      ],
       "matches": ["<all_urls>"]
     }
   ],
