@@ -139,11 +139,17 @@
       { name: 'click', enabled: true, handler: 'recordEvent' },
       // { name: 'mousedown', enabled: true, handler: 'recordEvent' },
       // { name: 'mouseup', enabled: true, handler: 'recordEvent' },
-      // { name: 'pointerdown', enabled: true, handler: 'recordEvent' },
+      { name: 'pointerdown', enabled: true, handler: 'recordEvent' },
       // { name: 'pointerup', enabled: true, handler: 'recordEvent' },
+
+      // ADDED: Critical for ServiceNow Table Sorting (e.g. Asset/Hardware lists)
+      { name: 'selectstart', enabled: true, handler: 'recordEvent' },
+      
+      // ADDED: Critical for "First Dropdown" and text interactions
+      { name: 'selectionchange', enabled: true, handler: 'recordEvent' },
       // { name: 'mouseover', enabled: true, handler: 'recordEvent' },
       // { name: 'mouseout', enabled: true, handler: 'recordEvent' },
-      // { name: 'keydown', enabled: true, handler: 'recordEvent' },
+      { name: 'keydown', enabled: true, handler: 'recordEvent' },
       // { name: 'keyup', enabled: true, handler: 'recordEvent' },
       // { name: 'keypress', enabled: true, handler: 'recordEvent' },
       { name: 'scroll', enabled: true, handler: 'debouncedRecordScroll' },
@@ -180,7 +186,8 @@
   // site-level capturing handlers that may stop propagation (e.g., Amazon)
   function preAttachCriticalListeners(targetDocument = document) {
     try {
-      const critical = ['pointerdown', 'mousedown', 'mouseup', 'click', 'submit', 'input', 'change', 'keydown'];
+      // Removed mousedown/mouseup (redundant with pointerdown) and added selectstart (sorting) and selectionchange (custom dropdowns)
+      const critical = ['pointerdown', 'click', 'submit', 'input', 'change', 'keydown', 'selectstart', 'selectionchange'];
       critical.forEach((name) => {
         // Use document as key to track which documents have listeners
         const key = `${name}_${targetDocument === document ? 'main' : 'iframe'}`;

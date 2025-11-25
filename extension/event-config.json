@@ -8,13 +8,13 @@
     },
     {
       "name": "mousedown",
-      "enabled": true,
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Mouse button press"
     },
     {
       "name": "mouseup",
-      "enabled": true,
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Mouse button release"
     },
@@ -26,19 +26,31 @@
     },
     {
       "name": "pointerup",
-      "enabled": true,
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Pointer up (mouse, pen, touch)"
     },
     {
-      "name": "mouseover",
+      "name": "selectstart",
       "enabled": true,
+      "handler": "recordEvent",
+      "description": "Selection initiated (Critical for Table Sorting)"
+    },
+    {
+      "name": "selectionchange",
+      "enabled": true,
+      "handler": "recordEvent",
+      "description": "Selection changed"
+    },
+    {
+      "name": "mouseover",
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Pointer enters element"
     },
     {
       "name": "mouseout",
-      "enabled": true,
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Pointer leaves element"
     },
@@ -50,19 +62,19 @@
     },
     {
       "name": "keyup",
-      "enabled": true,
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Key released"
     },
     {
       "name": "keypress",
-      "enabled": true,
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Printable key pressed"
     },
     {
       "name": "scroll",
-      "enabled": true,
+      "enabled": false,
       "handler": "debouncedRecordScroll",
       "description": "Page or element scrolling"
     },
@@ -80,13 +92,13 @@
     },
     {
       "name": "focus",
-      "enabled": true,
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Element focus"
     },
     {
       "name": "blur",
-      "enabled": true,
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Element blur"
     },
@@ -98,19 +110,19 @@
     },
     {
       "name": "touchstart",
-      "enabled": true,
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Touch start (mobile)"
     },
     {
       "name": "touchend",
-      "enabled": true,
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Touch end (mobile)"
     },
     {
       "name": "touchmove",
-      "enabled": true,
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Touch move (mobile)"
     }
