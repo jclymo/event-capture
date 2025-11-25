@@ -146,7 +146,7 @@
       { name: 'selectstart', enabled: true, handler: 'recordEvent' },
       
       // ADDED: Critical for "First Dropdown" and text interactions
-      { name: 'selectionchange', enabled: true, handler: 'recordEvent' },
+      // { name: 'selectionchange', enabled: true, handler: 'recordEvent' },
       // { name: 'mouseover', enabled: true, handler: 'recordEvent' },
       // { name: 'mouseout', enabled: true, handler: 'recordEvent' },
       { name: 'keydown', enabled: true, handler: 'recordEvent' },
@@ -187,7 +187,7 @@
   function preAttachCriticalListeners(targetDocument = document) {
     try {
       // Removed mousedown/mouseup (redundant with pointerdown) and added selectstart (sorting) and selectionchange (custom dropdowns)
-      const critical = ['pointerdown', 'click', 'submit', 'input', 'change', 'keydown', 'selectstart', 'selectionchange'];
+      const critical = ['pointerdown', 'click', 'submit', 'input', 'change', 'keydown', 'selectstart'];
       critical.forEach((name) => {
         // Use document as key to track which documents have listeners
         const key = `${name}_${targetDocument === document ? 'main' : 'iframe'}`;

@@ -38,7 +38,7 @@
     },
     {
       "name": "selectionchange",
-      "enabled": true,
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Selection changed"
     },
