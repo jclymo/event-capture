@@ -395,14 +395,14 @@
     const doc = sourceDocument || document;
     const clone = doc.documentElement.cloneNode(true);
 
-    // --- 1. Remove scripts and noscripts ---
-    clone.querySelectorAll('script, noscript').forEach(el => el.remove());
-    // --- 2. Remove inline event handlers (e.g., onclick) ---
-    clone.querySelectorAll('*').forEach(el => {
-      for (const attr of Array.from(el.attributes)) {
-        if (attr.name.startsWith('on')) el.removeAttribute(attr.name);
-      }
-    });
+    // // --- 1. Remove scripts and noscripts ---
+    // clone.querySelectorAll('script, noscript').forEach(el => el.remove());
+    // // --- 2. Remove inline event handlers (e.g., onclick) ---
+    // clone.querySelectorAll('*').forEach(el => {
+    //   for (const attr of Array.from(el.attributes)) {
+    //     if (attr.name.startsWith('on')) el.removeAttribute(attr.name);
+    //   }
+    // });
     // --- 3. Inline all stylesheets, minified ---
     let styles = [];
     try {
@@ -435,10 +435,10 @@
     //     }
     //   }
     // });
-    // --- 5. Remove heavy media sources ---
-    clone.querySelectorAll('img, video, source').forEach(el => {
-      el.removeAttribute('src');
-    });
+    // // --- 5. Remove heavy media sources ---
+    // clone.querySelectorAll('img, video, source').forEach(el => {
+    //   el.removeAttribute('src');
+    // });
     
     // --- 6. Minify the resulting HTML ---
     const currentHtml =
