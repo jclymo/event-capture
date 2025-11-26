@@ -264,7 +264,7 @@ export function recordEvent(event) {
 
   // Send event to background script
   chrome.runtime.sendMessage({ type: 'recordedEvent', event: eventData });
-  // Capture HTML for the specific document this event came from
+  // Capture HTML for the specific document this event came from (with BID wait)
   const sourceDocument = metadataElement.ownerDocument || document;
   requestHtmlCapture(event.type, sourceDocument);
 }

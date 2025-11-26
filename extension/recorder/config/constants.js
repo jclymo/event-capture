@@ -35,5 +35,5 @@ export const DEFAULT_EVENT_CONFIG = {
 };
 
 export const PREBUFFER_WINDOW_MS = 2000;
-export const HTMLCOOLDOWN = 3000;
+export const HTMLCOOLDOWN = 1000; // Reduced from 3000ms for more frequent captures
 

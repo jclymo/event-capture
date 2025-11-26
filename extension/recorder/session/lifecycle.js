@@ -130,3 +130,29 @@ function attemptRecovery() {
   initializeRecording();
 }
 
+// Setup message listener for start/stop commands from popup/background
+export function setupMessageListener() {
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    console.log("📬 Message received in recorder:", message.action);
+
+    if (message.action === "startRecording") {
+      startRecording(message.taskId, message.startAtMs);
+      const newState = getRecordingState();
+      sendResponse({
+        status: "recording started", 
+        isRecording: newState.isRecording, 
+        taskId: newState.currentTaskId
+      });
+    } else if (message.action === "stopRecording") {
+      stopRecording();
+      const newState = getRecordingState();
+      sendResponse({
+        status: "recording stopped", 
+        eventsCount: newState.events.length
+      });
+    }
+
+    return true; // Required for async sendResponse
+  });
+}
+

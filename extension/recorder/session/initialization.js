@@ -85,6 +85,30 @@ function observeDynamicChanges() {
   return null;
 }
 
+// Check if we should resume recording (handles navigation during active recording)
+export function checkAndResumeRecording() {
+  chrome.storage.local.get(['isRecording', 'currentTaskId', 'taskHistory'], (data) => {
+    if (data.isRecording && data.currentTaskId) {
+      console.log("🔄 Resuming recording for task:", data.currentTaskId);
+      
+      // Get existing events for this task
+      const existingEvents = (data.taskHistory && data.taskHistory[data.currentTaskId]) 
+        ? (data.taskHistory[data.currentTaskId].events || [])
+        : [];
+      
+      // Resume recording session
+      initializeRecordingSession(data.currentTaskId, {
+        isResuming: true,
+        existingEvents: existingEvents,
+        clearCache: false
+      });
+      console.log('✅ Recording session resumed');
+    } else {
+      console.log('ℹ️ No active recording to resume');
+    }
+  });
+}
+
 export async function initializeRecording() {
   console.log('Initializing recording with configurable listeners');
 

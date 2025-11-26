@@ -7,8 +7,52 @@ let lastHtmlCapture = 0;
 let isNewPageLoad = true;
 let htmlCaptureLocked = false;
 let HTMLCOOLDOWNOVERRIDE = Date.now() - 3000;
+let browserGymReady = false;
+let pendingHtmlCaptures = [];
+
+// Listen for BrowserGym injection completion
+if (typeof document !== 'undefined') {
+  document.addEventListener('browsergym-injection-complete', (event) => {
+    console.log('✅ BrowserGym injection complete, enabling HTML capture');
+    browserGymReady = true;
+    
+    // Process any pending captures
+    if (pendingHtmlCaptures.length > 0) {
+      console.log(`📤 Processing ${pendingHtmlCaptures.length} pending HTML captures`);
+      pendingHtmlCaptures.forEach(({ eventType, sourceDocument }) => {
+        requestHtmlCapture(eventType, sourceDocument);
+      });
+      pendingHtmlCaptures = [];
+    }
+  }, { once: true });
+  
+  // Fallback: assume ready after 3 seconds if event never fires
+  setTimeout(() => {
+    if (!browserGymReady) {
+      console.warn('⚠️ BrowserGym injection timeout, enabling HTML capture anyway');
+      browserGymReady = true;
+      // Process pending captures
+      if (pendingHtmlCaptures.length > 0) {
+        pendingHtmlCaptures.forEach(({ eventType, sourceDocument }) => {
+          requestHtmlCapture(eventType, sourceDocument);
+        });
+        pendingHtmlCaptures = [];
+      }
+    }
+  }, 3000);
+}
+
+export function setBrowserGymReady(ready) {
+  browserGymReady = ready;
+}
 
 export function requestHtmlCapture(eventType, sourceDocument = document) {
+  // If BrowserGym isn't ready yet, queue the capture
+  if (!browserGymReady && eventType !== 'new page loaded') {
+    console.log(`⏳ Queueing HTML capture for ${eventType} (waiting for BrowserGym BIDs)`);
+    pendingHtmlCaptures.push({ eventType, sourceDocument });
+    return;
+  }
   if (htmlCaptureLocked) {
     return;
   }
@@ -36,13 +80,13 @@ export function captureHtml(eventType, sourceDocument = document) {
   const clone = doc.documentElement.cloneNode(true);
 
   // --- 1. Remove scripts and noscripts ---
-  clone.querySelectorAll('script, noscript').forEach(el => el.remove());
+  // clone.querySelectorAll('script, noscript').forEach(el => el.remove());
   // --- 2. Remove inline event handlers (e.g., onclick) ---
-  clone.querySelectorAll('*').forEach(el => {
-    for (const attr of Array.from(el.attributes)) {
-      if (attr.name.startsWith('on')) el.removeAttribute(attr.name);
-    }
-  });
+  // clone.querySelectorAll('*').forEach(el => {
+  //   for (const attr of Array.from(el.attributes)) {
+  //     if (attr.name.startsWith('on')) el.removeAttribute(attr.name);
+  //   }
+  // });
   // --- 3. Inline all stylesheets, minified ---
   let styles = [];
   try {
@@ -65,9 +109,9 @@ export function captureHtml(eventType, sourceDocument = document) {
     }
   }
   // --- 4. Remove heavy media sources ---
-  clone.querySelectorAll('img, video, source').forEach(el => {
-    el.removeAttribute('src');
-  });
+  // clone.querySelectorAll('img, video, source').forEach(el => {
+  //   el.removeAttribute('src');
+  // });
   
   // --- 5. Minify the resulting HTML ---
   const currentHtml =
