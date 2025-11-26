@@ -20,7 +20,7 @@
     },
     {
       "name": "pointerdown",
-      "enabled": false,
+      "enabled": true,
       "handler": "recordEvent",
       "description": "Pointer down (mouse, pen, touch)"
     },
@@ -29,6 +29,18 @@
       "enabled": false,
       "handler": "recordEvent",
       "description": "Pointer up (mouse, pen, touch)"
+    },
+    {
+      "name": "selectstart",
+      "enabled": true,
+      "handler": "recordEvent",
+      "description": "Selection initiated (Critical for Table Sorting)"
+    },
+    {
+      "name": "selectionchange",
+      "enabled": false,
+      "handler": "recordEvent",
+      "description": "Selection changed"
     },
     {
       "name": "mouseover",
@@ -44,7 +56,7 @@
     },
     {
       "name": "keydown",
-      "enabled": false,
+      "enabled": true,
       "handler": "recordEvent",
       "description": "Key pressed down"
     },
@@ -138,6 +150,9 @@
     }
   ],
   "observers": {
-    "dynamicDom": false
+    "dynamicDom": true
+  },
+  "htmlCapture": {
+    "enabled": true
   }
 }
