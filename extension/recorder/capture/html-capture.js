@@ -26,7 +26,7 @@ if (typeof document !== 'undefined') {
     }
   }, { once: true });
   
-  // Fallback: assume ready after 3 seconds if event never fires
+  // Fallback: assume ready after 10 seconds if event never fires (increased for complex pages like Amazon)
   setTimeout(() => {
     if (!browserGymReady) {
       console.warn('⚠️ BrowserGym injection timeout, enabling HTML capture anyway');
@@ -39,7 +39,7 @@ if (typeof document !== 'undefined') {
         pendingHtmlCaptures = [];
       }
     }
-  }, 3000);
+  }, 10000); // Increased to 10s for complex pages like Amazon
 }
 
 export function setBrowserGymReady(ready) {
@@ -47,8 +47,8 @@ export function setBrowserGymReady(ready) {
 }
 
 export function requestHtmlCapture(eventType, sourceDocument = document) {
-  // If BrowserGym isn't ready yet, queue the capture
-  if (!browserGymReady && eventType !== 'new page loaded') {
+  // If BrowserGym isn't ready yet, queue the capture (including 'new page loaded' events)
+  if (!browserGymReady) {
     console.log(`⏳ Queueing HTML capture for ${eventType} (waiting for BrowserGym BIDs)`);
     pendingHtmlCaptures.push({ eventType, sourceDocument });
     return;

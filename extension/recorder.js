@@ -15,11 +15,6 @@
 // - session: Recording session initialization, start/stop lifecycle
 // - utils: Helper functions and element utilities
 
-import { preAttachCriticalListeners } from './recorder/listeners/critical-listeners.js';
-import { setupMessageListener } from './recorder/session/lifecycle.js';
-import { checkAndResumeRecording } from './recorder/session/initialization.js';
-import { getRecordingState } from './recorder/state/recording-state.js';
-
 console.log('🚀 Task Recorder content script starting...');
 
 // Prevent re-injection for new recording sessions
@@ -28,23 +23,36 @@ if (window.taskRecorderInitialized) {
 } else {
   window.taskRecorderInitialized = true;
 
-  // Attach critical listeners first (must be synchronous and early)
-  if (!window.__recorderCriticalAttached) {
-    preAttachCriticalListeners();
-    window.__recorderCriticalAttached = true;
-    console.log('✅ Critical listeners pre-attached');
-  } else {
-    console.log('ℹ️ Critical listeners already attached (previous injection)');
-  }
+  // Use dynamic imports to load modules (works in injected content scripts)
+  (async () => {
+    try {
+      // Import all required modules using chrome.runtime.getURL for extension resources
+      const { preAttachCriticalListeners } = await import(chrome.runtime.getURL('./recorder/listeners/critical-listeners.js'));
+      const { setupMessageListener } = await import(chrome.runtime.getURL('./recorder/session/lifecycle.js'));
+      const { checkAndResumeRecording } = await import(chrome.runtime.getURL('./recorder/session/initialization.js'));
+      const { getRecordingState } = await import(chrome.runtime.getURL('./recorder/state/recording-state.js'));
 
-  // Make recording state accessible for debugging
-  window.__recorderState = getRecordingState;
+      // Attach critical listeners first (must be synchronous and early)
+      if (!window.__recorderCriticalAttached) {
+        preAttachCriticalListeners();
+        window.__recorderCriticalAttached = true;
+        console.log('✅ Critical listeners pre-attached');
+      } else {
+        console.log('ℹ️ Critical listeners already attached (previous injection)');
+      }
 
-  // Setup message listener for start/stop commands from popup/background
-  setupMessageListener();
+      // Make recording state accessible for debugging
+      window.__recorderState = getRecordingState;
 
-  // Check if we should resume recording (handles navigation during active recording)
-  checkAndResumeRecording();
+      // Setup message listener for start/stop commands from popup/background
+      setupMessageListener();
 
-  console.log('✅ Task Recorder content script ready');
+      // Check if we should resume recording (handles navigation during active recording)
+      checkAndResumeRecording();
+
+      console.log('✅ Task Recorder content script ready');
+    } catch (error) {
+      console.error('❌ Failed to initialize Task Recorder:', error);
+    }
+  })();
 }

@@ -30,7 +30,7 @@ export async function injectBrowserGymScript() {
     };
 
     document.addEventListener('browsergym-injection-complete', completionHandler, { once: true });
-    timeoutId = setTimeout(signalTimeout, 3000);
+    timeoutId = setTimeout(signalTimeout, 10000); // Increased to 10s for complex pages like Amazon
 
     // Direct DOM injection (same method as iframe injection)
     console.log('💉 Injecting BrowserGym script directly into main document');

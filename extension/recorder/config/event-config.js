@@ -2,6 +2,9 @@
 
 import { DEFAULT_EVENT_CONFIG } from './constants.js';
 
+// Re-export DEFAULT_EVENT_CONFIG so other modules can import it from here
+export { DEFAULT_EVENT_CONFIG };
+
 let cachedEventConfig = null;
 let htmlCaptureEnabled = true;
 
