@@ -35,7 +35,7 @@ export function remarkWithBrowserGym() {
 }
 
 // Debounced version of remarkWithBrowserGym to avoid excessive calls
-const debouncedRemark = debounce(remarkWithBrowserGym, 500);
+const debouncedRemark = debounce(remarkWithBrowserGym, 5000);
 
 // Start observing DOM mutations for BrowserGym re-marking
 export function startBrowserGymObserver() {
