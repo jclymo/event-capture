@@ -148,13 +148,13 @@ window.injectBrowserGym = async ([parent_bid, bid_attr_name, tags_to_mark]) => {
             }
             
             elem.setAttribute(bid_attr_name, `${elem_global_bid}`);
+
+            // Hack: store custom data inside ARIA attributes (will be available in DOM and AXTree)
+            update_bid_in_attribute(elem_global_bid, elem, "aria-roledescription");
+            update_bid_in_attribute(elem_global_bid, elem, "aria-description");  // fallback for generic nodes
         }
 
         all_bids.add(elem_global_bid);
-
-        // Hack: store custom data inside ARIA attributes (will be available in DOM and AXTree)
-        push_bid_to_attribute(elem_global_bid, elem, "aria-roledescription");
-        push_bid_to_attribute(elem_global_bid, elem, "aria-description");  // fallback for generic nodes
 
         // set-of-marks flag (He et al. 2024)
         elem.setAttribute("browsergym_set_of_marks", "0");
@@ -243,12 +243,24 @@ function whoCapturesCenterClick(element){
     }
 }
 
-function push_bid_to_attribute(bid, elem, attr){
-    let original_content = "";
-    if (elem.hasAttribute(attr)) {
-        original_content = elem.getAttribute(attr);
-    }
-    let new_content = `browsergym_id_${bid} ${original_content}`
+// function push_bid_to_attribute(bid, elem, attr){
+//     let original_content = "";
+//     if (elem.hasAttribute(attr)) {
+//         original_content = elem.getAttribute(attr);
+//     }
+//     let new_content = `browsergym_id_${bid} ${original_content}`
+//     elem.setAttribute(attr, new_content);
+// }
+
+function update_bid_in_attribute(bid, elem, attr){
+    const original_content = elem.getAttribute(attr) || "";
+    
+    // 1. Regex to remove any existing "browsergym_id_*" content
+    const cleaned_content = original_content.replace(/browsergym_id_[a-zA-Z0-9_-]+/g, '').trim();
+
+    // 2. Prepend the new BID to the cleaned content
+    let new_content = `browsergym_id_${bid} ${cleaned_content}`;
+    
     elem.setAttribute(attr, new_content);
 }
 
