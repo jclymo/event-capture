@@ -40,6 +40,8 @@ async function startRecording() {
     mediaRecorder.start(250); // small timeslice for reliability
     chrome.runtime.sendMessage({ type: 'OFFSCREEN_STARTED', startedAtMs });
   } catch (e) {
+    return; // TODO JUDE REMOVE! 
+
     console.error('getDisplayMedia failed:', {
       name: e.name,
       message: e.message,

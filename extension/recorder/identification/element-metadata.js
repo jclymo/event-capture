@@ -11,13 +11,14 @@ export function buildTargetMetadata(element) {
   }
 
   const attributes = {};
-  try {
-    Array.from(element.attributes || []).forEach(attr => {
-      attributes[attr.name] = attr.value;
-    });
-  } catch (err) {
-    console.warn('Failed to serialize attributes for element', element, err);
-  }
+  // JUDE: this is collecting some pretty big attributes that we then never use. removing to improve speed
+  // try {
+  //   Array.from(element.attributes || []).forEach(attr => {
+  //     attributes[attr.name] = attr.value;
+  //   });
+  // } catch (err) {
+  //   console.warn('Failed to serialize attributes for element', element, err);
+  // }
 
   let textContent = element.textContent || '';
   textContent = textContent.trim().replace(/\s+/g, ' ');

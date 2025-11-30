@@ -350,13 +350,13 @@ if (typeof window.IFrameIdGenerator === 'undefined') {
           }
         }
         
-        console.log(`🔍 BrowserGym starting injection, prefix: "${parentBid}", document ready: ${document.readyState}`);
-        console.log(`🔍 Document has ${document.querySelectorAll('*').length} elements`);
-        console.log(`🔍 window.BROWSERGYM_IFRAME_PREFIX value:`, window.BROWSERGYM_IFRAME_PREFIX);
-        console.log(`🔍 typeof window.BROWSERGYM_IFRAME_PREFIX:`, typeof window.BROWSERGYM_IFRAME_PREFIX);
-        console.log(`🔍 parentBid value:`, parentBid);
-        console.log(`🔍 parentBid length:`, parentBid.length);
-        console.log(`🔍 parentBid truthy check:`, !!parentBid);
+        // console.log(`🔍 BrowserGym starting injection, prefix: "${parentBid}", document ready: ${document.readyState}`);
+        // console.log(`🔍 Document has ${document.querySelectorAll('*').length} elements`);
+        // console.log(`🔍 window.BROWSERGYM_IFRAME_PREFIX value:`, window.BROWSERGYM_IFRAME_PREFIX);
+        // console.log(`🔍 typeof window.BROWSERGYM_IFRAME_PREFIX:`, typeof window.BROWSERGYM_IFRAME_PREFIX);
+        // console.log(`🔍 parentBid value:`, parentBid);
+        // console.log(`🔍 parentBid length:`, parentBid.length);
+        // console.log(`🔍 parentBid truthy check:`, !!parentBid);
         
         const warnings = await window.injectBrowserGym([
             parentBid,    // Use iframe prefix if in iframe, empty string for main document

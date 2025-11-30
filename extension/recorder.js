@@ -15,12 +15,12 @@
 // - session: Recording session initialization, start/stop lifecycle
 // - utils: Helper functions and element utilities
 
-console.log('🚀 Task Recorder content script starting...');
 
 // Prevent re-injection for new recording sessions
 if (window.taskRecorderInitialized) {
   console.log("Recorder script re-injected, skipping");
 } else {
+  console.log('🚀 Task Recorder content script starting...');
   window.taskRecorderInitialized = true;
 
   // Use dynamic imports to load modules (works in injected content scripts)

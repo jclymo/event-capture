@@ -1,7 +1,7 @@
 // Event storage and queue management module
 // Handles event persistence and queuing to avoid race conditions
 
-import { videoRecording } from './video-recorder.js';
+// import { videoRecording } from './video-recorder.js'; // TODO JUDE uncomment
 
 // Debug state for recording
 export const recordingDebug = {
@@ -15,7 +15,7 @@ globalThis.recordingDebug = recordingDebug;
 
 // Queue for events that need to be committed to task history
 // Trying to avoid race conditions
-export const eventQueue = {
+const eventQueue = {
   queue: [],
   processing: false,
   
@@ -49,7 +49,7 @@ export const eventQueue = {
 };
 
 // Add relative recording timestamp to event based on video start time
-export function addRelativeRecordingTimestampToEvent(eventData, fallbackBase = null) {
+function addRelativeRecordingTimestampToEvent(eventData, fallbackBase = null) {
   let relative = null;
   const base = videoRecording.startedAtMs || fallbackBase;
   if (base != null && eventData?.timestamp != null) {
@@ -88,7 +88,7 @@ export function updateEventStorage(captureData, sender, callback) {
       callback();
       return;
     }
-    
+
     const taskHistory = data.taskHistory;
     const taskId = data.currentTaskId;
     
@@ -98,7 +98,8 @@ export function updateEventStorage(captureData, sender, callback) {
     }
 
     const events = taskHistory[taskId].events || [];
-    const dataWithRelative = addRelativeRecordingTimestampToEvent(captureData, data.videoStartedAtMs);
+    // const dataWithRelative = addRelativeRecordingTimestampToEvent(captureData, data.videoStartedAtMs); // TODO JUDE UNCOMMENT!!
+    const dataWithRelative = captureData // TODO JUDE REMOVE!! 
     events.push(dataWithRelative);
     taskHistory[taskId].events = events;
     recordingDebug.totalEventsStored += 1;
