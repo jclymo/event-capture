@@ -92,6 +92,25 @@ window.injectBrowserGym = async ([parent_bid, bid_attr_name, tags_to_mark]) => {
         elems_to_be_visited.add(elem);
         intersection_observer.observe(elem);
 
+        // ===== CHECK IF ELEMENT IS NEW OR ALREADY PROCESSED =====
+        // Check for existing BID FIRST before any modifications
+        let elem_global_bid = null;
+        if (elem.hasAttribute(bid_attr_name)) {
+            elem_global_bid = elem.getAttribute(bid_attr_name);
+            // if the bid has already been encountered in THIS pass, it's a duplicate
+            if (all_bids.has(elem_global_bid)) {
+                console.log(`BrowserGym: duplicate bid ${elem_global_bid} detected, generating a new one`);
+                elem_global_bid = null;
+            }
+            // Element already has valid BID from previous injection, skip all modifications
+            else {
+                // Just add to our set and continue to next element
+                all_bids.add(elem_global_bid);
+                continue;
+            }
+        }
+
+        // ===== ONLY MODIFY NEW ELEMENTS (without existing BID) =====
         // write dynamic element values to the DOM
         if (typeof elem.value !== 'undefined') {
             elem.setAttribute("value", elem.value);
@@ -104,18 +123,6 @@ window.injectBrowserGym = async ([parent_bid, bid_attr_name, tags_to_mark]) => {
             }
             else {
                 elem.removeAttribute("checked");
-            }
-        }
-
-        // add the element global id (browsergym id) to a custom HTML attribute
-        // recover the element id if it has one already, else compute a new element id
-        let elem_global_bid = null;
-        if (elem.hasAttribute(bid_attr_name)) {
-            elem_global_bid = elem.getAttribute(bid_attr_name);
-            // if the bid has already been encountered, then this is a duplicate and a new bid should be set
-            if (all_bids.has(elem_global_bid)) {
-                console.log(`BrowserGym: duplicate bid ${elem_global_bid} detected, generating a new one`);
-                elem_global_bid = null;
             }
         }
 
