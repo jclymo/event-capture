@@ -70,6 +70,8 @@ export function requestHtmlCapture(eventType, sourceDocument = document) {
   htmlCaptureLocked = false;
 }
 
+
+
 export function captureHtml(eventType, sourceDocument = document) {
   if (!isHtmlCaptureEnabled()) {
     return;
@@ -79,6 +81,24 @@ export function captureHtml(eventType, sourceDocument = document) {
   const doc = sourceDocument || document;
   const clone = doc.documentElement.cloneNode(true);
 
+
+  // Find all BID-marked elements in the LIVE DOCUMENT that could host a Shadow Root.
+  // We use the live document to access the active .shadowRoot property.
+  const shadowHostsInOriginalDoc = doc.querySelectorAll('*[data-bid]');
+  shadowHostsInOriginalDoc.forEach(originalHost => {
+    if (originalHost.shadowRoot && originalHost.shadowRoot.mode) {
+      const templateToInject = serializeShadowRoot(originalHost, doc);
+
+      // Find the corresponding host element in the CLONE using the BID
+      const bid = originalHost.getAttribute('data-bid');
+      const clonedHost = clone.querySelector(`*[data-bid="${bid}"]`);
+
+      if (clonedHost && templateToInject) {
+          // Temporarily inject the DSD <template> tag into the cloned host element
+          clonedHost.appendChild(templateToInject.cloneNode(true));
+      }
+    }
+  });
   // --- 1. Remove scripts and noscripts ---
   // clone.querySelectorAll('script, noscript').forEach(el => el.remove());
   // --- 2. Remove inline event handlers (e.g., onclick) ---
@@ -149,3 +169,21 @@ if (typeof document !== 'undefined') {
   });
 }
 
+function serializeShadowRoot(hostElement, doc) {
+    const shadowRoot = hostElement.shadowRoot;
+    if (!shadowRoot || !shadowRoot.mode) return null;
+
+    // 1. Create the <template> element in the context of the original document
+    const template = doc.createElement('template');
+    
+    // 2. Set the mode attribute for Declarative Shadow DOM (DSD)
+    template.setAttribute('shadowrootmode', shadowRoot.mode);
+    
+    // 3. Deep-clone the Shadow Root content into the template's content fragment
+    // Note: Since BIDs are injected in the page context, they should be present here.
+    Array.from(shadowRoot.childNodes).forEach(node => {
+        template.content.appendChild(node.cloneNode(true));
+    });
+
+    return template;
+}
