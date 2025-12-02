@@ -1,0 +1,4 @@
+browsergym/workarena.servicenow.filter-asset-list
+noop()
+scroll(0, 100)
+noop()
