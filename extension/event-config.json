@@ -56,7 +56,7 @@
     },
     {
       "name": "keydown",
-      "enabled": true,
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Key pressed down"
     },
