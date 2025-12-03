@@ -47,7 +47,6 @@ export function setBrowserGymReady(ready) {
 }
 
 export function requestHtmlCapture(eventType, sourceDocument = document) {
-  // If BrowserGym isn't ready yet, queue the capture (including 'new page loaded' events)
   if (!browserGymReady) {
     console.log(`⏳ Queueing HTML capture for ${eventType} (waiting for BrowserGym BIDs)`);
     pendingHtmlCaptures.push({ eventType, sourceDocument });
@@ -159,14 +158,6 @@ export function captureHtml(eventType, sourceDocument = document) {
 
 export function resetPageLoadFlag() {
   isNewPageLoad = true;
-}
-
-// Setup DOM content loaded listener
-if (typeof document !== 'undefined') {
-  document.addEventListener('DOMContentLoaded', function() {
-    isNewPageLoad = true;
-    requestHtmlCapture('new page loaded');
-  });
 }
 
 function serializeShadowRoot(hostElement, doc) {

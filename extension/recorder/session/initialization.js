@@ -19,6 +19,7 @@ import { instrumentAllIframes } from '../iframe/instrumentation.js';
 import { preAttachCriticalListeners } from '../listeners/critical-listeners.js';
 import { attachDomListenersToDocument, detachDomListeners } from '../listeners/dom-listeners.js';
 import { attachNavigationListeners, detachNavigationListeners } from '../listeners/navigation-listeners.js';
+import { captureHtml } from '../capture/html-capture.js';
 
 let dynamicObserver = null;
 
@@ -45,6 +46,38 @@ export async function initializeRecordingSession(taskId, options = {}) {
     clearCachedConfig();
   }
 
+  // Inject BrowserGym script to mark DOM elements with data-bid attributes
+  let delay = 0;
+  try {
+    const injectionSuccess = await injectBrowserGymScript();
+    if (injectionSuccess) {
+      // Give BrowserGym a moment to initialize before iframes
+      delay = 100;
+    } else {
+      console.warn('⚠️ BrowserGym injection failed, using fallback BIDs');
+    }
+  } catch (err) {
+    console.error('❌ BrowserGym injection error:', err);
+  }
+  
+  // initialize iframes (includes setting ids)
+  setTimeout(() => {
+    startIframeObserver(preAttachCriticalListeners, attachDomListenersToDocument);
+    instrumentAllIframes(0, preAttachCriticalListeners, attachDomListenersToDocument);
+  }, delay);
+
+  // initial observation (html)
+  if (window.top === window.self) {
+    if (document.readyState === 'complete') {
+        console.log("Capturing initial observation");
+        captureHtml('pageLoad', document);
+    } else {
+      window.addEventListener('load', () => {
+        captureHtml('pageLoad', document);
+      }, { once: true });
+    }
+  }
+
   // Initialize full configurable listeners as soon as DOM is ready
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
     initializeRecording();
@@ -55,28 +88,7 @@ export async function initializeRecordingSession(taskId, options = {}) {
   // Flush any prebuffered events captured just after user hit Start
   const recordingStartAtMs = startAtMs || Date.now();
   flushPrebuffer(recordingStartAtMs, recordEvent);
-  
-  // Inject BrowserGym script to mark DOM elements with data-bid attributes
-  try {
-    const injectionSuccess = await injectBrowserGymScript();
-    if (injectionSuccess) {
-      console.log('✅ BrowserGym injection successful');
-      // startBrowserGymObserver(); // TODO Jude if all is well then fully remove BG mutation observer
-      // Give BrowserGym a moment to initialize, then instrument iframes
-      setTimeout(() => {
-        startIframeObserver(preAttachCriticalListeners, attachDomListenersToDocument);
-        instrumentAllIframes(0, preAttachCriticalListeners, attachDomListenersToDocument);
-      }, 100);
-    } else {
-      console.warn('⚠️ BrowserGym injection failed, using fallback BIDs');
-      startIframeObserver(preAttachCriticalListeners, attachDomListenersToDocument);
-      instrumentAllIframes(0, preAttachCriticalListeners, attachDomListenersToDocument);
-    }
-  } catch (err) {
-    console.error('❌ BrowserGym injection error:', err);
-    startIframeObserver(preAttachCriticalListeners, attachDomListenersToDocument);
-    instrumentAllIframes(0, preAttachCriticalListeners, attachDomListenersToDocument);
-  }
+
 }
 
 // TODO: observeDynamicChanges needs to be implemented or removed
