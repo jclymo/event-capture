@@ -13,7 +13,7 @@ import { setEnabledDomEventNames } from '../capture/event-recorder.js';
 import { setEnabledNavigationEventNames } from '../capture/navigation-recorder.js';
 import { updateNavigationState } from '../state/navigation-state.js';
 import { injectBrowserGymScript } from '../browsergym/injection.js';
-import { startBrowserGymObserver } from '../browsergym/observer.js';
+//import { startBrowserGymObserver } from '../browsergym/observer.js';
 import { startIframeObserver } from '../iframe/observer.js';
 import { instrumentAllIframes } from '../iframe/instrumentation.js';
 import { preAttachCriticalListeners } from '../listeners/critical-listeners.js';
@@ -61,7 +61,7 @@ export async function initializeRecordingSession(taskId, options = {}) {
     const injectionSuccess = await injectBrowserGymScript();
     if (injectionSuccess) {
       console.log('✅ BrowserGym injection successful');
-      startBrowserGymObserver();
+      // startBrowserGymObserver(); // TODO Jude if all is well then fully remove BG mutation observer
       // Give BrowserGym a moment to initialize, then instrument iframes
       setTimeout(() => {
         startIframeObserver(preAttachCriticalListeners, attachDomListenersToDocument);
