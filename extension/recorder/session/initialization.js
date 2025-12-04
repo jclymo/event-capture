@@ -19,7 +19,8 @@ import { instrumentAllIframes } from '../iframe/instrumentation.js';
 import { preAttachCriticalListeners } from '../listeners/critical-listeners.js';
 import { attachDomListenersToDocument, detachDomListeners } from '../listeners/dom-listeners.js';
 import { attachNavigationListeners, detachNavigationListeners } from '../listeners/navigation-listeners.js';
-import { captureHtml } from '../capture/html-capture.js';
+import { attachMainOnlyListeners } from '../listeners/main-document-listeners.js';
+import { captureState } from '../capture/html-capture.js';
 
 let dynamicObserver = null;
 
@@ -32,7 +33,7 @@ export async function initializeRecordingSession(taskId, options = {}) {
     startAtMs = null              // popup-provided start timestamp
   } = options;
 
-  console.log(`Initializing recording session: ${isResuming ? 'RESUMED' : 'NEW'}`, { taskId });
+  // console.log(`Initializing recording session: ${isResuming ? 'RESUMED' : 'NEW'}`, { taskId });
 
   // Set recording state
   setRecordingState(true);
@@ -60,6 +61,9 @@ export async function initializeRecordingSession(taskId, options = {}) {
     console.error('❌ BrowserGym injection error:', err);
   }
   
+  attachDomListenersToDocument(document)
+  attachMainOnlyListeners()
+  
   // initialize iframes (includes setting ids)
   setTimeout(() => {
     startIframeObserver(preAttachCriticalListeners, attachDomListenersToDocument);
@@ -69,11 +73,11 @@ export async function initializeRecordingSession(taskId, options = {}) {
   // initial observation (html)
   if (window.top === window.self) {
     if (document.readyState === 'complete') {
-        console.log("Capturing initial observation");
-        captureHtml('pageLoad', document);
+        // console.log("Capturing initial observation");
+        captureState('pageLoad', document);
     } else {
       window.addEventListener('load', () => {
-        captureHtml('pageLoad', document);
+        captureState('pageLoad', document);
       }, { once: true });
     }
   }
@@ -101,7 +105,7 @@ function observeDynamicChanges() {
 export function checkAndResumeRecording() {
   chrome.storage.local.get(['isRecording', 'currentTaskId', 'taskHistory'], (data) => {
     if (data.isRecording && data.currentTaskId) {
-      console.log("🔄 Resuming recording for task:", data.currentTaskId);
+      // console.log("🔄 Resuming recording for task:", data.currentTaskId);
       
       // Get existing events for this task
       const existingEvents = (data.taskHistory && data.taskHistory[data.currentTaskId]) 
@@ -114,7 +118,7 @@ export function checkAndResumeRecording() {
         existingEvents: existingEvents,
         clearCache: false
       });
-      console.log('✅ Recording session resumed');
+      // console.log('✅ Recording session resumed');
     } else {
       console.log('ℹ️ No active recording to resume');
     }
@@ -122,7 +126,7 @@ export function checkAndResumeRecording() {
 }
 
 export async function initializeRecording() {
-  console.log('Initializing recording with configurable listeners');
+  // console.log('Initializing recording with configurable listeners');
 
   try {
     const config = await loadEventConfig();
@@ -133,7 +137,7 @@ export async function initializeRecording() {
     const enabledDomEvents = (config.domEvents || []).filter(evt => evt && evt.enabled !== false);
     const enabledDomEventNames = new Set(enabledDomEvents.map(evt => evt.name));
     setEnabledDomEventNames(enabledDomEventNames);
-    console.log('Enabled DOM events:', Array.from(enabledDomEventNames));
+    // console.log('Enabled DOM events:', Array.from(enabledDomEventNames));
     
     enabledDomEvents.forEach(({ name, handler }) => {
       // DOM listeners are handled by attachDomListenersToDocument
@@ -143,7 +147,7 @@ export async function initializeRecording() {
     const enabledNavigationEvents = (config.navigationEvents || []).filter(evt => evt && evt.enabled !== false);
     const enabledNavigationEventNames = new Set(enabledNavigationEvents.map(evt => evt.name));
     setEnabledNavigationEventNames(enabledNavigationEventNames);
-    console.log('Enabled navigation events:', Array.from(enabledNavigationEventNames));
+    // console.log('Enabled navigation events:', Array.from(enabledNavigationEventNames));
     
     attachNavigationListeners(enabledNavigationEvents);
 
@@ -161,10 +165,10 @@ export async function initializeRecording() {
 
     updateNavigationState(window.location.href, document.title, false);
 
-    console.log('Recording initialized with state:', {
-      domEvents: enabledDomEvents.map(evt => evt.name),
-      navigationEvents: enabledNavigationEvents.map(evt => evt.name)
-    });
+    // console.log('Recording initialized with state:', {
+    //   domEvents: enabledDomEvents.map(evt => evt.name),
+    //   navigationEvents: enabledNavigationEvents.map(evt => evt.name)
+    // });
   } catch (error) {
     console.error('Failed to initialize recording configuration:', error);
   }

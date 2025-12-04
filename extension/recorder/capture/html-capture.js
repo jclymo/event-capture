@@ -1,80 +1,92 @@
 // HTML capture functionality
 
-import { isHtmlCaptureEnabled } from '../config/event-config.js';
-import { HTMLCOOLDOWN } from '../config/constants.js';
+// import { isHtmlCaptureEnabled } from '../config/event-config.js';
+// import { HTMLCOOLDOWN } from '../config/constants.js';
+import { debounce } from '../utils/helpers.js';
 
-let lastHtmlCapture = 0;
-let isNewPageLoad = true;
-let htmlCaptureLocked = false;
-let HTMLCOOLDOWNOVERRIDE = Date.now() - 3000;
-let browserGymReady = false;
-let pendingHtmlCaptures = [];
+// let lastHtmlCapture = 0;
+// let isNewPageLoad = true;
+// let htmlCaptureLocked = false;
+// let HTMLCOOLDOWNOVERRIDE = Date.now() - 3000;
+// let browserGymReady = false;
+// let pendingHtmlCaptures = [];
+const HTML_DEBOUNCE_DELAY_MS = 250; 
 
-// Listen for BrowserGym injection completion
-if (typeof document !== 'undefined') {
-  document.addEventListener('browsergym-injection-complete', (event) => {
-    console.log('✅ BrowserGym injection complete, enabling HTML capture');
-    browserGymReady = true;
+// // Listen for BrowserGym injection completion
+// if (typeof document !== 'undefined') {
+//   document.addEventListener('browsergym-injection-complete', (event) => {
+//     console.log('✅ BrowserGym injection complete, enabling HTML capture');
+//     browserGymReady = true;
     
-    // Process any pending captures
-    if (pendingHtmlCaptures.length > 0) {
-      console.log(`📤 Processing ${pendingHtmlCaptures.length} pending HTML captures`);
-      pendingHtmlCaptures.forEach(({ eventType, sourceDocument }) => {
-        requestHtmlCapture(eventType, sourceDocument);
-      });
-      pendingHtmlCaptures = [];
-    }
-  }, { once: true });
+//     // Process any pending captures
+//     if (pendingHtmlCaptures.length > 0) {
+//       console.log(`📤 Processing ${pendingHtmlCaptures.length} pending HTML captures`);
+//       pendingHtmlCaptures.forEach(({ eventType, sourceDocument }) => {
+//         requestHtmlCapture(eventType, sourceDocument);
+//       });
+//       pendingHtmlCaptures = [];
+//     }
+//   }, { once: true });
   
-  // Fallback: assume ready after 10 seconds if event never fires (increased for complex pages like Amazon)
-  setTimeout(() => {
-    if (!browserGymReady) {
-      console.warn('⚠️ BrowserGym injection timeout, enabling HTML capture anyway');
-      browserGymReady = true;
-      // Process pending captures
-      if (pendingHtmlCaptures.length > 0) {
-        pendingHtmlCaptures.forEach(({ eventType, sourceDocument }) => {
-          requestHtmlCapture(eventType, sourceDocument);
-        });
-        pendingHtmlCaptures = [];
-      }
-    }
-  }, 10000); // Increased to 10s for complex pages like Amazon
-}
+//   // Fallback: assume ready after 10 seconds if event never fires (increased for complex pages like Amazon)
+//   setTimeout(() => {
+//     if (!browserGymReady) {
+//       console.warn('⚠️ BrowserGym injection timeout, enabling HTML capture anyway');
+//       browserGymReady = true;
+//       // Process pending captures
+//       if (pendingHtmlCaptures.length > 0) {
+//         pendingHtmlCaptures.forEach(({ eventType, sourceDocument }) => {
+//           requestHtmlCapture(eventType, sourceDocument);
+//         });
+//         pendingHtmlCaptures = [];
+//       }
+//     }
+//   }, 10000); // Increased to 10s for complex pages like Amazon
+// }
 
-export function setBrowserGymReady(ready) {
-  browserGymReady = ready;
-}
+// export function setBrowserGymReady(ready) {
+//   browserGymReady = ready;
+// }
 
-export function requestHtmlCapture(eventType, sourceDocument = document) {
-  if (!browserGymReady) {
-    console.log(`⏳ Queueing HTML capture for ${eventType} (waiting for BrowserGym BIDs)`);
-    pendingHtmlCaptures.push({ eventType, sourceDocument });
-    return;
-  }
-  if (htmlCaptureLocked) {
-    return;
-  }
-  htmlCaptureLocked = true;
-  const now = Date.now();
+// export function requestHtmlCapture(eventType, sourceDocument = document) {
+//   if (!browserGymReady) {
+//     console.log(`⏳ Queueing HTML capture for ${eventType} (waiting for BrowserGym BIDs)`);
+//     pendingHtmlCaptures.push({ eventType, sourceDocument });
+//     return;
+//   }
+//   if (htmlCaptureLocked) {
+//     return;
+//   }
+//   htmlCaptureLocked = true;
+//   const now = Date.now();
   
-  // Always capture immediately on first page load, otherwise require gap between
-  if (isNewPageLoad || (now - HTMLCOOLDOWNOVERRIDE) < 250 || (now - lastHtmlCapture) >= HTMLCOOLDOWN) {
-    lastHtmlCapture = Date.now();
-    captureHtml(eventType, sourceDocument);
-    isNewPageLoad = false;
-  }
-  // else ignore this event
+//   // Always capture immediately on first page load, otherwise require gap between
+//   if (isNewPageLoad || (now - HTMLCOOLDOWNOVERRIDE) < 250 || (now - lastHtmlCapture) >= HTMLCOOLDOWN) {
+//     lastHtmlCapture = Date.now();
+//     captureHtml(eventType, sourceDocument);
+//     isNewPageLoad = false;
+//   }
+//   // else ignore this event
 
-  htmlCaptureLocked = false;
+//   htmlCaptureLocked = false;
+// }
+
+export function triggerCaptureAfterEvent(eventType) {
+  console.log("CAPTURE TRIGGERED")
+  debouncedCaptureStateAfterEvent(eventType);
 }
 
+// The debounced function that will be called by the message listener
+const debouncedCaptureStateAfterEvent = debounce(async (eventType) => {
+  captureState(eventType, document);     
+}, HTML_DEBOUNCE_DELAY_MS);
 
+export function captureState(eventType, sourceDocument) {
+    // TODO check if any elements need BIDs
+    captureHtml(eventType, sourceDocument);  
+}
 
-export function captureHtml(eventType, sourceDocument = document) {
-  if (!isHtmlCaptureEnabled()) {
-    return;
-  }
+function captureHtml(eventType, sourceDocument = document) {
   console.log('XXXXX approved html capture')
 
   const doc = sourceDocument || document;
@@ -156,9 +168,9 @@ export function captureHtml(eventType, sourceDocument = document) {
   }
 }
 
-export function resetPageLoadFlag() {
-  isNewPageLoad = true;
-}
+// export function resetPageLoadFlag() {
+//   isNewPageLoad = true;
+// }
 
 function serializeShadowRoot(hostElement, doc) {
     const shadowRoot = hostElement.shadowRoot;

@@ -41,9 +41,26 @@ export function setupMessageHandlers() {
     }
     
     // Event recording messages
-    if (message.type === 'recordedEvent' || message.type === 'htmlCapture') {
+    if (message.type === 'htmlCapture') {
       return handleRecordedEvent(message, sender, sendResponse);
     }
+
+    if (message.type === 'recordedEvent') {
+      handleRecordedEvent(message, sender, sendResponse);
+      chrome.tabs.sendMessage(
+        sender.tab.id, 
+        { type: 'HTML_CAPTURE_FROM_EVENT', eventType: message.event.type }, 
+        { frameId: 0 }, 
+        // This callback is defined but does nothing, simply satisfying the API's contract
+        () => {
+          if (chrome.runtime.lastError) {
+            // Log any errors (like no receiver on the other side)
+            console.warn("Capture signal failed to send:", chrome.runtime.lastError.message);
+          }
+        }
+      );
+      return false;
+    }      
     
     // Task management actions
     if (message.action === 'viewTaskDetails') {

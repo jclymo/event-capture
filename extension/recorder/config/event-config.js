@@ -85,7 +85,7 @@ export function getCachedConfig() {
   return cachedEventConfig;
 }
 
-export function isHtmlCaptureEnabled() {
-  return htmlCaptureEnabled;
-}
+// export function isHtmlCaptureEnabled() {
+//   return htmlCaptureEnabled;
+// }
 

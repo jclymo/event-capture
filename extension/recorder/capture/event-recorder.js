@@ -7,7 +7,6 @@ import { clickState, updateClickState } from '../state/click-state.js';
 import { resolveEventTarget, getElementValueUnified, isInteractiveElement } from '../utils/element-utils.js';
 import { buildTargetMetadata } from '../identification/element-metadata.js';
 import { getElementCssPath, getElementXPath } from '../identification/element-selectors.js';
-import { requestHtmlCapture } from './html-capture.js';
 import { getCachedConfig } from '../config/event-config.js';
 
 let enabledDomEventNames = null;
@@ -264,8 +263,5 @@ export function recordEvent(event) {
 
   // Send event to background script
   chrome.runtime.sendMessage({ type: 'recordedEvent', event: eventData });
-  // Capture HTML for the specific document this event came from (with BID wait)
-  const sourceDocument = metadataElement.ownerDocument || document;
-  requestHtmlCapture(event.type, sourceDocument);
 }
 

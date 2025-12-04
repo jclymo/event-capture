@@ -116,13 +116,9 @@ export function updateEventStorage(captureData, sender, callback) {
   });
 }
 
-// Handle recorded events from recorder.js
 export function handleRecordedEvent(message, sender, sendResponse) {
-  if ((message.type === 'recordedEvent') || (message.type === 'htmlCapture')) {
-    eventQueue.enqueue((done) => {
-      updateEventStorage(message.event, sender, done);
-    });
-    return false; // No response is sent back to recorder.js
-  }
+  eventQueue.enqueue((done) => {
+    updateEventStorage(message.event, sender, done);
+  });
   return false;
 }
