@@ -32,7 +32,7 @@
     },
     {
       "name": "selectstart",
-      "enabled": true,
+      "enabled": false,
       "handler": "recordEvent",
       "description": "Selection initiated (Critical for Table Sorting)"
     },
@@ -56,7 +56,7 @@
     },
     {
       "name": "keydown",
-      "enabled": false,
+      "enabled": true,
       "handler": "recordEvent",
       "description": "Key pressed down"
     },
@@ -147,12 +147,22 @@
       "name": "beforeunload",
       "enabled": true,
       "description": "Page unload warning"
+    },
+    {
+      "name": "pageshow",
+      "enabled": true,
+      "description": "Page becomes visible (includes navigation)"
     }
   ],
   "observers": {
     "dynamicDom": true
   },
   "htmlCapture": {
-    "enabled": true
+    "enabled": true,
+    "events": {
+      "click": true,
+      "pointerdown": true,
+      "keydown": true
+    }
   }
 }
