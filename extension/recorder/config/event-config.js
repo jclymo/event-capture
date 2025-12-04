@@ -47,8 +47,17 @@ export function mergeEventConfig(userConfig) {
     configClone.observers.dynamicDom = userConfig.observers.dynamicDom;
   }
 
-  if (userConfig.htmlCapture && typeof userConfig.htmlCapture.enabled === 'boolean') {
-    configClone.htmlCapture.enabled = userConfig.htmlCapture.enabled;
+  if (userConfig.htmlCapture) {
+    if (typeof userConfig.htmlCapture.enabled === 'boolean') {
+      configClone.htmlCapture.enabled = userConfig.htmlCapture.enabled;
+    }
+    // Merge event-specific htmlCapture settings
+    if (userConfig.htmlCapture.events && typeof userConfig.htmlCapture.events === 'object') {
+      if (!configClone.htmlCapture.events) {
+        configClone.htmlCapture.events = {};
+      }
+      Object.assign(configClone.htmlCapture.events, userConfig.htmlCapture.events);
+    }
   }
 
   return configClone;
@@ -87,5 +96,35 @@ export function getCachedConfig() {
 
 export function isHtmlCaptureEnabled() {
   return htmlCaptureEnabled;
+}
+
+/**
+ * Check if HTML capture is enabled for a specific event type
+ * @param {string} eventType - The event type to check (e.g., 'click', 'keydown')
+ * @returns {boolean} - True if HTML capture is enabled for this event type
+ */
+export function isHtmlCaptureEnabledForEvent(eventType) {
+  if (!htmlCaptureEnabled) {
+    return false;
+  }
+  
+  if (!cachedEventConfig || !cachedEventConfig.htmlCapture) {
+    return htmlCaptureEnabled; // Fallback to global setting
+  }
+  
+  const eventConfig = cachedEventConfig.htmlCapture.events;
+  if (!eventConfig || typeof eventConfig !== 'object') {
+    return htmlCaptureEnabled; // No event-specific config, use global setting
+  }
+  
+  // Check if this specific event type has htmlCapture enabled
+  // If the event is explicitly set to false, return false
+  // If the event is explicitly set to true, return true
+  // If the event is not in the config, default to global setting
+  if (eventType in eventConfig) {
+    return !!eventConfig[eventType];
+  }
+  
+  return htmlCaptureEnabled; // Default to global setting if event not specified
 }
 
