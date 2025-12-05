@@ -29,7 +29,7 @@ export function instrumentIframe(iframe, preAttachCriticalListenersFn, attachDom
       return;
     }
 
-    console.log('📍 Instrumenting iframe:', iframe.src || '<no src>');
+    // console.log('📍 Instrumenting iframe:', iframe.src || '<no src>');
 
     // Wait for iframe to be fully loaded
     const instrumentWhenReady = () => {
@@ -70,7 +70,6 @@ export function instrumentIframe(iframe, preAttachCriticalListenersFn, attachDom
     } else {
       instrumentWhenReady();
     }
-
   } catch (err) {
     console.warn('Failed to instrument iframe (likely cross-origin):', err);
     // Still mark as tracked to avoid retrying
@@ -88,7 +87,7 @@ function injectBrowserGymIntoIframe(iframe) {
 
     // Check if already injected
     if (iframeWindow.browserGymInitialized) {
-      console.log('BrowserGym already initialized in iframe');
+      // console.log('BrowserGym already initialized in iframe');
       return;
     }
 
@@ -96,7 +95,7 @@ function injectBrowserGymIntoIframe(iframe) {
     const scriptUrl = chrome.runtime.getURL('browsergym-inject.js');
     const existingScript = iframeDoc.querySelector(`script[src="${scriptUrl}"]`);
     if (existingScript) {
-      console.log('BrowserGym script already present in iframe, skipping injection');
+      // console.log('BrowserGym script already present in iframe, skipping injection');
       return;
     }
 
@@ -113,8 +112,8 @@ function injectBrowserGymIntoIframe(iframe) {
     // Set iframe BID prefix directly on window (bypasses CSP restrictions)
     const prefixValue = `iframe${iframeIndex}_`;
     iframeWindow.BROWSERGYM_IFRAME_PREFIX = prefixValue;
-    console.log(`🔧 Set iframe prefix directly:`, iframeWindow.BROWSERGYM_IFRAME_PREFIX);
-    console.log(`🔍 Iframe document ready state: ${iframeDoc.readyState}, elements: ${iframeDoc.querySelectorAll('*').length}`);
+    // console.log(`🔧 Set iframe prefix directly:`, iframeWindow.BROWSERGYM_IFRAME_PREFIX);
+    // console.log(`🔍 Iframe document ready state: ${iframeDoc.readyState}, elements: ${iframeDoc.querySelectorAll('*').length}`);
 
     // Verify prefix is accessible immediately
     if (iframeWindow.BROWSERGYM_IFRAME_PREFIX !== prefixValue) {
@@ -127,7 +126,7 @@ function injectBrowserGymIntoIframe(iframe) {
     const injectionCompleteHandler = (event) => {
       console.log(`✅ BrowserGym injection complete in iframe${iframeIndex}:`, event.detail);
       if (event.detail?.success) {
-        console.log(`✅ Iframe${iframeIndex} marked ${event.detail.elementsMarked || 0} elements with prefix "${event.detail.prefix}"`);
+        // console.log(`✅ Iframe${iframeIndex} marked ${event.detail.elementsMarked || 0} elements with prefix "${event.detail.prefix}"`);
       } else {
         console.error(`❌ Iframe${iframeIndex} injection failed:`, event.detail?.error);
       }
@@ -135,7 +134,6 @@ function injectBrowserGymIntoIframe(iframe) {
     };
     iframeDoc.addEventListener('browsergym-injection-complete', injectionCompleteHandler, { once: true });
 
-    // Set prefix again right before injection to ensure it's available
     // Small delay to ensure property is accessible before script executes
     setTimeout(() => {
       // Re-set prefix right before injection to ensure it's available
@@ -148,49 +146,49 @@ function injectBrowserGymIntoIframe(iframe) {
       // Store prefix in data attribute as backup (in case window property isn't accessible)
       script.setAttribute('data-iframe-prefix', prefixValue);
       script.onload = () => {
-        console.log(`📜 BrowserGym script loaded in iframe${iframeIndex} with prefix "iframe${iframeIndex}_"`);
-        console.log(`🔍 Iframe document ready state after load: ${iframeDoc.readyState}`);
+        // console.log(`📜 BrowserGym script loaded in iframe${iframeIndex} with prefix "iframe${iframeIndex}_"`);
+        // console.log(`🔍 Iframe document ready state after load: ${iframeDoc.readyState}`);
         
         // Verify prefix is accessible from iframe's window context
         try {
           const prefixFromIframe = iframeWindow.BROWSERGYM_IFRAME_PREFIX;
-          console.log(`🔍 Prefix verification - From content script:`, iframeWindow.BROWSERGYM_IFRAME_PREFIX);
-          console.log(`🔍 Prefix verification - From iframe window:`, prefixFromIframe);
-          console.log(`🔍 Prefix verification - Type:`, typeof prefixFromIframe);
-          console.log(`🔍 Prefix verification - Expected: "iframe${iframeIndex}_"`);
-          console.log(`🔍 Prefix verification - Match:`, prefixFromIframe === `iframe${iframeIndex}_`);
+          // console.log(`🔍 Prefix verification - From content script:`, iframeWindow.BROWSERGYM_IFRAME_PREFIX);
+          // console.log(`🔍 Prefix verification - From iframe window:`, prefixFromIframe);
+          // console.log(`🔍 Prefix verification - Type:`, typeof prefixFromIframe);
+          // console.log(`🔍 Prefix verification - Expected: "iframe${iframeIndex}_"`);
+          // console.log(`🔍 Prefix verification - Match:`, prefixFromIframe === `iframe${iframeIndex}_`);
           
           if (!prefixFromIframe || prefixFromIframe !== `iframe${iframeIndex}_`) {
             console.error(`❌ PREFIX MISMATCH! Setting it again...`);
             iframeWindow.BROWSERGYM_IFRAME_PREFIX = `iframe${iframeIndex}_`;
-            console.log(`🔧 Re-set prefix to:`, iframeWindow.BROWSERGYM_IFRAME_PREFIX);
+            // console.log(`🔧 Re-set prefix to:`, iframeWindow.BROWSERGYM_IFRAME_PREFIX);
           }
         } catch (e) {
           console.error(`❌ Error accessing prefix from iframe window:`, e);
         }
         
         // Wait a bit longer for the script to execute and mark elements
-        setTimeout(() => {
-          const elementsWithBid = iframeDoc.querySelectorAll('[data-bid]');
-          console.log(`🔍 Found ${elementsWithBid.length} elements with data-bid in iframe${iframeIndex}`);
+        // setTimeout(() => {
+        //   const elementsWithBid = iframeDoc.querySelectorAll('[data-bid]');
+        //   console.log(`🔍 Found ${elementsWithBid.length} elements with data-bid in iframe${iframeIndex}`);
           
-          if (elementsWithBid.length > 0) {
-            const sampleElement = elementsWithBid[0];
-            console.log(`✅ Sample iframe BID:`, sampleElement.getAttribute('data-bid'));
-          } else {
-            console.warn(`⚠️ No elements with data-bid found in iframe${iframeIndex}!`);
-            console.warn(`⚠️ Total elements in iframe: ${iframeDoc.querySelectorAll('*').length}`);
-            console.warn(`⚠️ Iframe prefix available:`, iframeWindow.BROWSERGYM_IFRAME_PREFIX);
-            console.warn(`⚠️ BrowserGym initialized flag:`, iframeWindow.browserGymInitialized);
-          }
-        }, 500); // Increased delay to allow script execution
+        //   if (elementsWithBid.length > 0) {
+        //     const sampleElement = elementsWithBid[0];
+        //     // console.log(`✅ Sample iframe BID:`, sampleElement.getAttribute('data-bid'));
+        //   } else {
+        //     console.warn(`⚠️ No elements with data-bid found in iframe${iframeIndex}!`);
+        //     console.warn(`⚠️ Total elements in iframe: ${iframeDoc.querySelectorAll('*').length}`);
+        //     console.warn(`⚠️ Iframe prefix available:`, iframeWindow.BROWSERGYM_IFRAME_PREFIX);
+        //     console.warn(`⚠️ BrowserGym initialized flag:`, iframeWindow.browserGymInitialized);
+        //   }
+        // }, 500); // Increased delay to allow script execution
       };
       script.onerror = () => {
         console.error(`❌ Failed to inject BrowserGym script into iframe${iframeIndex}`);
         iframeDoc.removeEventListener('browsergym-injection-complete', injectionCompleteHandler);
       };
       (iframeDoc.head || iframeDoc.documentElement)?.appendChild(script);
-    }, 50);
+    }, 10);
   } catch (err) {
     console.warn('Failed to inject BrowserGym into iframe:', err);
   }
@@ -218,18 +216,18 @@ export function instrumentAllIframes(retryCount = 0, preAttachFn, attachDomFn) {
     
     searchShadowRoots(document);
     
-    console.log(`Found ${iframes.length} iframes to instrument (attempt ${retryCount + 1})`);
+    // console.log(`Found ${iframes.length} iframes to instrument (attempt ${retryCount + 1})`);
     
-    if (iframes.length === 0 && retryCount < 5) {
+    if (iframes.length === 0 && retryCount < 2) {
       // Retry after a delay to catch iframes that load after initial DOM ready
-      console.log(`No iframes found yet, retrying in ${(retryCount + 1) * 500}ms...`);
+      // console.log(`No iframes found yet, retrying in ${(retryCount + 1) * 500}ms...`);
       setTimeout(() => instrumentAllIframes(retryCount + 1, preAttachFn, attachDomFn), (retryCount + 1) * 500);
       return;
     }
     
-    if (iframes.length > 0) {
-      console.log(`📍 Instrumenting ${iframes.length} iframes:`, iframes.map(f => f.id || f.name || '<unnamed>'));
-    }
+    // if (iframes.length > 0) {
+      // console.log(`📍 Instrumenting ${iframes.length} iframes:`, iframes.map(f => f.id || f.name || '<unnamed>'));
+    // }
     
     iframes.forEach(iframe => {
       instrumentIframe(iframe, preAttachFn, attachDomFn);

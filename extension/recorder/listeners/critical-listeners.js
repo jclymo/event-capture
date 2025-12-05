@@ -37,7 +37,7 @@ export function preAttachCriticalListeners(targetDocument = document) {
           }
         }, true);
         criticalDomListeners.set(key, true);
-        console.log(`Pre-attached critical listener for ${name} on`, targetDocument === document ? 'main document' : 'iframe');
+        // console.log(`Pre-attached critical listener for ${name} on`, targetDocument === document ? 'main document' : 'iframe');
       }
     });
   } catch (err) {

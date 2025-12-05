@@ -1,6 +1,5 @@
 // BrowserGym BID injection script
 // This script runs in the page context to mark all DOM elements with unique BIDs
-
 window.injectBrowserGym = async ([parent_bid, bid_attr_name, tags_to_mark]) => {
     // standard html tags
     // https://www.w3schools.com/tags/
@@ -19,6 +18,8 @@ window.injectBrowserGym = async ([parent_bid, bid_attr_name, tags_to_mark]) => {
         "svg", "table", "tbody", "td", "template", "textarea", "tfoot", "th", "thead",
         "time", "title", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"
     ]);
+
+    console.log('🔍 parent_bid1:', parent_bid);
 
     const set_of_marks_tags = new Set([
         "input", "textarea", "select", "button", "a", "iframe", "video", "li", "td", "option"
@@ -59,6 +60,7 @@ window.injectBrowserGym = async ([parent_bid, bid_attr_name, tags_to_mark]) => {
     let i = 0;
     while (i < elements.length) {
         const elem = elements[i];
+        // console.log(parent_bid, elem)
         // add shadowDOM elements to the elements array, in such a way that order is preserved
         if (elem.shadowRoot !== null) {
             elements = new Array(
@@ -109,9 +111,14 @@ window.injectBrowserGym = async ([parent_bid, bid_attr_name, tags_to_mark]) => {
 
         // add the element global id (browsergym id) to a custom HTML attribute
         // recover the element id if it has one already, else compute a new element id
+        // console.log(parent_bid, elem, elem.getAttribute(bid_attr_name))
+
         let elem_global_bid = null;
         if (elem.hasAttribute(bid_attr_name)) {
             elem_global_bid = elem.getAttribute(bid_attr_name);
+            // console.log('parent', parent_bid, 'attr', elem_global_bid)
+            // console.log('inside if', parent_bid, elem, elem.getAttribute(bid_attr_name))
+            console.log('inside if', parent_bid)
             // if the bid has already been encountered, then this is a duplicate and a new bid should be set
             if (all_bids.has(elem_global_bid)) {
                 console.log(`BrowserGym: duplicate bid ${elem_global_bid} detected, generating a new one`);
@@ -131,10 +138,10 @@ window.injectBrowserGym = async ([parent_bid, bid_attr_name, tags_to_mark]) => {
             }
             
             // Debug first few elements to see prefix application
-            if (window.browsergym_elem_counter <= 3 || (window.browsergym_elem_counter - 1) <= 3) {
-                console.log(`🔍 BID generation - parent_bid: "${parent_bid}", elem_local_id: "${elem_local_id}", parent_bid type: ${typeof parent_bid}, parent_bid length: ${parent_bid ? parent_bid.length : 0}`);
-            }
-            
+            // if (window.browsergym_elem_counter <= 3 || (window.browsergym_elem_counter - 1) <= 3) {
+                // console.log(`🔍 BID generation - parent_bid: "${parent_bid}", elem_local_id: "${elem_local_id}", parent_bid type: ${typeof parent_bid}, parent_bid length: ${parent_bid ? parent_bid.length : 0}`);
+            // }
+            console.log('inside BG updates, parent bid is', parent_bid)
             if (parent_bid == "" || !parent_bid) {
                 elem_global_bid = `${elem_local_id}`;
             }
@@ -143,9 +150,9 @@ window.injectBrowserGym = async ([parent_bid, bid_attr_name, tags_to_mark]) => {
             }
             
             // Debug first few elements
-            if (window.browsergym_elem_counter <= 3 || (window.browsergym_elem_counter - 1) <= 3) {
-                console.log(`🔍 BID generated: "${elem_global_bid}" for element:`, elem.tagName);
-            }
+            // if (window.browsergym_elem_counter <= 3 || (window.browsergym_elem_counter - 1) <= 3) {
+            //     console.log(`🔍 BID generated: "${elem_global_bid}" for element:`, elem.tagName);
+            // }
             
             elem.setAttribute(bid_attr_name, `${elem_global_bid}`);
 
@@ -323,6 +330,7 @@ if (typeof window.IFrameIdGenerator === 'undefined') {
 // Auto-execute on injection
 (async () => {
     try {
+
         // Wait for document to be ready (especially important for iframes)
         const waitForReady = () => {
             return new Promise((resolve) => {
@@ -338,10 +346,11 @@ if (typeof window.IFrameIdGenerator === 'undefined') {
         };
         
         await waitForReady();
-        
+
         // Check if we're in an iframe and use the prefix if available
         // Try multiple methods to get the prefix (window property or script data attribute)
         let parentBid = window.BROWSERGYM_IFRAME_PREFIX || "";
+        // console.log(' XXXX starting bg script', parentBid, document.documentElement.outerHTML)
         
         // Backup: Try to get prefix from the script tag that loaded this file
         if (!parentBid) {
@@ -369,27 +378,27 @@ if (typeof window.IFrameIdGenerator === 'undefined') {
         // console.log(`🔍 parentBid value:`, parentBid);
         // console.log(`🔍 parentBid length:`, parentBid.length);
         // console.log(`🔍 parentBid truthy check:`, !!parentBid);
-        
-        const warnings = await window.injectBrowserGym([
-            parentBid,    // Use iframe prefix if in iframe, empty string for main document
-            "data-bid",   // attribute key to hold the BID
-            "all"         // process every single element
-        ]);
+        console.log('immediately before calling for first time', parentBid);
+        // const warnings = await window.injectBrowserGym([
+        //     parentBid,    // Use iframe prefix if in iframe, empty string for main document
+        //     "data-bid",   // attribute key to hold the BID
+        //     "all"         // process every single element
+        // ]);
         
         // Verify that BIDs were actually assigned
-        const elementsWithBid = document.querySelectorAll('[data-bid]');
-        console.log(`🔍 Found ${elementsWithBid.length} elements with data-bid after injection`);
+        // const elementsWithBid = document.querySelectorAll('[data-bid]');
+        // console.log(`🔍 Found ${elementsWithBid.length} elements with data-bid after injection`);
         
-        if (parentBid) {
-            console.log(`✅ BrowserGym IDs set with prefix "${parentBid}", ${elementsWithBid.length} elements marked, warnings:`, warnings);
-        } else {
-            console.log(`✅ BrowserGym IDs set (main document), ${elementsWithBid.length} elements marked, warnings:`, warnings);
-        }
+        // if (parentBid) {
+        //     console.log(`✅ BrowserGym IDs set with prefix "${parentBid}", ${elementsWithBid.length} elements marked, warnings:`, warnings);
+        // } else {
+        //     console.log(`✅ BrowserGym IDs set (main document), ${elementsWithBid.length} elements marked, warnings:`, warnings);
+        // }
         
         window.browserGymInitialized = true;
         // Signal completion via custom event (content script can listen)
         document.dispatchEvent(new CustomEvent('browsergym-injection-complete', { 
-            detail: { success: true, warnings: warnings, prefix: parentBid, elementsMarked: elementsWithBid.length }
+            detail: { success: true, warnings: [], prefix: 0, elementsMarked: 0 }
         }));
     } catch (err) {
         console.error("BrowserGym injection failed:", err);
@@ -399,22 +408,50 @@ if (typeof window.IFrameIdGenerator === 'undefined') {
     }
 })();
 
-// Listen for re-mark requests from content script (for dynamically added content)
-document.addEventListener('browsergym-remark-request', async (event) => {
+document.addEventListener('iframe-observation-request', async (event) => {
     try {
-        console.log('🔄 Re-marking new DOM elements with BrowserGym...');
-        
-        // Use the same prefix that was used during initial injection
+        // do re-marking first
         const parentBid = window.BROWSERGYM_IFRAME_PREFIX || "";
-        
+        console.log('🔄 Re-marking iframe elements with BrowserGym...', parentBid);
+        // console.log('iframe in listener', document.documentElement.outerHTML)
+
         const warnings = await window.injectBrowserGym([
             parentBid,    // Use iframe prefix if in iframe
             "data-bid",   // attribute key
             "all"         // process all elements
         ]);
-        console.log(`✅ Re-marking complete${parentBid ? ` with prefix "${parentBid}"` : ''}, warnings:`, warnings.length);
+        const fullHTML = document.documentElement.outerHTML;
+        // const clone = document.documentElement.cloneNode(true);
+        // clone.querySelectorAll('script[src*="browsergym-inject.js"]').forEach(el => el.remove());    
+        // const fullHTML = clone.outerHTML    
+        window.parent.postMessage({
+            type: 'observation-request-complete',
+            iframeId: parentBid,
+            html: fullHTML
+            }, '*');
+    } catch (err) {
+        console.error('❌ Re-marking failed:', err);
+        document.dispatchEvent(new CustomEvent('observation-request-complete', { 
+            detail: { success: false, error: err.message }
+        }));
+    }
+});
+
+// Listen for re-mark requests from content script (for dynamically added content)
+document.addEventListener('browsergym-remark-request', async (event) => {
+    try {
+        // Use the same prefix that was used during initial injection
+        const parentBid = window.BROWSERGYM_IFRAME_PREFIX || "";
+        console.log('🔄 Re-marking with ids...', parentBid);
+
+        const warnings = await window.injectBrowserGym([
+            parentBid,    // Use iframe prefix if in iframe
+            "data-bid",   // attribute key
+            "all"         // process all elements
+        ]);
+        // console.log(`✅ Re-marking complete${parentBid ? ` with prefix "${parentBid}"` : ''}, warnings:`, warnings.length);
         document.dispatchEvent(new CustomEvent('browsergym-remark-complete', { 
-            detail: { success: true, warnings: warnings }
+            detail: { success: true, warnings: warnings}
         }));
     } catch (err) {
         console.error('❌ Re-marking failed:', err);

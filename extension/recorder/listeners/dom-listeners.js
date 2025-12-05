@@ -50,7 +50,7 @@ export function attachDomListenersToDocument(targetDocument) {
         return;
       }
       targetDocument.addEventListener(name, resolvedHandler, true);
-      console.log(`Added event listener for ${name} on`, targetDocument === document ? 'main' : 'iframe');
+      // console.log(`Added event listener for ${name} on`, targetDocument === document ? 'main' : 'iframe');
     });
   } catch (err) {
     console.error('Failed to attach DOM listeners to document:', err);

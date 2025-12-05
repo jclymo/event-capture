@@ -41,7 +41,7 @@ export async function injectRecorderIntoTab(tabId, reason = '') {
     }
 
     await chrome.scripting.executeScript({
-      target: { tabId, allFrames: true },
+      target: { tabId, allFrames: false },
       files: ['recorder.js']  // Loads modular recorder via compatibility wrapper
     });
     if (reason) {

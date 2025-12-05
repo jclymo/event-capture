@@ -36,9 +36,9 @@ if (window.taskRecorderInitialized) {
       if (!window.__recorderCriticalAttached) {
         preAttachCriticalListeners();
         window.__recorderCriticalAttached = true;
-        console.log('✅ Critical listeners pre-attached');
+        // console.log('✅ Critical listeners pre-attached'); 
       } else {
-        console.log('ℹ️ Critical listeners already attached (previous injection)');
+        // console.log('ℹ️ Critical listeners already attached (previous injection)');
       }
 
       // Make recording state accessible for debugging
@@ -50,7 +50,7 @@ if (window.taskRecorderInitialized) {
       // Check if we should resume recording (handles navigation during active recording)
       checkAndResumeRecording();
 
-      console.log('✅ Task Recorder content script ready');
+      // console.log('✅ Task Recorder content script ready');
     } catch (error) {
       console.error('❌ Failed to initialize Task Recorder:', error);
     }

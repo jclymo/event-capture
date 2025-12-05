@@ -19,7 +19,7 @@ export async function injectBrowserGymScript() {
 
     const completionHandler = (event) => {
       cleanup();
-      console.log('✅ BrowserGym injection complete:', event.detail);
+      // console.log('✅ BrowserGym injection complete:', event.detail);
       resolve(event.detail?.success === true);
     };
 
@@ -33,7 +33,7 @@ export async function injectBrowserGymScript() {
     timeoutId = setTimeout(signalTimeout, 10000); // Increased to 10s for complex pages like Amazon
 
     // Direct DOM injection (same method as iframe injection)
-    console.log('💉 Injecting BrowserGym script directly into main document');
+    // console.log('💉 Injecting BrowserGym script directly into main document');
     try {
       const script = document.createElement('script');
       script.src = chrome.runtime.getURL('browsergym-inject.js');

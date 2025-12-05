@@ -151,8 +151,5 @@
   ],
   "observers": {
     "dynamicDom": true
-  },
-  "htmlCapture": {
-    "enabled": true
   }
 }

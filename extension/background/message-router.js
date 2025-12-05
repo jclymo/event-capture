@@ -11,6 +11,19 @@ import {
 } from './video-recorder.js';
 
 import { handleRecordedEvent } from './event-storage.js';
+import { debounce } from '../recorder/utils/helpers.js';
+
+// let lastCallTime = 0;
+const CAPTURE_DEBOUNCE_DELAY_MS = 350;
+
+const triggerCaptureDebounced = debounce((tabId, eventType) => {
+  // Send message to content script to trigger capture
+  chrome.tabs.sendMessage(
+    tabId,
+    { type: 'HTML_CAPTURE_FROM_EVENT', eventType: eventType }, 
+    { frameId: 0 }
+  );
+}, CAPTURE_DEBOUNCE_DELAY_MS);
 
 // Setup all message handlers
 export function setupMessageHandlers() {
@@ -47,18 +60,11 @@ export function setupMessageHandlers() {
 
     if (message.type === 'recordedEvent') {
       handleRecordedEvent(message, sender, sendResponse);
-      chrome.tabs.sendMessage(
-        sender.tab.id, 
-        { type: 'HTML_CAPTURE_FROM_EVENT', eventType: message.event.type }, 
-        { frameId: 0 }, 
-        // This callback is defined but does nothing, simply satisfying the API's contract
-        () => {
-          if (chrome.runtime.lastError) {
-            // Log any errors (like no receiver on the other side)
-            console.warn("Capture signal failed to send:", chrome.runtime.lastError.message);
-          }
-        }
-      );
+      // const now = Date.now();
+      // const timeSinceLastCall = now - lastCallTime;
+      // console.log("CAPTURE TRIGGERED, time since last call:", timeSinceLastCall, "ms");
+      // lastCallTime = now;
+      triggerCaptureDebounced(sender.tab.id, message.event.type)
       return false;
     }      
     
@@ -111,4 +117,3 @@ export function setupMessageHandlers() {
 
   console.log('✅ Message routing initialized');
 }
-

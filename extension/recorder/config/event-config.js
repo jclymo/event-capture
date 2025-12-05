@@ -6,7 +6,6 @@ import { DEFAULT_EVENT_CONFIG } from './constants.js';
 export { DEFAULT_EVENT_CONFIG };
 
 let cachedEventConfig = null;
-let htmlCaptureEnabled = true;
 
 export function mergeEventConfig(userConfig) {
   const configClone = JSON.parse(JSON.stringify(DEFAULT_EVENT_CONFIG));
@@ -72,8 +71,6 @@ export async function loadEventConfig() {
     cachedEventConfig = mergeEventConfig(null);
   }
 
-  htmlCaptureEnabled = !!cachedEventConfig.htmlCapture?.enabled;
-
   return cachedEventConfig;
 }
 
@@ -84,8 +81,3 @@ export function clearCachedConfig() {
 export function getCachedConfig() {
   return cachedEventConfig;
 }
-
-// export function isHtmlCaptureEnabled() {
-//   return htmlCaptureEnabled;
-// }
-

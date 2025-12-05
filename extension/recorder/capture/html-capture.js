@@ -1,97 +1,129 @@
 // HTML capture functionality
 
-// import { isHtmlCaptureEnabled } from '../config/event-config.js';
-// import { HTMLCOOLDOWN } from '../config/constants.js';
 import { debounce } from '../utils/helpers.js';
 
-// let lastHtmlCapture = 0;
-// let isNewPageLoad = true;
-// let htmlCaptureLocked = false;
-// let HTMLCOOLDOWNOVERRIDE = Date.now() - 3000;
-// let browserGymReady = false;
-// let pendingHtmlCaptures = [];
-const HTML_DEBOUNCE_DELAY_MS = 250; 
+function combineHTMLWithIframes(topLevelHTML, iframeHTMLMap) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(topLevelHTML, 'text/html');
+  
+  // Find all iframes and inject their captured HTML
+  const iframes = doc.querySelectorAll('iframe');
+  iframes.forEach(iframe => {
+    // get our iframe id
+    const iframeId = iframe.getAttribute('data-iframe-index') 
+                    // || iframe.id ||
+                    //  window.iframeUniqueId; 
+    const iframeAltId =`iframe${iframeId}_`
+    if (iframeHTMLMap.has(iframeAltId)) {
+      // console.log('found iframe html', iframeAltId)
+      const iframeHTML = minify(iframeHTMLMap.get(iframeAltId));
+      // console.log(iframeHTML)
+      
+      // Use srcdoc attribute to display inline HTML
+      iframe.removeAttribute('src');
+      iframe.setAttribute('srcdoc', iframeHTML);
+    }
+  });
+  return doc.documentElement.outerHTML;
+}
 
-// // Listen for BrowserGym injection completion
-// if (typeof document !== 'undefined') {
-//   document.addEventListener('browsergym-injection-complete', (event) => {
-//     console.log('✅ BrowserGym injection complete, enabling HTML capture');
-//     browserGymReady = true;
+function captureFullPageHTML() {
+  return new Promise((resolve) => {
+    const iframeHTMLMap = new Map(); // Store iframe HTML by ID
+    const iframes = document.querySelectorAll('iframe');
+    const totalIframes = iframes.length;
+    let responsesReceived = 0;
+    let isResolved = false; 
     
-//     // Process any pending captures
-//     if (pendingHtmlCaptures.length > 0) {
-//       console.log(`📤 Processing ${pendingHtmlCaptures.length} pending HTML captures`);
-//       pendingHtmlCaptures.forEach(({ eventType, sourceDocument }) => {
-//         requestHtmlCapture(eventType, sourceDocument);
-//       });
-//       pendingHtmlCaptures = [];
-//     }
-//   }, { once: true });
-  
-//   // Fallback: assume ready after 10 seconds if event never fires (increased for complex pages like Amazon)
-//   setTimeout(() => {
-//     if (!browserGymReady) {
-//       console.warn('⚠️ BrowserGym injection timeout, enabling HTML capture anyway');
-//       browserGymReady = true;
-//       // Process pending captures
-//       if (pendingHtmlCaptures.length > 0) {
-//         pendingHtmlCaptures.forEach(({ eventType, sourceDocument }) => {
-//           requestHtmlCapture(eventType, sourceDocument);
-//         });
-//         pendingHtmlCaptures = [];
-//       }
-//     }
-//   }, 10000); // Increased to 10s for complex pages like Amazon
-// }
+    // Set up listener for iframe responses
+    function handleIframeResponse(event) {
+      if (event.data.type === 'observation-request-complete') {
+        const { iframeId, html } = event.data;
+        
+        iframeHTMLMap.set(iframeId, html);
+        responsesReceived++;
+        
+        if (responsesReceived === totalIframes) {
+          isResolved = true;
+          // Clean up listener
+          window.removeEventListener('message', handleIframeResponse);
+          
+          // Get top-level HTML
+          const topLevelHTML = captureHtml(document)
+          
+          // Combine everything
+          const combinedHTML = combineHTMLWithIframes(topLevelHTML, iframeHTMLMap);
+          resolve(combinedHTML);
+        }
+      }
+    }
+    
+    window.addEventListener('message', handleIframeResponse);
+    console.log('listener added')
+    // Send request to all iframes
+    iframes.forEach(iframe => {
+      try {
+        const iframeDoc = iframe.contentDocument;
+        iframeDoc.dispatchEvent(new CustomEvent('iframe-observation-request', {
+          detail: { timestamp: Date.now() }
+        }));
 
-// export function setBrowserGymReady(ready) {
-//   browserGymReady = ready;
-// }
-
-// export function requestHtmlCapture(eventType, sourceDocument = document) {
-//   if (!browserGymReady) {
-//     console.log(`⏳ Queueing HTML capture for ${eventType} (waiting for BrowserGym BIDs)`);
-//     pendingHtmlCaptures.push({ eventType, sourceDocument });
-//     return;
-//   }
-//   if (htmlCaptureLocked) {
-//     return;
-//   }
-//   htmlCaptureLocked = true;
-//   const now = Date.now();
-  
-//   // Always capture immediately on first page load, otherwise require gap between
-//   if (isNewPageLoad || (now - HTMLCOOLDOWNOVERRIDE) < 250 || (now - lastHtmlCapture) >= HTMLCOOLDOWN) {
-//     lastHtmlCapture = Date.now();
-//     captureHtml(eventType, sourceDocument);
-//     isNewPageLoad = false;
-//   }
-//   // else ignore this event
-
-//   htmlCaptureLocked = false;
-// }
-
-export function triggerCaptureAfterEvent(eventType) {
-  console.log("CAPTURE TRIGGERED")
-  debouncedCaptureStateAfterEvent(eventType);
+      } catch (e) {
+        console.warn('Cannot access iframe:', e);
+        // Count cross-origin iframes as "responded" so we don't wait forever
+        responsesReceived++;
+      }
+    });
+    
+    // Timeout safety net (in case some iframes never respond)
+    setTimeout(() => {
+      if (!isResolved) {  // ← Only log/resolve if not already done
+        isResolved = true;      
+        console.warn(`Timeout: Only received ${responsesReceived}/${totalIframes} responses`);
+        window.removeEventListener('message', handleIframeResponse);
+        const topLevelHTML = captureHtml(document)
+        const combinedHTML = combineHTMLWithIframes(topLevelHTML, iframeHTMLMap);
+        resolve(combinedHTML);
+      }
+    }, 3000); // 3 second timeout
+  });
 }
 
-// The debounced function that will be called by the message listener
-const debouncedCaptureStateAfterEvent = debounce(async (eventType) => {
-  captureState(eventType, document);     
-}, HTML_DEBOUNCE_DELAY_MS);
+export async function captureState(eventType) {
+  document.dispatchEvent(new CustomEvent('browsergym-remark-request', {
+    detail: { timestamp: Date.now() }
+  }));
+  
+  const fullHTML = await captureFullPageHTML();
 
-export function captureState(eventType, sourceDocument) {
-    // TODO check if any elements need BIDs
-    captureHtml(eventType, sourceDocument);  
+  chrome.runtime.sendMessage({ 
+    type: 'htmlCapture', 
+    event: {
+      html: fullHTML,
+      type: 'htmlCapture',
+      eventType: eventType,
+      timestamp: Date.now(),
+      url: (document.defaultView && document.defaultView.location)
+        ? document.defaultView.location.href
+        : window.location.href
+    } 
+  });
+  console.log('html reported')
 }
 
-function captureHtml(eventType, sourceDocument = document) {
-  console.log('XXXXX approved html capture')
+function minify(html) {
+  const reducedHtml =
+  '<!DOCTYPE html>\n' +
+  html
+    .replace(/\s+/g, ' ')   // collapse whitespace
+    .replace(/> </g, '><'); // remove inter-tag spaces 
+  
+    return reducedHtml;
+}
 
+function captureHtml(sourceDocument = document) {
   const doc = sourceDocument || document;
   const clone = doc.documentElement.cloneNode(true);
-
 
   // Find all BID-marked elements in the LIVE DOCUMENT that could host a Shadow Root.
   // We use the live document to access the active .shadowRoot property.
@@ -110,6 +142,10 @@ function captureHtml(eventType, sourceDocument = document) {
       }
     }
   });
+
+  // remove our injected code
+  clone.querySelectorAll('script[src*="browsergym-inject.js"]').forEach(el => el.remove());
+
   // --- 1. Remove scripts and noscripts ---
   // clone.querySelectorAll('script, noscript').forEach(el => el.remove());
   // --- 2. Remove inline event handlers (e.g., onclick) ---
@@ -145,32 +181,9 @@ function captureHtml(eventType, sourceDocument = document) {
   // });
   
   // --- 5. Minify the resulting HTML ---
-  const currentHtml =
-    '<!DOCTYPE html>\n' +
-    clone.outerHTML
-      .replace(/\s+/g, ' ')   // collapse whitespace
-      .replace(/> </g, '><'); // remove inter-tag spaces
-  
-  chrome.runtime.sendMessage({ 
-    type: 'htmlCapture', 
-    event: {
-      html: currentHtml,
-      type: 'htmlCapture',
-      eventType: eventType,
-      timestamp: Date.now(),
-      url: (doc.defaultView && doc.defaultView.location)
-        ? doc.defaultView.location.href
-        : window.location.href
-    } 
-  });
-  if (eventType ==="change") {
-    HTMLCOOLDOWNOVERRIDE = Date.now();
-  }
+  const currentHtml = minify(clone.outerHTML)
+  return currentHtml
 }
-
-// export function resetPageLoadFlag() {
-//   isNewPageLoad = true;
-// }
 
 function serializeShadowRoot(hostElement, doc) {
     const shadowRoot = hostElement.shadowRoot;

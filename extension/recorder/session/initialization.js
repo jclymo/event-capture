@@ -48,12 +48,10 @@ export async function initializeRecordingSession(taskId, options = {}) {
   }
 
   // Inject BrowserGym script to mark DOM elements with data-bid attributes
-  let delay = 0;
+  let delay = 200;
   try {
     const injectionSuccess = await injectBrowserGymScript();
     if (injectionSuccess) {
-      // Give BrowserGym a moment to initialize before iframes
-      delay = 100;
     } else {
       console.warn('⚠️ BrowserGym injection failed, using fallback BIDs');
     }
@@ -64,23 +62,23 @@ export async function initializeRecordingSession(taskId, options = {}) {
   attachDomListenersToDocument(document)
   attachMainOnlyListeners()
   
-  // initialize iframes (includes setting ids)
-  setTimeout(() => {
-    startIframeObserver(preAttachCriticalListeners, attachDomListenersToDocument);
-    instrumentAllIframes(0, preAttachCriticalListeners, attachDomListenersToDocument);
-  }, delay);
-
+  // initialize iframes 
+  startIframeObserver(preAttachCriticalListeners, attachDomListenersToDocument);
+  instrumentAllIframes(0, preAttachCriticalListeners, attachDomListenersToDocument);
+  
   // initial observation (html)
-  if (window.top === window.self) {
-    if (document.readyState === 'complete') {
-        // console.log("Capturing initial observation");
-        captureState('pageLoad', document);
-    } else {
-      window.addEventListener('load', () => {
-        captureState('pageLoad', document);
-      }, { once: true });
+  setTimeout(async () => {
+    if (window.top === window.self) {
+      // Wait for page load if needed
+      if (document.readyState !== 'complete') {
+        await new Promise(resolve => window.addEventListener('load', resolve, { once: true }));
+      }
+      
+      await captureState('pageLoad');
     }
-  }
+  }, delay); // delay allows listeners and the parentID to get set on iframes otherwise bids are wrong
+  // it's a hack. if iframe bids aren't setting correctly on page load try a longer delay
+  // (or implement a proper solution...)
 
   // Initialize full configurable listeners as soon as DOM is ready
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
