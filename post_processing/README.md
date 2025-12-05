@@ -8,6 +8,8 @@ Process trace.json exported from the BrowserGym event capture extension.
 cd EXTENSION/event-capture/post_processing
 uv sync
 uv run python process_trace.py trace.json
+    OR 
+uv run python process_trace.py trace.json -o results --extract-html      
 ```
 
 That's it! This generates all outputs in one go.
