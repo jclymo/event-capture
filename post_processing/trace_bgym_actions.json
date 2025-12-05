@@ -1,0 +1,143 @@
+{
+  "task_id": "task_1764698529477",
+  "task_title": "workarena.servicenow.filter-incident-list",
+  "start_url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do",
+  "end_url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do%3Fsysparm_query%3Dpriority%253D1%255Ecategory%253Dnetwork%26sysparm_first_row%3D1%26sysparm_view%3Dmajor_incidents",
+  "duration_seconds": 66,
+  "total_actions": 10,
+  "actions": [
+    {
+      "action": "click",
+      "data_bid": "189",
+      "step": 1,
+      "timestamp": 1764698534460,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do",
+      "event_type": "click",
+      "element_info": {
+        "role": "list",
+        "name": "All",
+        "tagName": "SPAN"
+      }
+    },
+    {
+      "action": "click",
+      "data_bid": "iframe0_48",
+      "step": 2,
+      "timestamp": 1764698541899,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do",
+      "event_type": "click",
+      "element_info": {
+        "role": "button",
+        "name": "Show / hide filter",
+        "tagName": "A"
+      }
+    },
+    {
+      "action": "click",
+      "data_bid": "role-button",
+      "step": 3,
+      "timestamp": 1764698578629,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do",
+      "event_type": "pointerdown",
+      "element_info": {
+        "role": "button",
+        "name": "-- choose field --",
+        "tagName": "A"
+      }
+    },
+    {
+      "action": "fill",
+      "data_bid": "id-s2id-autogen2-search",
+      "value": "Prio",
+      "step": 4,
+      "timestamp": 1764698559387,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do",
+      "event_type": "input",
+      "element_info": {
+        "role": "combobox",
+        "name": "",
+        "tagName": "INPUT"
+      }
+    },
+    {
+      "action": "click",
+      "data_bid": "id-select2-result-label-166",
+      "step": 5,
+      "timestamp": 1764698560802,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do",
+      "event_type": "pointerdown",
+      "element_info": {
+        "role": "option",
+        "name": "Priority",
+        "tagName": "DIV"
+      }
+    },
+    {
+      "action": "select_option",
+      "data_bid": "aria-choose-option-for-field--priority",
+      "option": "1",
+      "step": 6,
+      "timestamp": 1764698565703,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do",
+      "event_type": "click",
+      "element_info": {
+        "role": "combobox",
+        "name": "Choose option for field: Priority",
+        "tagName": "SELECT"
+      }
+    },
+    {
+      "action": "click",
+      "data_bid": "aria-add-and-condition-to-condition-1--priority-is-1---critical",
+      "step": 7,
+      "timestamp": 1764698567178,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do",
+      "event_type": "click",
+      "element_info": {
+        "role": "button",
+        "name": "Add AND Condition To Condition 1: Priority is 1 - Critical",
+        "tagName": "BUTTON"
+      }
+    },
+    {
+      "action": "click",
+      "data_bid": "iframe0_34",
+      "step": 8,
+      "timestamp": 1764698577600,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do",
+      "event_type": "pointerdown",
+      "element_info": {
+        "role": "",
+        "name": "Unfiltered Incidents list showing 1 to 20 of 88 re",
+        "tagName": "BODY"
+      }
+    },
+    {
+      "action": "fill",
+      "data_bid": "id-s2id-autogen168-search",
+      "value": "Cate",
+      "step": 9,
+      "timestamp": 1764698580374,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do",
+      "event_type": "input",
+      "element_info": {
+        "role": "combobox",
+        "name": "",
+        "tagName": "INPUT"
+      }
+    },
+    {
+      "action": "click",
+      "data_bid": "id-select2-result-label-464",
+      "step": 10,
+      "timestamp": 1764698581664,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do",
+      "event_type": "pointerdown",
+      "element_info": {
+        "role": "option",
+        "name": "Category",
+        "tagName": "DIV"
+      }
+    }
+  ]
+}

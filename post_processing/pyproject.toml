@@ -1,0 +1,9 @@
+[project]
+name = "post-processing"
+version = "0.1.0"
+description = "Process trace.json from BrowserGym event capture extension"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "beautifulsoup4>=4.12.0",
+]

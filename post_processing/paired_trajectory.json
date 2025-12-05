@@ -1,0 +1,232 @@
+{
+  "task_id": "task_1764698529477",
+  "task_title": "workarena.servicenow.filter-incident-list",
+  "start_url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do",
+  "end_url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do%3Fsysparm_query%3Dpriority%253D1%255Ecategory%253Dnetwork%26sysparm_first_row%3D1%26sysparm_view%3Dmajor_incidents",
+  "duration_seconds": 66,
+  "stats": {
+    "total_raw_events": 31,
+    "total_observations": 14,
+    "total_key_events": 10,
+    "total_pairs": 10,
+    "valid_pairs": 3,
+    "obs_event_ratio_pct": 140.0,
+    "valid_pair_ratio_pct": 30.0,
+    "missing_bid_ratio_pct": 70.0
+  },
+  "trajectory": [
+    {
+      "step": 1,
+      "action": {
+        "action": "click",
+        "data_bid": "189"
+      },
+      "bid_found_in_html": true,
+      "element_info": {
+        "role": "list",
+        "name": "All",
+        "tagName": "SPAN"
+      },
+      "event_type": "click",
+      "event_timestamp": 1764698534460,
+      "observation": {
+        "timestamp": 1764698534421,
+        "url": "https://empmassimo23.service-now.com/incident_list.do",
+        "video_timestamp": 4853,
+        "html_length": 1274615
+      }
+    },
+    {
+      "step": 2,
+      "action": {
+        "action": "click",
+        "data_bid": "iframe0_48"
+      },
+      "bid_found_in_html": true,
+      "element_info": {
+        "role": "button",
+        "name": "Show / hide filter",
+        "tagName": "A"
+      },
+      "event_type": "click",
+      "event_timestamp": 1764698541899,
+      "observation": {
+        "timestamp": 1764698541814,
+        "url": "https://empmassimo23.service-now.com/incident_list.do",
+        "video_timestamp": 12246,
+        "html_length": 1298616
+      }
+    },
+    {
+      "step": 3,
+      "action": {
+        "action": "click",
+        "data_bid": "role-button"
+      },
+      "bid_found_in_html": false,
+      "element_info": {
+        "role": "button",
+        "name": "-- choose field --",
+        "tagName": "A"
+      },
+      "event_type": "pointerdown",
+      "event_timestamp": 1764698578629,
+      "observation": {
+        "timestamp": 1764698577738,
+        "url": "https://empmassimo23.service-now.com/incident_list.do",
+        "video_timestamp": 48170,
+        "html_length": 1400996
+      }
+    },
+    {
+      "step": 4,
+      "action": {
+        "action": "fill",
+        "data_bid": "id-s2id-autogen2-search",
+        "value": "Prio"
+      },
+      "bid_found_in_html": false,
+      "element_info": {
+        "role": "combobox",
+        "name": "",
+        "tagName": "INPUT"
+      },
+      "event_type": "input",
+      "event_timestamp": 1764698559387,
+      "observation": {
+        "timestamp": 1764698577738,
+        "url": "https://empmassimo23.service-now.com/incident_list.do",
+        "video_timestamp": 48170,
+        "html_length": 1400996
+      }
+    },
+    {
+      "step": 5,
+      "action": {
+        "action": "click",
+        "data_bid": "id-select2-result-label-166"
+      },
+      "bid_found_in_html": false,
+      "element_info": {
+        "role": "option",
+        "name": "Priority",
+        "tagName": "DIV"
+      },
+      "event_type": "pointerdown",
+      "event_timestamp": 1764698560802,
+      "observation": {
+        "timestamp": 1764698577738,
+        "url": "https://empmassimo23.service-now.com/incident_list.do",
+        "video_timestamp": 48170,
+        "html_length": 1400996
+      }
+    },
+    {
+      "step": 6,
+      "action": {
+        "action": "select_option",
+        "data_bid": "aria-choose-option-for-field--priority",
+        "option": "1"
+      },
+      "bid_found_in_html": false,
+      "element_info": {
+        "role": "combobox",
+        "name": "Choose option for field: Priority",
+        "tagName": "SELECT"
+      },
+      "event_type": "click",
+      "event_timestamp": 1764698565703,
+      "observation": {
+        "timestamp": 1764698577738,
+        "url": "https://empmassimo23.service-now.com/incident_list.do",
+        "video_timestamp": 48170,
+        "html_length": 1400996
+      }
+    },
+    {
+      "step": 7,
+      "action": {
+        "action": "click",
+        "data_bid": "aria-add-and-condition-to-condition-1--priority-is-1---critical"
+      },
+      "bid_found_in_html": false,
+      "element_info": {
+        "role": "button",
+        "name": "Add AND Condition To Condition 1: Priority is 1 - Critical",
+        "tagName": "BUTTON"
+      },
+      "event_type": "click",
+      "event_timestamp": 1764698567178,
+      "observation": {
+        "timestamp": 1764698577738,
+        "url": "https://empmassimo23.service-now.com/incident_list.do",
+        "video_timestamp": 48170,
+        "html_length": 1400996
+      }
+    },
+    {
+      "step": 8,
+      "action": {
+        "action": "click",
+        "data_bid": "iframe0_34"
+      },
+      "bid_found_in_html": true,
+      "element_info": {
+        "role": "",
+        "name": "Unfiltered Incidents list showing 1 to 20 of 88 re",
+        "tagName": "BODY"
+      },
+      "event_type": "pointerdown",
+      "event_timestamp": 1764698577600,
+      "observation": {
+        "timestamp": 1764698577738,
+        "url": "https://empmassimo23.service-now.com/incident_list.do",
+        "video_timestamp": 48170,
+        "html_length": 1400996
+      }
+    },
+    {
+      "step": 9,
+      "action": {
+        "action": "fill",
+        "data_bid": "id-s2id-autogen168-search",
+        "value": "Cate"
+      },
+      "bid_found_in_html": false,
+      "element_info": {
+        "role": "combobox",
+        "name": "",
+        "tagName": "INPUT"
+      },
+      "event_type": "input",
+      "event_timestamp": 1764698580374,
+      "observation": {
+        "timestamp": 1764698579885,
+        "url": "https://empmassimo23.service-now.com/incident_list.do",
+        "video_timestamp": 50317,
+        "html_length": 1401079
+      }
+    },
+    {
+      "step": 10,
+      "action": {
+        "action": "click",
+        "data_bid": "id-select2-result-label-464"
+      },
+      "bid_found_in_html": false,
+      "element_info": {
+        "role": "option",
+        "name": "Category",
+        "tagName": "DIV"
+      },
+      "event_type": "pointerdown",
+      "event_timestamp": 1764698581664,
+      "observation": {
+        "timestamp": 1764698579885,
+        "url": "https://empmassimo23.service-now.com/incident_list.do",
+        "video_timestamp": 50317,
+        "html_length": 1401079
+      }
+    }
+  ]
+}
