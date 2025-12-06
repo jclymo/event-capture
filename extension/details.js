@@ -30,6 +30,35 @@ function normalizeEvents(events = []) {
 }
 
 /**
+ * Open HTML document in a new tab
+ * @param {string} documentKey - The IndexedDB key for the HTML document
+ */
+async function openHtmlDocument(documentKey) {
+  try {
+    // Request HTML content from background script
+    const response = await chrome.runtime.sendMessage({
+      type: 'GET_HTML_DOCUMENT',
+      documentKey: documentKey
+    });
+    
+    if (response && response.success && response.html) {
+      // Create a blob URL and open in new tab
+      const blob = new Blob([response.html], { type: 'text/html' });
+      const blobUrl = URL.createObjectURL(blob);
+      window.open(blobUrl, '_blank');
+      
+      // Clean up blob URL after a delay (tab will have loaded by then)
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+    } else {
+      alert('Could not load HTML document: ' + (response?.error || 'Unknown error'));
+    }
+  } catch (err) {
+    console.error('Error opening HTML document:', err);
+    alert('Error opening HTML document: ' + err.message);
+  }
+}
+
+/**
  * Reconstruct HTML content via background message passing
  * Uses single source of truth in background/html-indexeddb.js
  * @param {Array} events - Array of events
@@ -192,6 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
         filtered = filtered.slice().sort((a, b) => a.timestamp - b.timestamp);
       }
       document.getElementById('eventCount').textContent = `Total Events: ${filtered.length}`;
+      
       // Show full JSON with video paths and per-event timestamps
       const full = {
         id: task.id,
@@ -206,7 +236,30 @@ document.addEventListener('DOMContentLoaded', function() {
           video_timestamp: typeof e.video_timestamp === 'number' ? e.video_timestamp : (typeof e.videoTimeMs === 'number' ? e.videoTimeMs : null)
         }))
       };
-      document.getElementById('eventData').textContent = JSON.stringify(full, null, 2);
+      
+      // Convert to JSON string
+      let jsonStr = JSON.stringify(full, null, 2);
+      
+      // Escape HTML entities first
+      jsonStr = jsonStr.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      
+      // Make documentKey values clickable (matches "documentKey": "value")
+      jsonStr = jsonStr.replace(
+        /"documentKey":\s*"([^"]+)"/g,
+        '"documentKey": "<span class="doc-link" data-key="$1">$1 [View HTML]</span>"'
+      );
+      
+      // Use innerHTML to render clickable links
+      const eventDataEl = document.getElementById('eventData');
+      eventDataEl.innerHTML = jsonStr;
+      
+      // Attach click handlers to all doc-link elements
+      eventDataEl.querySelectorAll('.doc-link').forEach(link => {
+        link.addEventListener('click', () => {
+          const key = link.getAttribute('data-key');
+          if (key) openHtmlDocument(key);
+        });
+      });
     }
 
     filter.addEventListener('change', function(e) {

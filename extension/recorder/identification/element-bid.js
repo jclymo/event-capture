@@ -5,6 +5,23 @@ import { hashString } from '../utils/helpers.js';
 // Track if we've already attempted re-marking for this call
 let isRemarkingInProgress = false;
 
+// Helper to get element info for logging
+function getElementInfo(element) {
+  if (!element) return { error: 'null element' };
+  try {
+    return {
+      tag: element.tagName?.toLowerCase() || 'unknown',
+      id: element.id || null,
+      classes: (typeof element.className === 'string' ? element.className : '').substring(0, 80) || null,
+      text: element.textContent?.trim().substring(0, 40) || null,
+      name: element.getAttribute?.('name') || null,
+      role: element.getAttribute?.('role') || null
+    };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
 // Function to trigger BrowserGym re-marking
 async function triggerBrowserGymRemark(element) {
   return new Promise((resolve) => {
@@ -33,7 +50,11 @@ async function triggerBrowserGymRemark(element) {
     };
 
     const timeoutHandler = () => {
-      console.warn('⚠️ Re-mark timeout in getStableBID');
+      console.warn('⚠️ Re-mark timeout in getStableBID:', {
+        element: getElementInfo(element),
+        isIframe: isIframe,
+        url: targetDoc.location?.href?.substring(0, 100) || 'unknown'
+      });
       isRemarkingInProgress = false;
       targetDoc.removeEventListener('browsergym-remark-complete', completionHandler);
       resolve();
@@ -59,7 +80,7 @@ export async function getStableBID(element) {
   }
   
   // If no data-bid, trigger re-marking and retry once
-  console.log('📍 No data-bid found, triggering BrowserGym re-mark...');
+  console.log('📍 No data-bid found, triggering BrowserGym re-mark for:', getElementInfo(element));
   
   try {
     await triggerBrowserGymRemark(element);
@@ -93,7 +114,9 @@ export async function getStableBID(element) {
   for (const { attr, prefix } of attributes) {
     const value = element.getAttribute(attr);
     if (value) {
-      return prefix + value.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      const fallbackBid = prefix + value.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      console.log(`🔖 Using fallback BID from ${attr}:`, fallbackBid);
+      return fallbackBid;
     }
   }
 
@@ -107,6 +130,8 @@ export async function getStableBID(element) {
   const index = siblings.indexOf(element);
   const semanticId = `${tag}-${classes}-${text}-${index}`;
   const hash = hashString(semanticId);
-  return `${tag}${classes ? '-' + classes : ''}-${hash}`.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+  const hashBid = `${tag}${classes ? '-' + classes : ''}-${hash}`.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+  console.log(`🔖 Using semantic hash fallback BID:`, hashBid, 'for element:', getElementInfo(element));
+  return hashBid;
 }
 

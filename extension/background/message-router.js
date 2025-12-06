@@ -11,7 +11,7 @@ import {
 } from './video-recorder.js';
 
 import { handleRecordedEvent } from './event-storage.js';
-import { deleteHtmlDocumentsForTask, reconstructHtmlInEvents, closeHtmlDB } from './html-indexeddb.js';
+import { deleteHtmlDocumentsForTask, reconstructHtmlInEvents, closeHtmlDB, readHtmlFromIndexedDB } from './html-indexeddb.js';
 
 // Setup all message handlers
 export function setupMessageHandlers() {
@@ -61,6 +61,24 @@ export function setupMessageHandlers() {
         } catch (err) {
           console.error('Error reconstructing HTML events:', err);
           sendResponse({ success: false, error: err.message, events: message.events });
+        }
+      })();
+      return true; // Keep channel open for async response
+    }
+    
+    // Get single HTML document from IndexedDB (for opening in new tab)
+    if (message.type === 'GET_HTML_DOCUMENT') {
+      (async () => {
+        try {
+          const html = await readHtmlFromIndexedDB(message.documentKey);
+          if (html) {
+            sendResponse({ success: true, html: html });
+          } else {
+            sendResponse({ success: false, error: 'Document not found' });
+          }
+        } catch (err) {
+          console.error('Error reading HTML document:', err);
+          sendResponse({ success: false, error: err.message });
         }
       })();
       return true; // Keep channel open for async response
