@@ -1,6 +1,37 @@
 // BrowserGym BID injection script
 // This script runs in the page context to mark all DOM elements with unique BIDs
 
+// Performance tracking for BrowserGym injections
+if (!window.browserGymStats) {
+    window.browserGymStats = {
+        initialInjection: null,
+        reMarks: [],
+        getTotalCount: function() {
+            return (this.initialInjection ? 1 : 0) + this.reMarks.length;
+        },
+        getAverageTime: function() {
+            const times = [
+                ...(this.initialInjection ? [this.initialInjection.duration] : []),
+                ...this.reMarks.map(r => r.duration)
+            ];
+            return times.length > 0 ? times.reduce((a, b) => a + b, 0) / times.length : 0;
+        },
+        getSummary: function() {
+            return {
+                totalCount: this.getTotalCount(),
+                initialInjection: this.initialInjection,
+                reMarkCount: this.reMarks.length,
+                averageTime: this.getAverageTime(),
+                totalTime: [
+                    ...(this.initialInjection ? [this.initialInjection.duration] : []),
+                    ...this.reMarks.map(r => r.duration)
+                ].reduce((a, b) => a + b, 0),
+                allRemarks: this.reMarks
+            };
+        }
+    };
+}
+
 window.injectBrowserGym = async ([parent_bid, bid_attr_name, tags_to_mark]) => {
     // standard html tags
     // https://www.w3schools.com/tags/
@@ -318,6 +349,9 @@ if (typeof window.IFrameIdGenerator === 'undefined') {
 // Auto-execute on injection
 (async () => {
     try {
+        const injectionStartTime = performance.now();
+        console.log('🚀 BrowserGym initial injection starting...');
+        
         // Wait for document to be ready (especially important for iframes)
         const waitForReady = () => {
             return new Promise((resolve) => {
@@ -371,20 +405,44 @@ if (typeof window.IFrameIdGenerator === 'undefined') {
             "all"         // process every single element
         ]);
         
+        const injectionEndTime = performance.now();
+        const duration = injectionEndTime - injectionStartTime;
+        
         // Verify that BIDs were actually assigned
         const elementsWithBid = document.querySelectorAll('[data-bid]');
         console.log(`🔍 Found ${elementsWithBid.length} elements with data-bid after injection`);
         
+        // Store initial injection stats
+        window.browserGymStats.initialInjection = {
+            timestamp: Date.now(),
+            startTime: injectionStartTime,
+            endTime: injectionEndTime,
+            duration: duration,
+            elementsMarked: elementsWithBid.length,
+            totalElements: document.querySelectorAll('*').length,
+            warnings: warnings.length,
+            prefix: parentBid
+        };
+        
         if (parentBid) {
-            console.log(`✅ BrowserGym IDs set with prefix "${parentBid}", ${elementsWithBid.length} elements marked, warnings:`, warnings);
+            console.log(`✅ BrowserGym IDs set with prefix "${parentBid}", ${elementsWithBid.length} elements marked in ${duration.toFixed(2)}ms, warnings:`, warnings);
         } else {
-            console.log(`✅ BrowserGym IDs set (main document), ${elementsWithBid.length} elements marked, warnings:`, warnings);
+            console.log(`✅ BrowserGym IDs set (main document), ${elementsWithBid.length} elements marked in ${duration.toFixed(2)}ms, warnings:`, warnings);
         }
+        
+        console.log(`📊 Initial injection stats:`, window.browserGymStats.initialInjection);
         
         window.browserGymInitialized = true;
         // Signal completion via custom event (content script can listen)
         document.dispatchEvent(new CustomEvent('browsergym-injection-complete', { 
-            detail: { success: true, warnings: warnings, prefix: parentBid, elementsMarked: elementsWithBid.length }
+            detail: { 
+                success: true, 
+                warnings: warnings, 
+                prefix: parentBid, 
+                elementsMarked: elementsWithBid.length,
+                duration: duration,
+                stats: window.browserGymStats.initialInjection
+            }
         }));
     } catch (err) {
         console.error("BrowserGym injection failed:", err);
@@ -397,7 +455,10 @@ if (typeof window.IFrameIdGenerator === 'undefined') {
 // Listen for re-mark requests from content script (for dynamically added content)
 document.addEventListener('browsergym-remark-request', async (event) => {
     try {
-        console.log('🔄 Re-marking new DOM elements with BrowserGym...');
+        const remarkStartTime = performance.now();
+        const remarkNumber = window.browserGymStats.reMarks.length + 1;
+        
+        console.log(`🔄 Re-mark #${remarkNumber} starting...`);
         
         // Use the same prefix that was used during initial injection
         const parentBid = window.BROWSERGYM_IFRAME_PREFIX || "";
@@ -407,9 +468,39 @@ document.addEventListener('browsergym-remark-request', async (event) => {
             "data-bid",   // attribute key
             "all"         // process all elements
         ]);
-        console.log(`✅ Re-marking complete${parentBid ? ` with prefix "${parentBid}"` : ''}, warnings:`, warnings.length);
+        
+        const remarkEndTime = performance.now();
+        const duration = remarkEndTime - remarkStartTime;
+        const elementsWithBid = document.querySelectorAll('[data-bid]');
+        
+        // Store re-mark stats
+        const remarkStats = {
+            remarkNumber: remarkNumber,
+            timestamp: Date.now(),
+            startTime: remarkStartTime,
+            endTime: remarkEndTime,
+            duration: duration,
+            elementsMarked: elementsWithBid.length,
+            totalElements: document.querySelectorAll('*').length,
+            warnings: warnings.length,
+            prefix: parentBid
+        };
+        
+        window.browserGymStats.reMarks.push(remarkStats);
+        
+        console.log(`✅ Re-mark #${remarkNumber} complete${parentBid ? ` with prefix "${parentBid}"` : ''} in ${duration.toFixed(2)}ms, warnings:`, warnings.length);
+        console.log(`📊 Re-mark stats:`, remarkStats);
+        console.log(`📊 Total injections so far: ${window.browserGymStats.getTotalCount()}, Average time: ${window.browserGymStats.getAverageTime().toFixed(2)}ms`);
+        
         document.dispatchEvent(new CustomEvent('browsergym-remark-complete', { 
-            detail: { success: true, warnings: warnings }
+            detail: { 
+                success: true, 
+                warnings: warnings,
+                duration: duration,
+                remarkNumber: remarkNumber,
+                stats: remarkStats,
+                summary: window.browserGymStats.getSummary()
+            }
         }));
     } catch (err) {
         console.error('❌ Re-marking failed:', err);
@@ -419,4 +510,24 @@ document.addEventListener('browsergym-remark-request', async (event) => {
     }
 });
 
+// Global helper to check BrowserGym stats from console
+window.getBrowserGymStats = function() {
+    if (window.browserGymStats) {
+        const summary = window.browserGymStats.getSummary();
+        console.log('📊 BrowserGym Injection Statistics:');
+        console.log(`   Total Injections: ${summary.totalCount}`);
+        console.log(`   Initial Injection: ${summary.initialInjection ? summary.initialInjection.duration.toFixed(2) + 'ms' : 'N/A'}`);
+        console.log(`   Re-marks: ${summary.reMarkCount}`);
+        console.log(`   Average Time: ${summary.averageTime.toFixed(2)}ms`);
+        console.log(`   Total Time: ${summary.totalTime.toFixed(2)}ms`);
+        if (summary.allRemarks.length > 0) {
+            console.table(summary.allRemarks);
+        }
+        return summary;
+    } else {
+        console.warn('No BrowserGym stats available');
+        return null;
+    }
+};
 
+console.log('💡 Use window.getBrowserGymStats() to view injection statistics');

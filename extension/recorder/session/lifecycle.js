@@ -10,7 +10,7 @@ import { detachDomListeners } from '../listeners/dom-listeners.js';
 import { detachNavigationListeners } from '../listeners/navigation-listeners.js';
 import { stopBrowserGymObserver } from '../browsergym/observer.js';
 import { stopIframeObserver } from '../iframe/observer.js';
-import { initializeRecordingSession, getDynamicObserver } from './initialization.js';
+import { initializeRecordingSession, getDynamicObserver, initializeRecording } from './initialization.js';
 
 export function startRecording(taskId, startAtMs) {
   console.log("🎬 Recording started for task:", taskId);
@@ -126,7 +126,6 @@ function attemptRecovery() {
   }
   
   // Reinitialize recording
-  const { initializeRecording } = require('./initialization.js');
   initializeRecording();
 }
 

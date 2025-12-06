@@ -31,8 +31,3 @@ export function stopTimer() {
     timerElement.textContent = '';
   }
 }
-
-export function clearTimer() {
-  stopTimer();
-}
-

@@ -1,14 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>Task Details</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
-    pre { background: #f5f5f5; padding: 10px; border-radius: 5px; }
+    pre { background: #f5f5f5; padding: 10px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
     .controls { margin-bottom: 20px; }
     select, button { font-size: 1em; margin-right: 10px; }
     #pushToMongoBtn { background-color: #4CAF50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
     #pushToMongoBtn:hover { background-color: #45a049; }
+    
+    /* Inline document links in JSON */
+    .doc-link { 
+      color: #1976d2; 
+      text-decoration: underline; 
+      cursor: pointer;
+      background: #e3f2fd;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .doc-link:hover { background: #bbdefb; }
   </style>
 </head>
 <body>
@@ -24,4 +36,4 @@
   <script src="config.js"></script>
   <script src="details.js"></script>
 </body>
-</html> 
+</html>

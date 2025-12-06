@@ -8,6 +8,7 @@ export const NAVIGATION_HANDLER_MAP = {
   popstate: handleNavigation,
   pushState: handleNavigation,
   replaceState: handleNavigation,
+  pageshow: handleNavigation,
   beforeunload: handleBeforeUnload
 };
 

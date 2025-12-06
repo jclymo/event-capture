@@ -29,19 +29,102 @@ function normalizeEvents(events = []) {
   }));
 }
 
+/**
+ * Open HTML document in a new tab
+ * @param {string} documentKey - The IndexedDB key for the HTML document
+ */
+async function openHtmlDocument(documentKey) {
+  try {
+    // Request HTML content from background script
+    const response = await chrome.runtime.sendMessage({
+      type: 'GET_HTML_DOCUMENT',
+      documentKey: documentKey
+    });
+    
+    if (response && response.success && response.html) {
+      // Create a blob URL and open in new tab
+      const blob = new Blob([response.html], { type: 'text/html' });
+      const blobUrl = URL.createObjectURL(blob);
+      window.open(blobUrl, '_blank');
+      
+      // Clean up blob URL after a delay (tab will have loaded by then)
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+    } else {
+      alert('Could not load HTML document: ' + (response?.error || 'Unknown error'));
+    }
+  } catch (err) {
+    console.error('Error opening HTML document:', err);
+    alert('Error opening HTML document: ' + err.message);
+  }
+}
+
+/**
+ * Reconstruct HTML content via background message passing
+ * Uses single source of truth in background/html-indexeddb.js
+ * @param {Array} events - Array of events
+ * @returns {Promise<Array>} - Events with html property restored
+ */
+async function reconstructHtmlInEvents(events) {
+  if (!Array.isArray(events)) return events;
+  
+  // Check if there are any htmlCapture events that need reconstruction
+  const needsReconstruction = events.some(e => 
+    e.type === 'htmlCapture' && e.documentKey && !e.html
+  );
+  
+  if (!needsReconstruction) {
+    console.log('📄 No HTML reconstruction needed');
+    return events;
+  }
+  
+  console.log('📄 Requesting HTML reconstruction from background...');
+  
+  try {
+    const response = await chrome.runtime.sendMessage({
+      type: 'RECONSTRUCT_HTML_EVENTS',
+      events: events
+    });
+    
+    if (response && response.success) {
+      const restored = response.events.filter(e => e.type === 'htmlCapture' && e.html).length;
+      const total = response.events.filter(e => e.type === 'htmlCapture').length;
+      console.log(`📄 Reconstructed ${restored}/${total} HTML documents`);
+      return response.events;
+    } else {
+      console.warn('⚠️ HTML reconstruction failed:', response?.error);
+      return events;
+    }
+  } catch (err) {
+    console.error('Error requesting HTML reconstruction:', err);
+    return events;
+  }
+}
+
 async function pushTaskToMongo(buttonElement) {
   if (!currentTask) {
     alert('Task data not available.');
     return;
   }
 
-  const payload = buildTaskPayload(currentTask);
+  // Reconstruct HTML content from IndexedDB before building payload
+  let eventsToSync = currentTask.events;
+  if (eventsToSync && Array.isArray(eventsToSync)) {
+    try {
+      eventsToSync = await reconstructHtmlInEvents(eventsToSync);
+    } catch (err) {
+      console.error('Error reconstructing HTML content:', err);
+      // Continue with events as-is
+    }
+  }
+
+  const taskWithReconstructedHtml = { ...currentTask, events: eventsToSync };
+  const payload = buildTaskPayload(taskWithReconstructedHtml);
   if (!payload) {
     alert('Unable to build payload from task data.');
     return;
   }
 
-  payload.data = currentTask.events;
+  payload.data = eventsToSync;
   if (currentTask.video_local_path) payload.video_local_path = currentTask.video_local_path;
   if (currentTask.video_server_path) payload.video_server_path = currentTask.video_server_path;
 
@@ -138,6 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
         filtered = filtered.slice().sort((a, b) => a.timestamp - b.timestamp);
       }
       document.getElementById('eventCount').textContent = `Total Events: ${filtered.length}`;
+      
       // Show full JSON with video paths and per-event timestamps
       const full = {
         id: task.id,
@@ -152,7 +236,30 @@ document.addEventListener('DOMContentLoaded', function() {
           video_timestamp: typeof e.video_timestamp === 'number' ? e.video_timestamp : (typeof e.videoTimeMs === 'number' ? e.videoTimeMs : null)
         }))
       };
-      document.getElementById('eventData').textContent = JSON.stringify(full, null, 2);
+      
+      // Convert to JSON string
+      let jsonStr = JSON.stringify(full, null, 2);
+      
+      // Escape HTML entities first
+      jsonStr = jsonStr.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      
+      // Make documentKey values clickable (matches "documentKey": "value")
+      jsonStr = jsonStr.replace(
+        /"documentKey":\s*"([^"]+)"/g,
+        '"documentKey": "<span class="doc-link" data-key="$1">$1 [View HTML]</span>"'
+      );
+      
+      // Use innerHTML to render clickable links
+      const eventDataEl = document.getElementById('eventData');
+      eventDataEl.innerHTML = jsonStr;
+      
+      // Attach click handlers to all doc-link elements
+      eventDataEl.querySelectorAll('.doc-link').forEach(link => {
+        link.addEventListener('click', () => {
+          const key = link.getAttribute('data-key');
+          if (key) openHtmlDocument(key);
+        });
+      });
     }
 
     filter.addEventListener('change', function(e) {
