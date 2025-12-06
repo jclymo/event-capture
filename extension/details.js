@@ -29,19 +29,73 @@ function normalizeEvents(events = []) {
   }));
 }
 
+/**
+ * Reconstruct HTML content via background message passing
+ * Uses single source of truth in background/html-indexeddb.js
+ * @param {Array} events - Array of events
+ * @returns {Promise<Array>} - Events with html property restored
+ */
+async function reconstructHtmlInEvents(events) {
+  if (!Array.isArray(events)) return events;
+  
+  // Check if there are any htmlCapture events that need reconstruction
+  const needsReconstruction = events.some(e => 
+    e.type === 'htmlCapture' && e.documentKey && !e.html
+  );
+  
+  if (!needsReconstruction) {
+    console.log('📄 No HTML reconstruction needed');
+    return events;
+  }
+  
+  console.log('📄 Requesting HTML reconstruction from background...');
+  
+  try {
+    const response = await chrome.runtime.sendMessage({
+      type: 'RECONSTRUCT_HTML_EVENTS',
+      events: events
+    });
+    
+    if (response && response.success) {
+      const restored = response.events.filter(e => e.type === 'htmlCapture' && e.html).length;
+      const total = response.events.filter(e => e.type === 'htmlCapture').length;
+      console.log(`📄 Reconstructed ${restored}/${total} HTML documents`);
+      return response.events;
+    } else {
+      console.warn('⚠️ HTML reconstruction failed:', response?.error);
+      return events;
+    }
+  } catch (err) {
+    console.error('Error requesting HTML reconstruction:', err);
+    return events;
+  }
+}
+
 async function pushTaskToMongo(buttonElement) {
   if (!currentTask) {
     alert('Task data not available.');
     return;
   }
 
-  const payload = buildTaskPayload(currentTask);
+  // Reconstruct HTML content from IndexedDB before building payload
+  let eventsToSync = currentTask.events;
+  if (eventsToSync && Array.isArray(eventsToSync)) {
+    try {
+      eventsToSync = await reconstructHtmlInEvents(eventsToSync);
+    } catch (err) {
+      console.error('Error reconstructing HTML content:', err);
+      // Continue with events as-is
+    }
+  }
+
+  const taskWithReconstructedHtml = { ...currentTask, events: eventsToSync };
+  const payload = buildTaskPayload(taskWithReconstructedHtml);
   if (!payload) {
     alert('Unable to build payload from task data.');
     return;
   }
 
-  payload.data = currentTask.events;
+  payload.data = eventsToSync;
   if (currentTask.video_local_path) payload.video_local_path = currentTask.video_local_path;
   if (currentTask.video_server_path) payload.video_server_path = currentTask.video_server_path;
 

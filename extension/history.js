@@ -4,6 +4,47 @@ document.addEventListener('DOMContentLoaded', () => {
   const pendingSummaryEl = document.getElementById('pendingSummary');
   const syncAllBtn = document.getElementById('syncAllBtn');
 
+  /**
+   * Reconstruct HTML content via background message passing
+   * Uses single source of truth in background/html-indexeddb.js
+   * @param {Array} events - Array of events
+   * @returns {Promise<Array>} - Events with html property restored
+   */
+  async function reconstructHtmlInEvents(events) {
+    if (!Array.isArray(events)) return events;
+    
+    const needsReconstruction = events.some(e => 
+      e.type === 'htmlCapture' && e.documentKey && !e.html
+    );
+    
+    if (!needsReconstruction) {
+      console.log('📄 No HTML reconstruction needed');
+      return events;
+    }
+    
+    console.log('📄 Requesting HTML reconstruction from background...');
+    
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: 'RECONSTRUCT_HTML_EVENTS',
+        events: events
+      });
+      
+      if (response && response.success) {
+        const restored = response.events.filter(e => e.type === 'htmlCapture' && e.html).length;
+        const total = response.events.filter(e => e.type === 'htmlCapture').length;
+        console.log(`📄 Reconstructed ${restored}/${total} HTML documents`);
+        return response.events;
+      } else {
+        console.warn('⚠️ HTML reconstruction failed:', response?.error);
+        return events;
+      }
+    } catch (err) {
+      console.error('Error requesting HTML reconstruction:', err);
+      return events;
+    }
+  }
+
   function sortTasks(taskHistory = {}) {
     const tasks = Object.values(taskHistory || {});
     return tasks.slice().sort((a, b) => {
@@ -118,7 +159,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const task = taskHistory[taskId];
     if (!task || task.pushedToMongo) return;
 
-    const payload = buildTaskPayload(task);
+    // Reconstruct HTML content from IndexedDB before building payload
+    let taskToSync = task;
+    if (task.events && Array.isArray(task.events)) {
+      try {
+        const reconstructedEvents = await reconstructHtmlInEvents(task.events);
+        taskToSync = { ...task, events: reconstructedEvents };
+      } catch (err) {
+        console.error('Error reconstructing HTML content:', err);
+        // Continue with events as-is
+      }
+    }
+
+    const payload = buildTaskPayload(taskToSync);
     if (!payload) {
       alert('Unable to build payload for this task.');
       return;

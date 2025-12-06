@@ -1,7 +1,7 @@
 // HTML capture functionality
 
 import { isHtmlCaptureEnabled } from '../config/event-config.js';
-import { HTMLCOOLDOWN } from '../config/constants.js';
+import { EVENT_TYPES, HTMLCOOLDOWN } from '../config/constants.js';
 
 let lastHtmlCapture = 0;
 let isNewPageLoad = true;
@@ -39,7 +39,7 @@ if (typeof document !== 'undefined') {
         pendingHtmlCaptures = [];
       }
     }
-  }, 10000); // Increased to 10s for complex pages like Amazon
+  }, 3000); // Increased to 10s for complex pages like Amazon
 }
 
 export function setBrowserGymReady(ready) {
@@ -74,7 +74,7 @@ export function captureHtml(eventType, sourceDocument = document) {
   if (!isHtmlCaptureEnabled()) {
     return;
   }
-  console.log('XXXXX approved html capture')
+  console.log('📸 HTML capture approved for:', eventType);
 
   const doc = sourceDocument || document;
   const clone = doc.documentElement.cloneNode(true);
@@ -132,7 +132,7 @@ export function captureHtml(eventType, sourceDocument = document) {
         : window.location.href
     } 
   });
-  if (eventType ==="change") {
+  if (eventType ===EVENT_TYPES.CHANGE) {
     HTMLCOOLDOWNOVERRIDE = Date.now();
   }
 }

@@ -5,7 +5,7 @@ import { getStableBID } from './element-bid.js';
 import { getA11yIdentifiers } from './a11y.js';
 import { isInteractiveElement, getElementBoundingBox } from '../utils/element-utils.js';
 
-export function buildTargetMetadata(element) {
+export async function buildTargetMetadata(element) {
   if (!element || element.nodeType !== Node.ELEMENT_NODE) {
     return null;
   }
@@ -44,7 +44,7 @@ export function buildTargetMetadata(element) {
     isInteractive: isInteractiveElement(element),
     xpath: getElementXPath(element),
     cssPath: getElementCssPath(element),
-    bid: getStableBID(element),
+    bid: await getStableBID(element),
     a11y: getA11yIdentifiers(element),
     attributes,
     boundingBox: getElementBoundingBox(element),

@@ -123,10 +123,8 @@ export async function initializeRecording() {
     setEnabledDomEventNames(enabledDomEventNames);
     console.log('Enabled DOM events:', Array.from(enabledDomEventNames));
     
-    enabledDomEvents.forEach(({ name, handler }) => {
-      // DOM listeners are handled by attachDomListenersToDocument
-      // This is called separately in the initialization flow
-    });
+    // Note: DOM listeners are attached via attachDomListenersToDocument() 
+    // which is called during iframe instrumentation and initial setup
 
     const enabledNavigationEvents = (config.navigationEvents || []).filter(evt => evt && evt.enabled !== false);
     const enabledNavigationEventNames = new Set(enabledNavigationEvents.map(evt => evt.name));
