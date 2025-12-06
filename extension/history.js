@@ -132,14 +132,9 @@ document.addEventListener('DOMContentLoaded', () => {
       deleteBtn.textContent = 'Delete';
       deleteBtn.addEventListener('click', () => {
         if (!confirm('Delete this task?')) return;
-        chrome.storage.local.get(['taskHistory'], (data) => {
-          const current = data.taskHistory || {};
-          if (current[task.id]) {
-            delete current[task.id];
-            chrome.storage.local.set({ taskHistory: current }, () => {
-              loadAndRender();
-            });
-          }
+        // Use message passing to ensure IndexedDB cleanup happens
+        chrome.runtime.sendMessage({ action: 'deleteTask', taskId: task.id }, () => {
+          loadAndRender();
         });
       });
 

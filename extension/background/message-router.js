@@ -37,10 +37,11 @@ export function setupMessageHandlers() {
       // After blob is processed, close the HTML IndexedDB connection
       const result = handleBlobReady(message, sender, (response) => {
         // Close DB after blob processing completes
+        // Use 3 second delay to ensure video and trace.json are fully written
         setTimeout(() => {
           closeHtmlDB();
           console.log('📂 HTML DB closed after recording finalized');
-        }, 1000); // Small delay to ensure trace.json is written
+        }, 3000);
         sendResponse?.(response);
       });
       return result;

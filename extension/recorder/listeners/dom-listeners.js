@@ -33,11 +33,21 @@ export function getHandlerByKey(handlerKey) {
   }
 }
 
+// Track listeners per document (WeakMap to avoid memory leaks)
+const documentListeners = new WeakMap();
+
 // Attach DOM listeners to a specific document (main or iframe)
 export function attachDomListenersToDocument(targetDocument) {
   try {
     const config = getCachedConfig() || DEFAULT_EVENT_CONFIG;
     const enabledDomEvents = (config.domEvents || []).filter(evt => evt && evt.enabled !== false);
+
+    // Get or create listener map for this document
+    let docListenerMap = documentListeners.get(targetDocument);
+    if (!docListenerMap) {
+      docListenerMap = new Map();
+      documentListeners.set(targetDocument, docListenerMap);
+    }
 
     enabledDomEvents.forEach(({ name, handler }) => {
       const resolvedHandler = getHandlerByKey(handler);
@@ -49,7 +59,18 @@ export function attachDomListenersToDocument(targetDocument) {
       if (targetDocument === document && hasCriticalListener(name)) {
         return;
       }
+      // Skip if already attached to this document
+      if (docListenerMap.has(name)) {
+        return;
+      }
       targetDocument.addEventListener(name, resolvedHandler, true);
+      docListenerMap.set(name, resolvedHandler);
+      
+      // Also track in global map for main document (backward compatibility)
+      if (targetDocument === document) {
+        activeDomListeners.set(name, resolvedHandler);
+      }
+      
       console.log(`Added event listener for ${name} on`, targetDocument === document ? 'main' : 'iframe');
     });
   } catch (err) {
@@ -58,10 +79,22 @@ export function attachDomListenersToDocument(targetDocument) {
 }
 
 export function detachDomListeners(targetDocument = document) {
-  activeDomListeners.forEach((handler, eventName) => {
-    targetDocument.removeEventListener(eventName, handler, true);
-  });
+  // Get listeners for this specific document
+  const docListenerMap = documentListeners.get(targetDocument);
+  
+  if (docListenerMap) {
+    docListenerMap.forEach((handler, eventName) => {
+      targetDocument.removeEventListener(eventName, handler, true);
+    });
+    docListenerMap.clear();
+    documentListeners.delete(targetDocument);
+  }
+  
+  // Also clear global map for main document
   if (targetDocument === document) {
+    activeDomListeners.forEach((handler, eventName) => {
+      targetDocument.removeEventListener(eventName, handler, true);
+    });
     activeDomListeners.clear();
   }
 }
