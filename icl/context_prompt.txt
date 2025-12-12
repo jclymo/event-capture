@@ -1,0 +1,57 @@
+============================================================
+HUMAN DEMONSTRATION - IN-CONTEXT LEARNING EXAMPLE
+============================================================
+
+## TASK OVERVIEW
+Task: workarena.servicenow.filter-incident-list
+Starting URL: https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/incident_list.do
+Total Steps: 10
+
+## STEP-BY-STEP DEMONSTRATION
+
+### Step 1/10
+**Action:** Click on list "All"
+**Code:** `click("189")`
+
+### Step 2/10
+**Action:** Click on button "Show / hide filter"
+**Code:** `click("iframe0_48")`
+
+### Step 3/10
+**Action:** Click on button "-- choose field --"
+**Code:** `click("role-button")`
+
+### Step 4/10
+**Action:** Type "Prio" (bid=id-s2id-autogen2-search)
+**Code:** `fill("id-s2id-autogen2-search", "Prio")`
+
+### Step 5/10
+**Action:** Click on option "Priority"
+**Code:** `click("id-select2-result-label-166")`
+
+### Step 6/10
+**Action:** Select "1" from combobox "Choose option for field: Priority"
+**Code:** `select_option("aria-choose-option-for-field--priority", "1")`
+
+### Step 7/10
+**Action:** Click on button "Add AND Condition To Condition 1: Priority is 1 - Critical"
+**Code:** `click("aria-add-and-condition-to-condition-1--priority-is-1---critical")`
+
+### Step 8/10
+**Action:** Click on  "Unfiltered Incidents list showing 1 to 20 of 88 re"
+**Code:** `click("iframe0_34")`
+
+### Step 9/10
+**Action:** Type "Cate" (bid=id-s2id-autogen168-search)
+**Code:** `fill("id-s2id-autogen168-search", "Cate")`
+
+### Step 10/10
+**Action:** Click on option "Category"
+**Code:** `click("id-select2-result-label-464")`
+
+## KEY PATTERNS
+- Identify elements by their role and name
+- Follow the same sequence of interactions
+- Adapt values based on current task requirements
+
+============================================================
