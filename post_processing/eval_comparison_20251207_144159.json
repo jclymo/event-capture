@@ -1,0 +1,293 @@
+{
+  "task_id": "browsergym/workarena.servicenow.create-hardware-asset",
+  "timestamp": "2025-12-07T14:39:18.519655",
+  "seeds": [
+    55,
+    276,
+    91,
+    789,
+    419
+  ],
+  "models": [
+    "gpt-4o",
+    "gpt-4o-mini"
+  ],
+  "conditions": [
+    "baseline",
+    "icl"
+  ],
+  "parallel_workers": 3,
+  "evaluations": {
+    "baseline": [
+      {
+        "model": "gpt-4o",
+        "seed": 91,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 55,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 789,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 419,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 55,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 276,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 789,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 91,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 419,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 276,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 10,
+        "time_seconds": 122.05435729026794,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')"
+        ]
+      }
+    ],
+    "icl": [
+      {
+        "model": "gpt-4o",
+        "seed": 55,
+        "condition": "icl",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 276,
+        "condition": "icl",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 91,
+        "condition": "icl",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 789,
+        "condition": "icl",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 419,
+        "condition": "icl",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 55,
+        "condition": "icl",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 276,
+        "condition": "icl",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 789,
+        "condition": "icl",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 91,
+        "condition": "icl",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 419,
+        "condition": "icl",
+        "success": false,
+        "reward": 0.0,
+        "steps": 0,
+        "time_seconds": 0,
+        "error": "cannot switch to a different thread",
+        "actions": []
+      }
+    ]
+  },
+  "summary": {
+    "baseline": {
+      "total_runs": 10,
+      "successes": 0,
+      "success_rate": 0.0,
+      "avg_steps": 1.0,
+      "avg_time": 12.205435729026794,
+      "by_model": {
+        "gpt-4o": {
+          "success_rate": 0.0,
+          "avg_steps": 2.0
+        },
+        "gpt-4o-mini": {
+          "success_rate": 0.0,
+          "avg_steps": 0.0
+        }
+      }
+    },
+    "icl": {
+      "total_runs": 10,
+      "successes": 0,
+      "success_rate": 0.0,
+      "avg_steps": 0.0,
+      "avg_time": 0.0,
+      "by_model": {
+        "gpt-4o": {
+          "success_rate": 0.0,
+          "avg_steps": 0.0
+        },
+        "gpt-4o-mini": {
+          "success_rate": 0.0,
+          "avg_steps": 0.0
+        }
+      }
+    }
+  }
+}

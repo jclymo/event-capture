@@ -1,0 +1,202 @@
+{
+  "task_id": "browsergym/workarena.servicenow.create-hardware-asset",
+  "timestamp": "2025-12-07T14:19:47.745979",
+  "seeds": [
+    55,
+    276,
+    91,
+    789,
+    419
+  ],
+  "models": [
+    "gpt-4o",
+    "gpt-4o-mini"
+  ],
+  "evaluations": [
+    {
+      "model": "gpt-4o",
+      "temperature": 0,
+      "runs": [
+        {
+          "model": "gpt-4o",
+          "seed": 55,
+          "success": false,
+          "reward": 0,
+          "steps": 6,
+          "time_seconds": 61.630321741104126,
+          "error": "repeated action 5x: click(\"188\")",
+          "actions": [
+            "click(\"a188\")",
+            "click(\"165\")",
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")"
+          ]
+        },
+        {
+          "model": "gpt-4o",
+          "seed": 276,
+          "success": false,
+          "reward": 0,
+          "steps": 4,
+          "time_seconds": 34.71432828903198,
+          "error": "repeated action 5x: click(\"188\")",
+          "actions": [
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")"
+          ]
+        },
+        {
+          "model": "gpt-4o",
+          "seed": 91,
+          "success": false,
+          "reward": 0,
+          "steps": 4,
+          "time_seconds": 30.497082948684692,
+          "error": "repeated action 5x: click(\"188\")",
+          "actions": [
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")"
+          ]
+        },
+        {
+          "model": "gpt-4o",
+          "seed": 789,
+          "success": false,
+          "reward": 0,
+          "steps": 4,
+          "time_seconds": 29.89951515197754,
+          "error": "repeated action 5x: click(\"188\")",
+          "actions": [
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")"
+          ]
+        },
+        {
+          "model": "gpt-4o",
+          "seed": 419,
+          "success": false,
+          "reward": 0,
+          "steps": 4,
+          "time_seconds": 29.838536262512207,
+          "error": "repeated action 5x: click(\"188\")",
+          "actions": [
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")",
+            "click(\"188\")"
+          ]
+        }
+      ],
+      "success_rate": 0.0,
+      "avg_steps": 4.4,
+      "avg_time": 37.31595687866211
+    },
+    {
+      "model": "gpt-4o-mini",
+      "temperature": 0,
+      "runs": [
+        {
+          "model": "gpt-4o-mini",
+          "seed": 55,
+          "success": false,
+          "reward": 0,
+          "steps": 4,
+          "time_seconds": 31.167496919631958,
+          "error": "repeated action 5x: click(\"185\")",
+          "actions": [
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")"
+          ]
+        },
+        {
+          "model": "gpt-4o-mini",
+          "seed": 276,
+          "success": false,
+          "reward": 0,
+          "steps": 4,
+          "time_seconds": 30.19994807243347,
+          "error": "repeated action 5x: click(\"185\")",
+          "actions": [
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")"
+          ]
+        },
+        {
+          "model": "gpt-4o-mini",
+          "seed": 91,
+          "success": false,
+          "reward": 0,
+          "steps": 4,
+          "time_seconds": 30.487735271453857,
+          "error": "repeated action 5x: click(\"185\")",
+          "actions": [
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")"
+          ]
+        },
+        {
+          "model": "gpt-4o-mini",
+          "seed": 789,
+          "success": false,
+          "reward": 0,
+          "steps": 4,
+          "time_seconds": 29.814149379730225,
+          "error": "repeated action 5x: click(\"185\")",
+          "actions": [
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")"
+          ]
+        },
+        {
+          "model": "gpt-4o-mini",
+          "seed": 419,
+          "success": false,
+          "reward": 0,
+          "steps": 4,
+          "time_seconds": 28.25132942199707,
+          "error": "repeated action 5x: click(\"185\")",
+          "actions": [
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")",
+            "click(\"185\")"
+          ]
+        }
+      ],
+      "success_rate": 0.0,
+      "avg_steps": 4.0,
+      "avg_time": 29.984131813049316
+    }
+  ],
+  "summary": {
+    "total_runs": 10,
+    "total_successes": 0,
+    "overall_success_rate": 0.0
+  }
+}

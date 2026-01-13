@@ -1,0 +1,261 @@
+{
+  "task_id": "task_1765145113317",
+  "task_title": "workarena.servicenow.create-hardware-asset",
+  "start_url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+  "end_url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/welcome.do",
+  "duration_seconds": 153,
+  "total_actions": 19,
+  "actions": [
+    {
+      "step": 1,
+      "data_bid": "963",
+      "timestamp": 1765145117612,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "click",
+      "element_info": {
+        "role": "",
+        "name": "",
+        "tagName": "DIV"
+      },
+      "action": "click"
+    },
+    {
+      "step": 2,
+      "data_bid": "1819",
+      "timestamp": 1765145129140,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "pointerdown",
+      "element_info": {
+        "role": "option",
+        "name": "Computer",
+        "tagName": "DIV"
+      },
+      "action": "click"
+    },
+    {
+      "step": 3,
+      "data_bid": "1869",
+      "timestamp": 1765145150231,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "pointerdown",
+      "element_info": {
+        "role": "option",
+        "name": "Apple MacBook Pro 15\"",
+        "tagName": "DIV"
+      },
+      "action": "click"
+    },
+    {
+      "step": 4,
+      "data_bid": "179",
+      "timestamp": 1765145152013,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "click",
+      "element_info": {
+        "role": "",
+        "name": "Model categoryA new record with this value will be",
+        "tagName": "DIV"
+      },
+      "action": "click"
+    },
+    {
+      "step": 5,
+      "data_bid": "216",
+      "timestamp": 1765145154517,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "click",
+      "element_info": {
+        "role": "",
+        "name": "",
+        "tagName": "SPAN"
+      },
+      "action": "click"
+    },
+    {
+      "step": 6,
+      "data_bid": "1881",
+      "timestamp": 1765145161133,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "pointerdown",
+      "element_info": {
+        "role": "option",
+        "name": "SL 5 Years",
+        "tagName": "DIV"
+      },
+      "action": "click"
+    },
+    {
+      "step": 7,
+      "data_bid": "256",
+      "timestamp": 1765145240227,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "click",
+      "element_info": {
+        "role": "",
+        "name": "Financial",
+        "tagName": "SPAN"
+      },
+      "action": "click"
+    },
+    {
+      "step": 8,
+      "data_bid": "665",
+      "timestamp": 1765145178752,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "input",
+      "element_info": {
+        "role": "textbox",
+        "name": "",
+        "tagName": "INPUT"
+      },
+      "action": "fill",
+      "value": "consubsist Asperifoliae desire gamomania"
+    },
+    {
+      "step": 9,
+      "data_bid": "251",
+      "timestamp": 1765145187341,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "click",
+      "element_info": {
+        "role": "",
+        "name": "General",
+        "tagName": "SPAN"
+      },
+      "action": "click"
+    },
+    {
+      "step": 10,
+      "data_bid": "333",
+      "timestamp": 1765145189240,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "input",
+      "element_info": {
+        "role": "textbox",
+        "name": "",
+        "tagName": "INPUT"
+      },
+      "action": "fill",
+      "value": "SN-ac4aa555-fbc9-4e97-97cb-e0c0b286e175"
+    },
+    {
+      "step": 11,
+      "data_bid": "509",
+      "timestamp": 1765145190883,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "click",
+      "element_info": {
+        "role": "",
+        "name": "Department",
+        "tagName": "LABEL"
+      },
+      "action": "click"
+    },
+    {
+      "step": 12,
+      "data_bid": "1893",
+      "timestamp": 1765145193574,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "pointerdown",
+      "element_info": {
+        "role": "",
+        "name": "27, Boulevard Vitton, Paris",
+        "tagName": "SPAN"
+      },
+      "action": "click"
+    },
+    {
+      "step": 13,
+      "data_bid": "303",
+      "timestamp": 1765145211771,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "input",
+      "element_info": {
+        "role": "textbox",
+        "name": "",
+        "tagName": "INPUT"
+      },
+      "action": "fill",
+      "value": "7"
+    },
+    {
+      "step": 14,
+      "data_bid": "1911",
+      "timestamp": 1765145220892,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "pointerdown",
+      "element_info": {
+        "role": "option",
+        "name": "Apple",
+        "tagName": "DIV"
+      },
+      "action": "click"
+    },
+    {
+      "step": 15,
+      "data_bid": "259",
+      "timestamp": 1765145222361,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "click",
+      "element_info": {
+        "role": "tab",
+        "name": "*Disposal",
+        "tagName": "SPAN"
+      },
+      "action": "click"
+    },
+    {
+      "step": 16,
+      "data_bid": "830",
+      "timestamp": 1765145233455,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "input",
+      "element_info": {
+        "role": "textbox",
+        "name": "",
+        "tagName": "INPUT"
+      },
+      "action": "fill",
+      "value": "washdown Scytonemataceae fisc anachronism unimpeachability"
+    },
+    {
+      "step": 17,
+      "data_bid": "1928",
+      "timestamp": 1765145248128,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "pointerdown",
+      "element_info": {
+        "role": "option",
+        "name": "IT",
+        "tagName": "DIV"
+      },
+      "action": "click"
+    },
+    {
+      "step": 18,
+      "data_bid": "264",
+      "timestamp": 1765145259601,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "click",
+      "element_info": {
+        "role": "tab",
+        "name": "*Depreciation",
+        "tagName": "SPAN"
+      },
+      "action": "click"
+    },
+    {
+      "step": 19,
+      "data_bid": "1527",
+      "timestamp": 1765145262339,
+      "url": "https://empmassimo23.service-now.com/now/nav/ui/classic/params/target/alm_hardware.do",
+      "event_type": "click",
+      "element_info": {
+        "role": "button",
+        "name": "Submit",
+        "tagName": "BUTTON"
+      },
+      "action": "click"
+    }
+  ]
+}

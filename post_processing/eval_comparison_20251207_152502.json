@@ -1,0 +1,439 @@
+{
+  "task_id": "browsergym/workarena.servicenow.create-hardware-asset",
+  "timestamp": "2025-12-07T15:09:49.855209",
+  "seeds": [
+    55,
+    276,
+    91,
+    789,
+    419
+  ],
+  "models": [
+    "gpt-4o",
+    "gpt-4o-mini"
+  ],
+  "conditions": [
+    "baseline",
+    "icl"
+  ],
+  "parallel_workers": 3,
+  "evaluations": {
+    "baseline": [
+      {
+        "model": "gpt-4o",
+        "seed": 55,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 9,
+        "time_seconds": 126.57535934448242,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 276,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 9,
+        "time_seconds": 121.38752555847168,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 91,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 9,
+        "time_seconds": 127.64265012741089,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 789,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 9,
+        "time_seconds": 123.25542092323303,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 419,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 9,
+        "time_seconds": 129.04685831069946,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 55,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 38.84797692298889,
+        "error": "repeated 5x",
+        "actions": [
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 276,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 38.404412031173706,
+        "error": "repeated 5x",
+        "actions": [
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 91,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 40.94499111175537,
+        "error": "repeated 5x",
+        "actions": [
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 789,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 39.30444312095642,
+        "error": "repeated 5x",
+        "actions": [
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 419,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 34.57783269882202,
+        "error": "repeated 5x",
+        "actions": [
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')"
+        ]
+      }
+    ],
+    "icl": [
+      {
+        "model": "gpt-4o",
+        "seed": 55,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 9,
+        "time_seconds": 121.56333780288696,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 276,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 7,
+        "time_seconds": 121.10091876983643,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a208')",
+          "click('311')",
+          "click('311')",
+          "click('311')",
+          "click('311')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 91,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 8,
+        "time_seconds": 134.26911330223083,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a208')",
+          "click('175')",
+          "click('a208')",
+          "click('65')",
+          "click('65')",
+          "click('65')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 789,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 7,
+        "time_seconds": 123.2157051563263,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a208')",
+          "click('338')",
+          "click('338')",
+          "click('338')",
+          "click('338')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 419,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 7,
+        "time_seconds": 121.88790345191956,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a208')",
+          "click('239')",
+          "click('239')",
+          "click('239')",
+          "click('239')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 55,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 9,
+        "time_seconds": 125.08983755111694,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')",
+          "click('165')",
+          "click('a188')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 276,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 37.55585169792175,
+        "error": "repeated 5x",
+        "actions": [
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 91,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 43.032591819763184,
+        "error": "repeated 5x",
+        "actions": [
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 789,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 40.19081425666809,
+        "error": "repeated 5x",
+        "actions": [
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 419,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 37.00326061248779,
+        "error": "repeated 5x",
+        "actions": [
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')",
+          "click('188')"
+        ]
+      }
+    ]
+  },
+  "summary": {
+    "baseline": {
+      "total_runs": 10,
+      "successes": 0,
+      "success_rate": 0.0,
+      "avg_steps": 6.5,
+      "avg_time": 81.9987470149994,
+      "by_model": {
+        "gpt-4o": {
+          "success_rate": 0.0,
+          "avg_steps": 9.0
+        },
+        "gpt-4o-mini": {
+          "success_rate": 0.0,
+          "avg_steps": 4.0
+        }
+      }
+    },
+    "icl": {
+      "total_runs": 10,
+      "successes": 0,
+      "success_rate": 0.0,
+      "avg_steps": 6.3,
+      "avg_time": 90.49093344211579,
+      "by_model": {
+        "gpt-4o": {
+          "success_rate": 0.0,
+          "avg_steps": 7.6
+        },
+        "gpt-4o-mini": {
+          "success_rate": 0.0,
+          "avg_steps": 5.0
+        }
+      }
+    }
+  }
+}

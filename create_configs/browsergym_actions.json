@@ -1,0 +1,300 @@
+{"action": "click", "xpath": "//*[@id='change_request_filter_toggle_image']", "bid": "a47", "value": null}
+{"action": "click", "xpath": "//*[@id='change_requestfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2232", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2452", "value": "Phase state"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2548", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='change_requestfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2232", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2594", "value": "Description"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2690", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2227", "value": null}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.model_category']", "bid": "a185", "value": "Computer"}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.model']", "bid": "a205", "value": "Apple MacBook Pro 15\""}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.vendor']", "bid": "a697", "value": "Apple"}
+{"action": "fill", "xpath": "//*[@id='alm_hardware.serial_number']", "bid": "a326", "value": "SN-3267f28d-221c-4aca-9b0f-234759d722c0"}
+{"action": "fill", "xpath": "//*[@id='alm_hardware.invoice_number']", "bid": "a658", "value": "consubsist Asperifoliae desire gamomania"}
+{"action": "fill", "xpath": "//*[@id='alm_hardware.lease_id']", "bid": "a1149", "value": "supravital Leonard unobjected Occamistic"}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.location']", "bid": "a491", "value": "27, Boulevard Vitton, Paris"}
+{"action": "fill", "xpath": "//*[@id='alm_hardware.disposal_reason']", "bid": "a823", "value": "washdown Scytonemataceae fisc anachronism unimpeachability"}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.cost_center']", "bid": "a764", "value": "IT"}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.beneficiary']", "bid": "a836", "value": ""}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.owned_by']", "bid": "a438", "value": ""}
+{"action": "fill", "xpath": "//*[@id='alm_hardware.asset_tag']", "bid": "a296", "value": "P1000497"}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.depreciation']", "bid": "a925", "value": "SL 5 Years"}
+{"action": "click", "xpath": "//*[@id='sysverb_insert']", "bid": "a89", "value": null}
+{"action": "click", "xpath": "//*[@id='incident_filter_toggle_image']", "bid": "a47", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2166", "value": "priority"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2276", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2298", "value": "1 - Critical"}
+{"action": "click", "xpath": "//*[@id='incidentfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2094", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2325", "value": "category"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2434", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2453", "value": "Network"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2091", "value": null}
+{"action": "click", "xpath": "//*[@id='alm_hardware_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "click", "xpath": "//*[@id='alm_hardwarefilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2096", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2290", "value": "Model"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2366", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='alm_hardwarefilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2096", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2412", "value": "Eligible for refresh"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2488", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2091", "value": null}
+{"action": "click", "xpath": "//*[@id='sys_user_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "1976", "value": "schedule"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2056", "value": "="}
+{"action": "click", "xpath": "//*[@id='sys_userfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "1904", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2095", "value": "manager"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2174", "value": "="}
+{"action": "click", "xpath": "//*[@id='sys_userfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "1904", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2214", "value": "location"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2290", "value": "="}
+{"action": "fill", "xpath": "//*[@id='sys_display.sys_user.location.200d920200ca10200f3e02001450200e']", "bid": "2307", "value": "2-12-1 Ookayama, Meguro-ku, Tokyo"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "1901", "value": null}
+{"action": "click", "xpath": "//*[@id='sc_cat_item_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "click", "xpath": "//*[@id='sc_cat_itemfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2064", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2277", "value": "Name"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2370", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='sc_cat_itemfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2064", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2416", "value": "Hide 'Add to Wish List'"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2509", "value": "ascending"}
+{"action": "click", "xpath": "//*[@id='sc_cat_itemfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2064", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2552", "value": "Classic Mobile Picture Type"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2645", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2059", "value": null}
+{"action": "click", "xpath": "//*[@id='alm_hardware_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2166", "value": "install_status"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2262", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2288", "value": "In transit"}
+{"action": "click", "xpath": "//*[@id='alm_hardwarefilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2094", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2319", "value": "company"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2414", "value": "="}
+{"action": "click", "xpath": "//*[@id='alm_hardwarefilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2094", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2453", "value": "display_name"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2545", "value": "="}
+{"action": "fill", "xpath": "//*[@id='value']/input[1]", "bid": "2563", "value": "Apple MacBook Pro 15\""}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2091", "value": null}
+{"action": "click", "xpath": "//*[@id='alm_asset_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "click", "xpath": "//*[@id='alm_assetfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2058", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2254", "value": "Location"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2332", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2053", "value": null}
+{"action": "select_option", "xpath": "//*[@id='change_request.risk']", "bid": "a341", "value": "Moderate"}
+{"action": "select_option", "xpath": "//*[@id='change_request.close_code']", "bid": "a1204", "value": "Successful"}
+{"action": "select_option", "xpath": "//*[@id='change_request.impact']", "bid": "a355", "value": "3 - Low"}
+{"action": "fill", "xpath": "//*[@id='change_request.risk_impact_analysis']", "bid": "a644", "value": "camptonite cimbia inoffensiveness outthruster impossibilist"}
+{"action": "fill", "xpath": "//*[@id='sys_display.change_request.assignment_group']", "bid": "a485", "value": "Service Desk"}
+{"action": "fill", "xpath": "//*[@id='change_request.short_description']", "bid": "a526", "value": "Reboot Windows Server"}
+{"action": "fill", "xpath": "//*[@id='change_request.test_plan']", "bid": "a674", "value": "Ensure that the monitoring console is all green for this server before closing change request"}
+{"action": "fill", "xpath": "//*[@id='change_request.implementation_plan']", "bid": "a629", "value": "--In the server monitoring console set the server to \"Maintenance mode\" to prevent alerts being sent--If the server has network attached storage (NFS or iSCSI) stop any file server applications and unmount the storage--Reboot the server4. Check the Windows system log for any error messages--In the server monitoring console set the server back to \"Operational\" mode"}
+{"action": "fill", "xpath": "//*[@id='sys_display.change_request.business_service']", "bid": "a253", "value": ""}
+{"action": "fill", "xpath": "//*[@id='sys_display.change_request.cmdb_ci']", "bid": "a299", "value": ""}
+{"action": "fill", "xpath": "//*[@id='change_request.close_notes']", "bid": "a1221", "value": "Server rebooted"}
+{"action": "fill", "xpath": "//*[@id='change_request.number']", "bid": "a199", "value": "CHG0000028"}
+{"action": "fill", "xpath": "//*[@id='change_request.backout_plan']", "bid": "a659", "value": "There is no backout plan for this change template"}
+{"action": "fill", "xpath": "//*[@id='change_request.justification']", "bid": "a614", "value": "subhexagonal ghoul twinned phallic chariotry"}
+{"action": "click", "xpath": "//*[@id='sysverb_insert']", "bid": "a91", "value": null}
+{"action": "click", "xpath": "//*[@id='sc_cat_item_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2134", "value": "short_description"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2249", "value": "="}
+{"action": "fill", "xpath": "//*[@id='value']/input[1]", "bid": "2267", "value": "Request for temporary group membership"}
+{"action": "click", "xpath": "//*[@id='sc_cat_itemfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2062", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2291", "value": "category"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2405", "value": "="}
+{"action": "fill", "xpath": "//*[@id='sys_display.sc_cat_item.category.6caaa5a06caa77e06caab8006caafcc0']", "bid": "2422", "value": "Application and Account Access"}
+{"action": "click", "xpath": "//*[@id='sc_cat_itemfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2062", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2445", "value": "type"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2556", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2575", "value": "Package"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2059", "value": null}
+{"action": "click", "xpath": "//*[@id='sys_user_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "click", "xpath": "//*[@id='sys_userfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "1906", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2084", "value": "Internal Integration User"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2141", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='sys_userfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "1906", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2187", "value": "Manager"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2244", "value": "ascending"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "1901", "value": null}
+{"action": "click", "xpath": "//*[@id='incident_filter_toggle_image']", "bid": "a47", "value": null}
+{"action": "click", "xpath": "//*[@id='incidentfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2096", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2304", "value": "Child Incidents"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2389", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='incidentfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2096", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2435", "value": "Effective number"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2520", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='incidentfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2096", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2563", "value": "Priority"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2648", "value": "ascending"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2091", "value": null}
+{"action": "click", "xpath": "//*[@id='alm_asset_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2128", "value": "model_category"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2226", "value": "="}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_asset.model_category.4054d4a04054041040549df040542a90']", "bid": "2243", "value": "Consumable"}
+{"action": "click", "xpath": "//*[@id='alm_assetfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2056", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2266", "value": "sys_class_name"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2363", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2375", "value": "Hardware"}
+{"action": "click", "xpath": "//*[@id='alm_assetfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2056", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2402", "value": "install_status"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2496", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2522", "value": "In transit"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2053", "value": null}
+{"action": "click", "xpath": "//*[@id='change_request_filter_toggle_image']", "bid": "a47", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2302", "value": "number"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2424", "value": "="}
+{"action": "fill", "xpath": "//*[@id='value']/input[1]", "bid": "2442", "value": "CHG0000039"}
+{"action": "click", "xpath": "//*[@id='change_requestfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2230", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2466", "value": "short_description"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2587", "value": "="}
+{"action": "fill", "xpath": "//*[@id='value']/input[1]", "bid": "2605", "value": "Deploy new Cisco Catalyst 4500"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2227", "value": null}
+{"action": "click", "xpath": "//*[@id='sc_cat_item_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "click", "xpath": "//*[@id='sc_cat_itemfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2064", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2277", "value": "Name"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2370", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='sc_cat_itemfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2064", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2416", "value": "Hide 'Add to Wish List'"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2509", "value": "ascending"}
+{"action": "click", "xpath": "//*[@id='sc_cat_itemfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2064", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2552", "value": "Classic Mobile Picture Type"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2645", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2059", "value": null}
+{"action": "click", "xpath": "//*[@id='com.glideapp.servicecatalog.RenderCategory_0176514311967705_header']/a[1]", "bid": "a252", "value": null, "target": "Hardware section"}
+{"action": "click", "xpath": "//*[@id='item_link_04b7e94b4f7b4200086eeed18110c7fd']/h2[1]", "bid": "409", "value": null, "target": "Standard Laptop"}
+{"action": "select_option", "xpath": "//*[@id='quantity']", "bid": "247", "value": "8"}
+{"action": "click", "xpath": "//*[@id='IO:a8b72d4b4f7b4200086eeed18110c702']", "bid": "213", "value": null, "field": "Additional software requirements"}
+{"action": "fill", "xpath": "//*[@id='IO:a8b72d4b4f7b4200086eeed18110c702']", "bid": "213", "value": "QuickBooks, Asana, HubSpot, Adobe Creative Cloud"}
+{"action": "click", "xpath": "//*[@id='oi_order_now_button']", "bid": "288", "value": null, "target": "Order Now"}
+{"action": "click", "xpath": "//*[@id='change_request_filter_toggle_image']", "bid": "a47", "value": null}
+{"action": "click", "xpath": "//*[@id='change_requestfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2232", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2452", "value": "Phase state"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2548", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='change_requestfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2232", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2594", "value": "Description"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2690", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2227", "value": null}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.model_category']", "bid": "a185", "value": "Computer"}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.model']", "bid": "a205", "value": "Apple MacBook Pro 15\""}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.vendor']", "bid": "a697", "value": "Apple"}
+{"action": "fill", "xpath": "//*[@id='alm_hardware.serial_number']", "bid": "a326", "value": "SN-ac4aa555-fbc9-4e97-97cb-e0c0b286e175"}
+{"action": "fill", "xpath": "//*[@id='alm_hardware.invoice_number']", "bid": "a658", "value": "consubsist Asperifoliae desire gamomania"}
+{"action": "fill", "xpath": "//*[@id='alm_hardware.lease_id']", "bid": "a1149", "value": "supravital Leonard unobjected Occamistic"}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.location']", "bid": "a491", "value": "27, Boulevard Vitton, Paris"}
+{"action": "fill", "xpath": "//*[@id='alm_hardware.disposal_reason']", "bid": "a823", "value": "washdown Scytonemataceae fisc anachronism unimpeachability"}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.cost_center']", "bid": "a764", "value": "IT"}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.beneficiary']", "bid": "a836", "value": ""}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_hardware.owned_by']", "bid": "a438", "value": ""}
+{"action": "fill", "xpath": null, "bid": null, "value": "P1000497"}
+{"action": "click", "xpath": "//*[@id='change_request_filter_toggle_image']", "bid": "a47", "value": null}
+{"action": "click", "xpath": "//*[@id='change_requestfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2232", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2452", "value": "Phase state"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2548", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='change_requestfilterdiv']/list_filter[1]/div[1]/button[5]", "bid": "2232", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2594", "value": "Description"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2690", "value": "descending"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2227", "value": null}
+{"action": "click", "xpath": "//*[@id='incident_filter_toggle_image']", "bid": "a47", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2166", "value": "priority"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2276", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2298", "value": "1 - Critical"}
+{"action": "click", "xpath": "//*[@id='incidentfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2094", "value": null}
+{"action": "select_option", "xpath": null, "bid": null, "value": "category"}
+{"action": "click", "xpath": "//*[@id='incident_filter_toggle_image']", "bid": "a47", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2166", "value": "priority"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2276", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2298", "value": "1 - Critical"}
+{"action": "click", "xpath": "//*[@id='incidentfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2094", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2325", "value": "category"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2434", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2453", "value": "Network"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2091", "value": null}
+{"action": "click", "xpath": "//*[@id='incident_filter_toggle_image']", "bid": "a47", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2166", "value": "priority"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2276", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2298", "value": "1 - Critical"}
+{"action": "click", "xpath": "//*[@id='incidentfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2094", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2325", "value": "category"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2434", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2453", "value": "Network"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2091", "value": null}
+{"action": "click", "xpath": "//*[@id='incident_filter_toggle_image']", "bid": "a47", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2166", "value": "priority"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2276", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2298", "value": "1 - Critical"}
+{"action": "click", "xpath": "//*[@id='incidentfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2094", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2325", "value": "category"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2434", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2453", "value": "Network"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2091", "value": null}
+{"action": "click", "xpath": "//*[@id='alm_asset_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2128", "value": "model_category"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2226", "value": "="}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_asset.model_category.5260f4d0526030505260624052602530']", "bid": "2243", "value": "Consumable"}
+{"action": "click", "xpath": "//*[@id='alm_assetfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2056", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2266", "value": "sys_class_name"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2363", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2375", "value": "Hardware"}
+{"action": "click", "xpath": "//*[@id='alm_assetfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2056", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2402", "value": "install_status"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2496", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2522", "value": "In transit"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2053", "value": null}
+{"action": "click", "xpath": "//*[@id='alm_asset_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2128", "value": "model_category"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2226", "value": "="}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_asset.model_category.f18b3f0f188480f18c5a0f18ab40f186']", "bid": "2243", "value": "Consumable"}
+{"action": "click", "xpath": "//*[@id='alm_assetfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2056", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2266", "value": "sys_class_name"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2363", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2375", "value": "Hardware"}
+{"action": "click", "xpath": "//*[@id='alm_assetfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2056", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2402", "value": "install_status"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2496", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2522", "value": "In transit"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2053", "value": null}
+{"action": "click", "xpath": "//*[@id='alm_asset_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2128", "value": "model_category"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2226", "value": "="}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_asset.model_category.5cc71105cc74d05ccb9905cc4de05cc5']", "bid": "2243", "value": "Consumable"}
+{"action": "click", "xpath": "//*[@id='alm_assetfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2056", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2266", "value": "sys_class_name"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2360", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2372", "value": "Hardware"}
+{"action": "click", "xpath": "//*[@id='alm_assetfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2056", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2399", "value": "install_status"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2493", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2519", "value": "In transit"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2053", "value": null}
+{"action": "click", "xpath": "//*[@id='alm_asset_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2128", "value": "model_category"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2226", "value": "="}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_asset.model_category.59fb68c059fb09f059fb70a059fb9c30']", "bid": "2243", "value": "Consumable"}
+{"action": "click", "xpath": "//*[@id='alm_assetfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2056", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2266", "value": "sys_class_name"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2363", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2375", "value": "Hardware"}
+{"action": "click", "xpath": "//*[@id='alm_assetfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2056", "value": null}
+{"action": "click", "xpath": "//*[@id='alm_asset_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2128", "value": "model_category"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2226", "value": "="}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_asset.model_category.037ca600370ed00374100037b0300374']", "bid": "2243", "value": "Consumable"}
+{"action": "click", "xpath": "//*[@id='alm_asset_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2128", "value": "model_category"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2226", "value": "="}
+{"action": "fill", "xpath": "//*[@id='sys_display.alm_asset.model_category.17747401774620177f9e0177f9601773']", "bid": "2243", "value": "Consumable"}
+{"action": "click", "xpath": "//*[@id='alm_assetfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2056", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2266", "value": "sys_class_name"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2363", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2375", "value": "Hardware"}
+{"action": "click", "xpath": "//*[@id='alm_assetfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "2056", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2402", "value": "install_status"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2496", "value": "="}
+{"action": "select_option", "xpath": "//*[@id='value']/select[1]", "bid": "2522", "value": "In transit"}
+{"action": "click", "xpath": "//*[@id='test_filter_action_toolbar_run']", "bid": "2053", "value": null}
+{"action": "click", "xpath": "//*[@id='sc_cat_item_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "click", "xpath": "//*[@id='alm_hardware_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2166", "value": "install_status"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2262", "value": "="}
+{"action": "click", "xpath": "//*[@id='sys_user_filter_toggle_image']", "bid": "a46", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "1976", "value": "schedule"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2056", "value": "="}
+{"action": "click", "xpath": "//*[@id='sys_userfilterdiv']/list_filter[1]/div[1]/button[3]", "bid": "1904", "value": null}
+{"action": "select_option", "xpath": "//*[@id='field']/select[1]", "bid": "2095", "value": "manager"}
+{"action": "select_option", "xpath": "//*[@id='oper']/select[1]", "bid": "2174", "value": "="}

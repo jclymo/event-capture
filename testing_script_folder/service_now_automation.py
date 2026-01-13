@@ -35,7 +35,92 @@ from playwright.sync_api import (  # type: ignore
     TimeoutError as PlaywrightTimeoutError,
     ElementHandle,
     sync_playwright,
+    BrowserContext,
 )
+
+
+# ============================================================
+# CLICK VISUALIZER - Shows fading circles on clicks
+# ============================================================
+CLICK_VISUALIZER_JS = """
+(() => {
+    if (window.__clickVisualizerActive) return;
+    window.__clickVisualizerActive = true;
+    
+    const style = document.createElement('style');
+    style.id = 'click-visualizer-styles';
+    style.textContent = `
+        .pw-click-indicator {
+            position: fixed !important;
+            pointer-events: none !important;
+            border-radius: 50% !important;
+            background: radial-gradient(circle, rgba(255, 87, 51, 0.9) 0%, rgba(255, 87, 51, 0) 70%) !important;
+            transform: translate(-50%, -50%) !important;
+            z-index: 2147483647 !important;
+            animation: pw-click-ripple 0.8s ease-out forwards !important;
+        }
+        
+        .pw-click-indicator::after {
+            content: '' !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            width: 18px !important;
+            height: 18px !important;
+            background: #FF5733 !important;
+            border: 3px solid white !important;
+            border-radius: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            animation: pw-click-dot 0.8s ease-out forwards !important;
+            box-shadow: 0 0 20px rgba(255, 87, 51, 1), 0 0 40px rgba(255, 87, 51, 0.6) !important;
+        }
+        
+        @keyframes pw-click-ripple {
+            0% { width: 0; height: 0; opacity: 1; }
+            100% { width: 120px; height: 120px; opacity: 0; }
+        }
+        
+        @keyframes pw-click-dot {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            30% { transform: translate(-50%, -50%) scale(2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+        }
+    `;
+    
+    function injectStyle() {
+        if (!document.getElementById('click-visualizer-styles')) {
+            (document.head || document.documentElement).appendChild(style);
+        }
+    }
+    
+    function showClick(x, y) {
+        injectStyle();
+        const indicator = document.createElement('div');
+        indicator.className = 'pw-click-indicator';
+        indicator.style.cssText = `left: ${x}px !important; top: ${y}px !important;`;
+        (document.body || document.documentElement).appendChild(indicator);
+        setTimeout(() => {
+            try { indicator.remove(); } catch(e) {}
+        }, 800);
+    }
+    
+    ['mousedown', 'pointerdown'].forEach(eventType => {
+        window.addEventListener(eventType, (e) => {
+            showClick(e.clientX, e.clientY);
+        }, true);
+    });
+    
+    window.__showClickAt = showClick;
+    
+    if (document.head) {
+        injectStyle();
+    } else {
+        document.addEventListener('DOMContentLoaded', injectStyle);
+    }
+    
+    console.log('🎯 Click visualizer active');
+})();
+"""
 
 
 @dataclass
@@ -89,16 +174,30 @@ class ServiceNowAutomation:
         headless = bool(self.playwright_settings.get("headless", False))
         slow_mo = int(self.playwright_settings.get("slow_mo_ms", 0))
         viewport = self.playwright_settings.get("viewport", {})
-        width = viewport.get("width")
-        height = viewport.get("height")
+        width = viewport.get("width", 1280)
+        height = viewport.get("height", 720)
 
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=headless, slow_mo=slow_mo)
-            context_kwargs: Dict[str, Any] = {}
-            if width and height:
-                context_kwargs["viewport"] = {"width": int(width), "height": int(height)}
+            
+            # Setup video recording path
+            video_dir = self._resolve_output_path("videos")
+            video_dir.mkdir(parents=True, exist_ok=True)
+            
+            context_kwargs: Dict[str, Any] = {
+                "viewport": {"width": int(width), "height": int(height)},
+                "record_video_dir": str(video_dir),
+                "record_video_size": {"width": int(width), "height": int(height)},
+            }
             context = browser.new_context(**context_kwargs)
 
+            # Inject click visualizer for fading circle effect on clicks
+            try:
+                context.add_init_script(CLICK_VISUALIZER_JS)
+                print("🎯 Click visualizer injected")
+            except PlaywrightError as exc:
+                print(f"[testing] Failed to add click visualizer: {exc}", file=sys.stderr)
+            
             # Inject BrowserGym and a standalone recorder into all frames for rich event capture.
             try:
                 project_root = self.working_dir.parent
@@ -174,8 +273,21 @@ class ServiceNowAutomation:
                 with events_path.open("w", encoding="utf-8") as fh:
                     json.dump(recorded_events, fh, indent=2)
 
+            # Get video path before closing context
+            video_path = None
+            try:
+                if page.video:
+                    video_path = page.video.path()
+                    print(f"🎬 Video recorded to: {video_path}")
+            except PlaywrightError:
+                pass
+
             context.close()
             browser.close()
+            
+            # Print final video location
+            if video_path:
+                print(f"\n📹 Recording saved: {video_path}")
 
     def _resolve_credentials(self, cfg: Dict[str, Any]) -> Credentials:
         username = ""
@@ -291,7 +403,7 @@ class ServiceNowAutomation:
                 search_input = page.get_by_role("textbox", name="Filter navigator")
                 search_input.fill(search_term)
                 logger.log("fill", selector="Filter navigator", text=search_term)
-                page.wait_for_timeout(1200)
+                page.wait_for_timeout(2000)
             except PlaywrightError:
                 logger.log("navigator_search_failed", search_term=search_term)
 
@@ -301,7 +413,7 @@ class ServiceNowAutomation:
                 if locator.count():
                     locator.first.click()
                     logger.log("click", element="treeitem", label=module_name)
-                    page.wait_for_timeout(800)
+                    page.wait_for_timeout(2000)
                     continue
                 link = page.get_by_role("link", name=module_name, exact=False)
                 link.first.click()
@@ -313,7 +425,7 @@ class ServiceNowAutomation:
 
     def _wait_for_main_frame(self, page: Page, logger: EventLogger) -> Frame:
         try:
-            page.wait_for_timeout(1500)
+            page.wait_for_timeout(2000)
             frame = page.frame(name="gsft_main")
             if frame:
                 logger.log("frame_detected", frame="gsft_main")
@@ -341,7 +453,7 @@ class ServiceNowAutomation:
         """
         frame.evaluate(script, encoded_query)
         frame.wait_for_load_state("load")
-        frame.wait_for_timeout(1500)
+        frame.wait_for_timeout(2000)
 
     def _apply_filter_conditions(self, frame: Frame, conditions: Iterable[Dict[str, Any]], logger: EventLogger) -> None:
         """Interact with the list filter builder to configure conditions."""

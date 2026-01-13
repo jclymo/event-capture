@@ -1,0 +1,451 @@
+{
+  "task_id": "browsergym/workarena.servicenow.create-hardware-asset",
+  "timestamp": "2025-12-07T14:43:42.624205",
+  "seeds": [
+    55,
+    276,
+    91,
+    789,
+    419
+  ],
+  "models": [
+    "gpt-4o",
+    "gpt-4o-mini"
+  ],
+  "conditions": [
+    "baseline",
+    "icl"
+  ],
+  "parallel_workers": 3,
+  "evaluations": {
+    "baseline": [
+      {
+        "model": "gpt-4o",
+        "seed": 55,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 7,
+        "time_seconds": 136.35580158233643,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a208')",
+          "click('239')",
+          "click('239')",
+          "click('239')",
+          "click('239')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 276,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 7,
+        "time_seconds": 132.99174237251282,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a208')",
+          "click('311')",
+          "click('311')",
+          "click('311')",
+          "click('311')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 91,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 7,
+        "time_seconds": 122.46943020820618,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a208')",
+          "click('175')",
+          "click('a208')",
+          "click('175')",
+          "click('a208')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 789,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 44.49483895301819,
+        "error": "repeated 5x",
+        "actions": [
+          "click('a185')",
+          "click('a185')",
+          "click('a185')",
+          "click('a185')",
+          "click('a185')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 419,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 44.99305438995361,
+        "error": "repeated 5x",
+        "actions": [
+          "click('a185')",
+          "click('a185')",
+          "click('a185')",
+          "click('a185')",
+          "click('a185')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 55,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 13,
+        "time_seconds": 127.36317491531372,
+        "error": "timeout",
+        "actions": [
+          "select_option(a185, 'Computer')",
+          "select_option(a185, 'Computer')",
+          "select_option(a185, 'Computer')",
+          "select_option(a185, 'Computer')",
+          "select_option('a185', 'Computer')",
+          "click('a188')",
+          "click('165')",
+          "select_option(a185, 'Computer')",
+          "select_option(a185, 'Computer')",
+          "select_option(a185, 'Computer')",
+          "click(a188)",
+          "click(a188)",
+          "click(a188)"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 276,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 34.6032874584198,
+        "error": "repeated 5x",
+        "actions": [
+          "select_option(a185, 'Computer')",
+          "select_option(a185, 'Computer')",
+          "select_option(a185, 'Computer')",
+          "select_option(a185, 'Computer')",
+          "select_option(a185, 'Computer')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 91,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 14,
+        "time_seconds": 125.45267248153687,
+        "error": "timeout",
+        "actions": [
+          "select_option(a185, 'Computer')",
+          "fill(a185, 'Computer')",
+          "select_option(a185, 'Computer')",
+          "fill(a185, 'Computer')",
+          "fill(a185, 'Computer')",
+          "fill(a185, 'Computer')",
+          "fill(a185, 'Computer')",
+          "click(a185)",
+          "fill(a185, 'Computer')",
+          "fill(a185, 'Computer')",
+          "click(a185)",
+          "click(a185)",
+          "fill(a185, 'Computer')",
+          "fill(a185, 'Computer')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 789,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 13,
+        "time_seconds": 128.62460923194885,
+        "error": "timeout",
+        "actions": [
+          "select_option('a185', 'Computer')",
+          "click(a188)",
+          "select_option('a185', 'Computer')",
+          "click(a188)",
+          "select_option('a185', 'Computer')",
+          "click(a188)",
+          "select_option('a185', 'Computer')",
+          "click(a185)",
+          "select_option('a185', 'Computer')",
+          "click(a188)",
+          "select_option('a185', 'Computer')",
+          "click(a188)",
+          "select_option('a185', 'Computer')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 419,
+        "condition": "baseline",
+        "success": false,
+        "reward": 0,
+        "steps": 10,
+        "time_seconds": 95.93566656112671,
+        "error": "repeated 5x",
+        "actions": [
+          "select_option(a185, 'Computer')",
+          "select_option(a185, 'Computer')",
+          "select_option('a185', 'Computer')",
+          "click(a188)",
+          "fill(a185, 'Computer')",
+          "fill('a185', 'Computer')",
+          "fill(a185, 'Computer')",
+          "fill(a185, 'Computer')",
+          "fill(a185, 'Computer')",
+          "fill(a185, 'Computer')",
+          "fill(a185, 'Computer')"
+        ]
+      }
+    ],
+    "icl": [
+      {
+        "model": "gpt-4o",
+        "seed": 55,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 7,
+        "time_seconds": 136.55492401123047,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a208')",
+          "click('239')",
+          "click('239')",
+          "click('239')",
+          "click('239')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 276,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 8,
+        "time_seconds": 132.51694297790527,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a208')",
+          "click('310')",
+          "fill('a326', 'SN-31ee8dff-1799-42b2-b7e2-377f417c5127')",
+          "click('a247')",
+          "click('a700')",
+          "click('313')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 91,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 8,
+        "time_seconds": 130.55187964439392,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a208')",
+          "click('175')",
+          "click('a208')",
+          "click('175')",
+          "click('a208')",
+          "click('175')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 789,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 7,
+        "time_seconds": 136.20293426513672,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a208')",
+          "click('338')",
+          "click('338')",
+          "click('338')",
+          "click('338')"
+        ]
+      },
+      {
+        "model": "gpt-4o",
+        "seed": 419,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 7,
+        "time_seconds": 128.45100593566895,
+        "error": "timeout",
+        "actions": [
+          "click('a188')",
+          "click('165')",
+          "click('a208')",
+          "click('239')",
+          "click('239')",
+          "click('239')",
+          "click('239')"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 55,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 37.19067406654358,
+        "error": "repeated 5x",
+        "actions": [
+          "click(a185)",
+          "click(a185)",
+          "click(a185)",
+          "click(a185)",
+          "click(a185)"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 276,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 38.96219992637634,
+        "error": "repeated 5x",
+        "actions": [
+          "click(a185)",
+          "click(a185)",
+          "click(a185)",
+          "click(a185)",
+          "click(a185)"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 91,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 36.36200547218323,
+        "error": "repeated 5x",
+        "actions": [
+          "click(a185)",
+          "click(a185)",
+          "click(a185)",
+          "click(a185)",
+          "click(a185)"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 789,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 34.37056922912598,
+        "error": "repeated 5x",
+        "actions": [
+          "click(a185)",
+          "click(a185)",
+          "click(a185)",
+          "click(a185)",
+          "click(a185)"
+        ]
+      },
+      {
+        "model": "gpt-4o-mini",
+        "seed": 419,
+        "condition": "icl",
+        "success": false,
+        "reward": 0,
+        "steps": 4,
+        "time_seconds": 31.36848282814026,
+        "error": "repeated 5x",
+        "actions": [
+          "click(a185)",
+          "click(a185)",
+          "click(a185)",
+          "click(a185)",
+          "click(a185)"
+        ]
+      }
+    ]
+  },
+  "summary": {
+    "baseline": {
+      "total_runs": 10,
+      "successes": 0,
+      "success_rate": 0.0,
+      "avg_steps": 8.3,
+      "avg_time": 99.32842781543732,
+      "by_model": {
+        "gpt-4o": {
+          "success_rate": 0.0,
+          "avg_steps": 5.8
+        },
+        "gpt-4o-mini": {
+          "success_rate": 0.0,
+          "avg_steps": 10.8
+        }
+      }
+    },
+    "icl": {
+      "total_runs": 10,
+      "successes": 0,
+      "success_rate": 0.0,
+      "avg_steps": 5.7,
+      "avg_time": 84.25316183567047,
+      "by_model": {
+        "gpt-4o": {
+          "success_rate": 0.0,
+          "avg_steps": 7.4
+        },
+        "gpt-4o-mini": {
+          "success_rate": 0.0,
+          "avg_steps": 4.0
+        }
+      }
+    }
+  }
+}
